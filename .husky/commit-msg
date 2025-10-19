@@ -1,0 +1,25 @@
+echo "🔍 Validating commit message..."
+echo ""
+
+npx --no -- commitlint --edit $1
+
+if [ $? -eq 0 ]; then
+  echo ""
+  echo "✅ Commit message is valid!"
+  echo ""
+else
+  echo ""
+  echo "❌ Invalid commit message format!"
+  echo ""
+  echo "📋 Use Conventional Commits format:"
+  echo "   <type>(<scope>): <subject>"
+  echo ""
+  echo "   Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore"
+  echo ""
+  echo "   Examples:"
+  echo "   ✓ feat(projects): add new filter"
+  echo "   ✓ fix(header): resolve mobile menu"
+  echo "   ✓ docs(readme): update installation"
+  echo ""
+  exit 1
+fi

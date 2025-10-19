@@ -1,0 +1,14 @@
+echo "🚀 Running pre-commit hook..."
+echo "📝 Formatting and linting staged files..."
+echo ""
+
+npx lint-staged
+
+if [ $? -eq 0 ]; then
+  echo ""
+  echo "✅ Pre-commit checks passed!"
+else
+  echo ""
+  echo "❌ Pre-commit checks failed. Please fix the errors above."
+  exit 1
+fi
