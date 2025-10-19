@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+.output/
+.astro/
+
+# Config files
+*.config.js
+*.config.mjs
+*.config.ts
+
+# GitHub Actions
+.github/
