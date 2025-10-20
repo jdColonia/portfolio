@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/jdColonia/portfolio/compare/v1.0.0...v1.1.0) (2025-10-20)
+
+
+### Features
+
+* **config:** update site configuration and base path for deployment; refactor navigation links ([cd42c84](https://github.com/jdColonia/portfolio/commit/cd42c848e827e455a37a20f6a689dcf35c8c5aeb))
+
 # 1.0.0 (2025-10-20)
 
 
