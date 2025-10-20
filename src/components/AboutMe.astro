@@ -201,7 +201,7 @@ const skillCategories = {
     <div class="relative group max-w-sm mx-auto lg:max-w-none">
       <div class="relative z-10 rounded-lg overflow-hidden">
         <Image
-          src={SITE_CONFIG.image}
+          src={`${import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`}${SITE_CONFIG.image.slice(1)}`}
           alt={SITE_CONFIG.name}
           width={400}
           height={400}

@@ -6,46 +6,52 @@ import { Image } from 'astro:assets';
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
-const langPrefix = lang === 'en' ? '/en' : '';
+const base = import.meta.env.BASE_URL;
+const normalizedBase = base.endsWith('/') ? base : `${base}/`;
+const langPrefix = lang === 'en' ? 'en' : '';
 
 const navItems = [
   {
     title: t('nav.about'),
     label: 'sobre-mi',
-    url: `${langPrefix}/sobre-mi`,
+    url: langPrefix ? `${normalizedBase}${langPrefix}/sobre-mi` : `${normalizedBase}sobre-mi`,
     isSection: true,
   },
   {
     title: t('nav.experience'),
     label: 'experiencia',
-    url: `${langPrefix}/experiencia`,
+    url: langPrefix ? `${normalizedBase}${langPrefix}/experiencia` : `${normalizedBase}experiencia`,
     isSection: true,
   },
   {
     title: t('nav.projects'),
     label: 'proyectos',
-    url: `${langPrefix}/proyectos`,
+    url: langPrefix ? `${normalizedBase}${langPrefix}/proyectos` : `${normalizedBase}proyectos`,
     isSection: true,
   },
   {
     title: t('nav.contact'),
     label: 'contacto',
-    url: `${langPrefix}/contacto`,
+    url: langPrefix ? `${normalizedBase}${langPrefix}/contacto` : `${normalizedBase}contacto`,
     isSection: true,
   },
   {
     title: t('nav.cv'),
     label: 'cv',
-    url: lang === 'en' ? '/en/cv' : '/cv',
+    url: langPrefix ? `${normalizedBase}${langPrefix}/cv` : `${normalizedBase}cv`,
     isSection: false,
   },
 ];
 ---
 
 <header class="fixed top-0 z-50 flex items-center justify-between w-full px-4 md:px-8 py-4">
-  <a href={langPrefix || '/'} aria-label="Home" class="flex items-center z-50">
+  <a
+    href={langPrefix ? `${normalizedBase}${langPrefix}` : base}
+    aria-label="Home"
+    class="flex items-center z-50"
+  >
     <Image
-      src="/logo.svg"
+      src={`${normalizedBase}logo.svg`}
       alt="Logo"
       width={48}
       height={48}
@@ -160,8 +166,8 @@ const navItems = [
           if (isOnCvPage) {
             e.preventDefault();
             sessionStorage.setItem('scrollToSection', sectionId);
-            const langPrefix = window.location.pathname.includes('/en') ? '/en' : '';
-            window.location.href = langPrefix || '/';
+            // Let the browser navigate using the href (which already includes base)
+            window.location.href = (link as HTMLAnchorElement).href.replace(`/${sectionId}`, '');
             return;
           }
 
@@ -169,8 +175,8 @@ const navItems = [
           if (!section) {
             e.preventDefault();
             sessionStorage.setItem('scrollToSection', sectionId);
-            const langPrefix = window.location.pathname.includes('/en') ? '/en' : '';
-            window.location.href = langPrefix || '/';
+            // Let the browser navigate using the href (which already includes base)
+            window.location.href = (link as HTMLAnchorElement).href.replace(`/${sectionId}`, '');
             return;
           }
 
@@ -195,9 +201,11 @@ const navItems = [
       if (section) {
         setTimeout(() => {
           section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          // Update URL
-          const langPrefix = window.location.pathname.includes('/en') ? '/en' : '';
-          const newUrl = `${langPrefix}/${scrollToSection}`;
+          // Update URL - just append the section to current path
+          const currentPath = window.location.pathname;
+          const newUrl = currentPath.endsWith('/')
+            ? `${currentPath}${scrollToSection}`
+            : `${currentPath}/${scrollToSection}`;
           window.history.pushState({}, '', newUrl);
         }, 100);
       }
@@ -247,9 +255,11 @@ const navItems = [
 
               // Update URL when scrolling through sections (only on main page, not on CV page)
               if (!window.location.pathname.includes('/cv')) {
-                const langPrefix = window.location.pathname.includes('/en') ? '/en' : '';
-                const newUrl = `${langPrefix}/${entry.target.id}`;
-                window.history.replaceState({}, '', newUrl);
+                // Get the link URL from the nav item
+                const linkUrl = item.getAttribute('href');
+                if (linkUrl) {
+                  window.history.replaceState({}, '', linkUrl);
+                }
               }
             } else {
               item.classList.remove('text-primary-green-vivid');
