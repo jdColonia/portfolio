@@ -1,0 +1,233 @@
+---
+import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+import { SITE_CONFIG } from '@/config';
+import { Image } from 'astro:assets';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const aboutContent = {
+  es: `
+    <p>
+      ¡Hola! Soy <strong>Juan David Colonia</strong>, un Ingeniero de Sistemas apasionado por crear soluciones que realmente importen. Durante más de 3 años como Monitor Académico en Universidad Icesi, he tenido el privilegio de guiar a más de 200 estudiantes en su viaje tecnológico, desde sus primeros algoritmos hasta el despliegue de aplicaciones en producción.
+    </p>
+    <p>
+      Mi especialidad está en la <strong>intersección de DevOps, Cloud Computing e Inteligencia Artificial</strong>. Me fascina cómo la automatización y las infraestructuras escalables pueden acelerar la innovación en soluciones impulsadas por IA. He trabajado desde la arquitectura de sistemas distribuidos hasta el despliegue de modelos de Machine Learning mediante APIs REST, siempre buscando la excelencia técnica y la eficiencia.
+    </p>
+    <p>
+      Más allá del código, creo firmemente en el <strong>poder del trabajo en equipo</strong>. Mi objetivo siempre es construir no solo software robusto, sino también equipos resilientes que valoren la innovación y la mejora continua.
+    </p>
+  `,
+  en: `
+    <p>
+      Hey! I'm <strong>Juan David Colonia</strong>, a Systems Engineer passionate about creating solutions that truly matter. For over 3 years as an Academic Monitor at Universidad Icesi, I've had the privilege of guiding 200+ students through their tech journey, from their first algorithms to deploying production applications.
+    </p>
+    <p>
+      My expertise lies at the <strong>intersection of DevOps, Cloud Computing, and Artificial Intelligence</strong>. I'm fascinated by how automation and scalable infrastructures can accelerate innovation in AI-driven solutions. I've worked from distributed systems architecture to deploying Machine Learning models through REST APIs, always pursuing technical excellence and efficiency.
+    </p>
+    <p>
+      Beyond code, I firmly believe in the <strong>power of teamwork</strong>. My goal is always to build not just robust software, but resilient teams that value innovation and continuous improvement.
+    </p>
+  `,
+};
+
+const education = {
+  es: [
+    {
+      degree: 'Ingeniería de Sistemas',
+      institution: 'Universidad Icesi',
+      year: '2022 - Presente',
+      description:
+        'Lista de Honor durante siete semestres consecutivos (2022-1 a 2025-1). Galardonado con las becas Honor y Oro de la Universidad Icesi, y con la beca Generación E del Gobierno de Colombia.',
+      highlights: [
+        'Arquitectura de Software',
+        'Inteligencia Artificial',
+        'Cloud Computing',
+        'Ciencia de Datos',
+      ],
+    },
+  ],
+  en: [
+    {
+      degree: 'Systems Engineering',
+      institution: 'Universidad Icesi',
+      year: '2022 - Present',
+      description:
+        "Dean's List for seven consecutive semesters (2022-1 to 2025-1). Awarded the Honor and Gold Scholarships by Universidad Icesi, and the Generación E Scholarship by the Government of Colombia.",
+      highlights: [
+        'Software Architecture',
+        'Artificial Intelligence',
+        'Cloud Computing',
+        'Data Science',
+      ],
+    },
+  ],
+};
+
+const skillCategories = {
+  es: [
+    {
+      title: 'Lenguajes',
+      skills: ['Java', 'Python', 'JavaScript', 'TypeScript', 'Kotlin', 'Bash'],
+    },
+    {
+      title: 'Frontend',
+      skills: ['React', 'Next.js', 'Astro', 'Tailwind CSS'],
+    },
+    {
+      title: 'Backend',
+      skills: ['Spring Boot', 'Django', 'NestJS', 'Express'],
+    },
+    {
+      title: 'IA & ML',
+      skills: ['Scikit-learn', 'NumPy', 'Pandas', 'SciPy'],
+    },
+    {
+      title: 'Bases de Datos',
+      skills: ['PostgreSQL', 'MySQL', 'MongoDB', 'SQLite'],
+    },
+    {
+      title: 'DevOps & Cloud',
+      skills: ['Docker', 'Kubernetes', 'AWS', 'Azure', 'GCP', 'Terraform', 'Ansible'],
+    },
+    {
+      title: 'CI/CD & Monitoreo',
+      skills: ['Jenkins', 'GitHub Actions', 'SonarQube', 'Prometheus', 'Grafana'],
+    },
+    {
+      title: 'Herramientas',
+      skills: ['Git', 'GitHub', 'GitHub Projects', 'Jira', 'Trello'],
+    },
+  ],
+  en: [
+    {
+      title: 'Languages',
+      skills: ['Java', 'Python', 'JavaScript', 'TypeScript', 'Kotlin', 'Bash'],
+    },
+    {
+      title: 'Frontend',
+      skills: ['React', 'Next.js', 'Astro', 'Tailwind CSS'],
+    },
+    {
+      title: 'Backend',
+      skills: ['Spring Boot', 'Django', 'NestJS', 'Express'],
+    },
+    {
+      title: 'AI & ML',
+      skills: ['Scikit-learn', 'NumPy', 'Pandas', 'SciPy'],
+    },
+    {
+      title: 'Databases',
+      skills: ['PostgreSQL', 'MySQL', 'MongoDB', 'SQLite'],
+    },
+    {
+      title: 'DevOps & Cloud',
+      skills: ['Docker', 'Kubernetes', 'AWS', 'Azure', 'GCP', 'Terraform', 'Ansible'],
+    },
+    {
+      title: 'CI/CD & Monitoring',
+      skills: ['Jenkins', 'GitHub Actions', 'SonarQube', 'Prometheus', 'Grafana'],
+    },
+    {
+      title: 'Tools',
+      skills: ['Git', 'GitHub', 'GitHub Projects', 'Jira', 'Trello'],
+    },
+  ],
+};
+---
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+  <!-- About Text & Skills -->
+  <div class="lg:col-span-2 space-y-6">
+    <div
+      class="prose prose-invert text-gray-300 space-y-4 text-sm md:text-base"
+      set:html={aboutContent[lang]}
+    />
+
+    <!-- Skills -->
+    <div>
+      <h3 class="text-lg md:text-xl font-semibold text-white mb-6">
+        {t('about.skills-title')}
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {
+          skillCategories[lang].map((category) => (
+            <div class="border-l-2 border-primary-green-vivid pl-4">
+              <h4 class="text-sm md:text-base font-semibold text-primary-green-vivid mb-2">
+                {category.title}
+              </h4>
+              <div class="flex flex-wrap gap-2">
+                {category.skills.map((skill) => (
+                  <span class="px-2.5 py-1 text-xs text-gray-300 bg-gray-800/50 border border-gray-700 rounded hover:border-primary-green-vivid hover:text-primary-green-vivid transition-colors duration-200">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Education -->
+    <div class="mt-6 md:mt-8">
+      <h3 class="text-lg md:text-xl font-semibold text-white mb-4">
+        {t('about.education-title')}
+      </h3>
+      {
+        education[lang].map((edu) => (
+          <div class="border-l-2 border-primary-green-vivid pl-4 md:pl-6 py-2 space-y-2">
+            <h4 class="text-base md:text-lg font-semibold text-white">{edu.degree}</h4>
+            <p class="text-sm md:text-base text-primary-green-vivid font-medium">
+              {edu.institution}
+            </p>
+            <p class="text-xs md:text-sm text-gray-400 font-mono">{edu.year}</p>
+            <p class="text-sm md:text-base text-gray-300">{edu.description}</p>
+            <div class="flex flex-wrap gap-2 mt-3">
+              {edu.highlights.map((highlight) => (
+                <span class="px-2 py-1 text-xs rounded-full bg-primary-green-vivid/10 text-primary-green-vivid border border-primary-green-vivid/20">
+                  {highlight}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- Profile Image -->
+  <div class="lg:col-span-1">
+    <div class="relative group max-w-sm mx-auto lg:max-w-none">
+      <div class="relative z-10 rounded-lg overflow-hidden">
+        <Image
+          src={SITE_CONFIG.image}
+          alt={SITE_CONFIG.name}
+          width={400}
+          height={400}
+          loading="lazy"
+          class="w-full h-auto rounded-lg grayscale group-hover:grayscale-0 transition-all duration-300"
+        />
+        <div
+          class="absolute inset-0 bg-primary-green-vivid/20 group-hover:bg-transparent transition-all duration-300"
+        >
+        </div>
+      </div>
+      <div
+        class="absolute -inset-2 border-2 border-primary-green-vivid rounded-lg -z-10 translate-x-3 translate-y-3 md:translate-x-4 md:translate-y-4 group-hover:translate-x-2 group-hover:translate-y-2 transition-transform duration-300"
+      >
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .prose :global(p) {
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+
+  .prose :global(strong) {
+    @apply text-primary-green-vivid font-semibold;
+  }
+</style>
