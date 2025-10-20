@@ -1,0 +1,82 @@
+---
+import { languages } from '@/i18n/ui';
+
+const { pathname } = Astro.url;
+const currentLang = pathname.startsWith('/en') ? 'en' : 'es';
+---
+
+<div class="relative inline-block">
+  <button
+    id="lang-toggle"
+    class="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors"
+    aria-label="Cambiar idioma"
+  >
+    <span class="text-sm font-medium uppercase">{currentLang}</span>
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"
+      ></path>
+    </svg>
+  </button>
+
+  <div
+    id="lang-menu"
+    class="hidden absolute right-0 mt-2 w-32 rounded-lg bg-gray-800 shadow-lg border border-gray-700 overflow-hidden z-50"
+  >
+    {
+      Object.entries(languages).map(([lang, label]) => {
+        const href = lang === 'es' ? pathname.replace('/en', '') : `/en${pathname}`;
+        return (
+          <a
+            href={href}
+            class={`block px-4 py-2 text-sm hover:bg-gray-700 transition-colors ${
+              currentLang === lang ? 'bg-gray-700 font-medium' : ''
+            }`}
+          >
+            {label}
+          </a>
+        );
+      })
+    }
+  </div>
+</div>
+
+<script>
+  // Función para inicializar el language picker
+  function initLanguagePicker() {
+    const toggle = document.getElementById('lang-toggle');
+    const menu = document.getElementById('lang-menu');
+
+    if (!toggle || !menu) return;
+
+    // Remover event listeners previos (si existen)
+    const newToggle = toggle.cloneNode(true) as HTMLElement;
+    toggle.parentNode?.replaceChild(newToggle, toggle);
+
+    // Agregar click event al nuevo botón
+    newToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menu.classList.toggle('hidden');
+    });
+
+    // Cerrar el menú cuando se hace click fuera
+    const clickOutside = (e: MouseEvent) => {
+      if (!newToggle.contains(e.target as Node) && !menu.contains(e.target as Node)) {
+        menu.classList.add('hidden');
+      }
+    };
+
+    document.addEventListener('click', clickOutside);
+
+    // Cleanup cuando la página cambia
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        document.removeEventListener('click', clickOutside);
+      },
+      { once: true }
+    );
+  }
+
+  // Inicializar cuando la página carga
+  document.addEventListener('astro:page-load', initLanguagePicker);
+</script>
