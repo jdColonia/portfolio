@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/jdColonia/portfolio/compare/v1.1.0...v1.1.1) (2025-10-20)
+
+
+### Bug Fixes
+
+* **nav:** update navigation links to use normalized base path ([8189a4e](https://github.com/jdColonia/portfolio/commit/8189a4ee9d396c152a2c36f07a1df3f2509e89db))
+
 # [1.1.0](https://github.com/jdColonia/portfolio/compare/v1.0.0...v1.1.0) (2025-10-20)
 
 
