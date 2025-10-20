@@ -1,0 +1,127 @@
+---
+import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+import { SITE_CONFIG } from '@/config';
+import { Image } from 'astro:assets';
+import Badge from './Badge.astro';
+import SocialPill from './SocialPill.astro';
+import LinkedInIcon from './icons/LinkedIn.astro';
+import GitHubIcon from './icons/GitHub.astro';
+import Medium from './icons/Medium.astro';
+import Download from './icons/Download.astro';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const cvUrl = lang === 'es' ? SITE_CONFIG.cvEs : SITE_CONFIG.cvEn;
+---
+
+<div class="max-w-4xl mx-auto px-4">
+  <div class="flex flex-col md:flex-row gap-4 md:gap-6 mb-6 items-start">
+    <Image
+      src={SITE_CONFIG.image}
+      alt={SITE_CONFIG.name}
+      width={96}
+      height={96}
+      loading="eager"
+      class="rounded-full shadow-2xl w-20 h-20 md:w-24 md:h-24 ring-4 ring-primary-green-vivid/20"
+    />
+    <div class="flex flex-col gap-3">
+      <Badge>
+        {t('hero.badge')}
+      </Badge>
+      <div class="flex gap-2">
+        <a
+          href={SITE_CONFIG.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-gray-400 hover:text-primary-green-vivid transition-colors"
+          aria-label="GitHub"
+        >
+          <GitHubIcon />
+        </a>
+        <a
+          href={SITE_CONFIG.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-gray-400 hover:text-primary-green-vivid transition-colors"
+          aria-label="LinkedIn"
+        >
+          <LinkedInIcon />
+        </a>
+        <a
+          href={SITE_CONFIG.medium}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-gray-400 hover:text-primary-green-vivid transition-colors"
+          aria-label="Medium"
+        >
+          <Medium />
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <h1
+    class="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold font-dm-sans tracking-tight text-white mb-2"
+  >
+    {t('hero.title')}
+  </h1>
+
+  <h2 class="text-xl md:text-2xl lg:text-3xl text-primary-green-vivid font-semibold mb-2">
+    {t('hero.subtitle')}
+  </h2>
+
+  <p class="text-base md:text-lg text-gray-400 font-mono mb-6">
+    {t('hero.tagline')}
+  </p>
+
+  <p class="text-base md:text-lg lg:text-xl text-gray-300 font-inter mb-8 leading-relaxed">
+    {t('hero.description')}
+  </p>
+
+  <nav class="flex flex-wrap gap-3 md:gap-4">
+    <SocialPill href={SITE_CONFIG.linkedin}>
+      <LinkedInIcon />
+      LinkedIn
+    </SocialPill>
+    <a
+      href={cvUrl}
+      download
+      class="inline-flex items-center gap-2 px-4 md:px-5 py-2 md:py-2.5 text-sm font-semibold rounded-full
+      bg-primary-green-vivid hover:bg-primary-green-muted text-black
+      transition-all duration-300 hover:scale-105 hover:shadow-lg"
+    >
+      <Download />
+      <span class="hidden sm:inline">{t('hero.download-cv')}</span>
+      <span class="sm:hidden">CV</span>
+    </a>
+  </nav>
+</div>
+
+<style>
+  h1 {
+    animation: fadeInUp 0.8s ease-out;
+  }
+
+  h2 {
+    animation: fadeInUp 0.8s ease-out 0.1s backwards;
+  }
+
+  p {
+    animation: fadeInUp 0.8s ease-out 0.2s backwards;
+  }
+
+  nav {
+    animation: fadeInUp 0.8s ease-out 0.4s backwards;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
