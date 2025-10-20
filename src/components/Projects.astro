@@ -1,0 +1,343 @@
+---
+import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+import GitHub from './icons/GitHub.astro';
+import Link from './icons/Link.astro';
+import { Image } from 'astro:assets';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const projects = {
+  es: [
+    {
+      title: 'Pipeline CI/CD Automatizado',
+      description:
+        'Diseño completo de pipeline CI/CD con Jenkins y GitLab CI para automatizar testing, build y deployment. Implementación de Docker y Kubernetes para orquestación de contenedores. Reducción del tiempo de deploy en 60% y zero-downtime deployments.',
+      image: '/projects/project1.webp',
+      tags: ['Jenkins', 'Docker', 'Kubernetes', 'AWS', 'Terraform'],
+      github: 'https://github.com/jdColonia',
+      demo: '',
+    },
+    {
+      title: 'Sistema de Monitoring y Alertas',
+      description:
+        'Implementación de stack de monitoreo completo usando Prometheus, Grafana y ELK. Dashboards personalizados para métricas de infraestructura y aplicaciones. Sistema de alertas automáticas con PagerDuty. Reducción del MTTR en 40%.',
+      image: '/projects/project1.webp',
+      tags: ['Prometheus', 'Grafana', 'ElasticSearch', 'Kibana', 'Python'],
+      github: 'https://github.com/jdColonia',
+      demo: '',
+    },
+    {
+      title: 'Chatbot con NLP e IA',
+      description:
+        'Desarrollo de chatbot inteligente usando TensorFlow y PyTorch para procesamiento de lenguaje natural. Implementación de modelos de ML para intención y entidades. Integración con plataformas de mensajería. 95% de accuracy en detección de intenciones.',
+      image: '/projects/project1.webp',
+      tags: ['Python', 'TensorFlow', 'PyTorch', 'NLP', 'FastAPI'],
+      github: 'https://github.com/jdColonia',
+      demo: '',
+    },
+    {
+      title: 'Infraestructura como Código',
+      description:
+        'Arquitectura cloud completa en AWS usando Terraform e Infrastructure as Code. Auto-scaling groups, load balancers y multi-AZ deployment. Implementación de best practices de seguridad y compliance. Costo reducido en 35%.',
+      image: '/projects/project1.webp',
+      tags: ['Terraform', 'AWS', 'CloudFormation', 'Python', 'Bash'],
+      github: 'https://github.com/jdColonia',
+      demo: '',
+    },
+  ],
+  en: [
+    {
+      title: 'Automated CI/CD Pipeline',
+      description:
+        'Complete CI/CD pipeline design with Jenkins and GitLab CI to automate testing, build, and deployment. Docker and Kubernetes implementation for container orchestration. 60% reduction in deploy time and zero-downtime deployments.',
+      image: '/projects/project1.webp',
+      tags: ['Jenkins', 'Docker', 'Kubernetes', 'AWS', 'Terraform'],
+      github: 'https://github.com/jdColonia',
+      demo: '',
+    },
+    {
+      title: 'Monitoring & Alerting System',
+      description:
+        'Implementation of complete monitoring stack using Prometheus, Grafana, and ELK. Custom dashboards for infrastructure and application metrics. Automated alerting system with PagerDuty. 40% reduction in MTTR.',
+      image: '/projects/project1.webp',
+      tags: ['Prometheus', 'Grafana', 'ElasticSearch', 'Kibana', 'Python'],
+      github: 'https://github.com/jdColonia',
+      demo: '',
+    },
+    {
+      title: 'NLP Chatbot with AI',
+      description:
+        'Development of intelligent chatbot using TensorFlow and PyTorch for natural language processing. Implementation of ML models for intent and entity detection. Integration with messaging platforms. 95% accuracy in intent detection.',
+      image: '/projects/project1.webp',
+      tags: ['Python', 'TensorFlow', 'PyTorch', 'NLP', 'FastAPI'],
+      github: 'https://github.com/jdColonia',
+      demo: '',
+    },
+    {
+      title: 'Infrastructure as Code',
+      description:
+        'Complete cloud architecture on AWS using Terraform and Infrastructure as Code. Auto-scaling groups, load balancers, and multi-AZ deployment. Implementation of security and compliance best practices. 35% cost reduction.',
+      image: '/projects/project1.webp',
+      tags: ['Terraform', 'AWS', 'CloudFormation', 'Python', 'Bash'],
+      github: 'https://github.com/jdColonia',
+      demo: '',
+    },
+  ],
+};
+
+const currentProjects = projects[lang];
+---
+
+<div class="space-y-12 md:space-y-20 max-w-6xl mx-auto">
+  {
+    currentProjects.map((project, index) => (
+      <div class={`project-item ${index % 2 !== 0 ? 'reverse' : ''}`}>
+        <div class="project-image">
+          <a href={project.demo || project.github} target="_blank" rel="noopener noreferrer">
+            <div class="image-wrapper">
+              <Image
+                src={project.image}
+                alt={project.title}
+                width={500}
+                height={500}
+                loading="lazy"
+              />
+            </div>
+          </a>
+        </div>
+
+        <div class="project-content">
+          <p class="project-overline text-xs md:text-sm">{t('projects.featured')}</p>
+          <h3 class="project-title">
+            <a href={project.demo || project.github} target="_blank" rel="noopener noreferrer">
+              {project.title}
+            </a>
+          </h3>
+
+          <div class="project-description">
+            <p class="text-sm md:text-base">{project.description}</p>
+          </div>
+
+          <ul class="project-tech-list">
+            {project.tags.map((tag) => (
+              <li class="text-xs md:text-sm">{tag}</li>
+            ))}
+          </ul>
+
+          <div class="project-links">
+            {project.github && (
+              <a
+                href={project.github}
+                aria-label="GitHub"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <GitHub class="w-5 h-5" />
+              </a>
+            )}
+            {project.demo && (
+              <a href={project.demo} aria-label="Demo" target="_blank" rel="noopener noreferrer">
+                <Link class="w-5 h-5" />
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .project-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .project-image {
+    grid-column: 1 / 8;
+    grid-row: 1;
+    z-index: 1;
+  }
+
+  .project-item.reverse .project-image {
+    grid-column: 6 / -1;
+  }
+
+  .image-wrapper {
+    position: relative;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.7);
+  }
+
+  .image-wrapper img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: grayscale(100%) contrast(1) brightness(90%);
+    transition: all 0.3s ease;
+  }
+
+  .image-wrapper:hover img {
+    filter: none;
+  }
+
+  .image-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #53fb57;
+    mix-blend-mode: multiply;
+    opacity: 0.3;
+    transition: all 0.3s ease;
+  }
+
+  .image-wrapper:hover::before {
+    opacity: 0;
+  }
+
+  .project-content {
+    grid-column: 6 / -1;
+    grid-row: 1;
+    z-index: 2;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .project-item.reverse .project-content {
+    grid-column: 1 / 8;
+    text-align: left;
+    align-items: flex-start;
+  }
+
+  .project-overline {
+    color: #53fb57;
+    font-family: monospace;
+    margin-bottom: 0.5rem;
+  }
+
+  .project-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1.25rem;
+  }
+
+  @media (max-width: 768px) {
+    .project-title {
+      font-size: 1.25rem;
+    }
+  }
+
+  .project-title a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .project-title a:hover {
+    color: #53fb57;
+  }
+
+  .project-description {
+    position: relative;
+    padding: 1.5rem;
+    background: #1c222e;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.7);
+    margin-bottom: 1rem;
+    color: #d1d5db;
+  }
+
+  .project-tech-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    list-style: none;
+    justify-content: flex-end;
+  }
+
+  .project-item.reverse .project-tech-list {
+    justify-content: flex-start;
+  }
+
+  .project-tech-list li {
+    font-family: monospace;
+    color: #9ca3af;
+  }
+
+  .project-links {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .project-links a {
+    color: #9ca3af;
+    transition: all 0.3s ease;
+  }
+
+  .project-links a:hover {
+    color: #53fb57;
+    transform: translateY(-3px);
+  }
+
+  @media (max-width: 768px) {
+    .project-item,
+    .project-item.reverse {
+      display: block;
+    }
+
+    .project-content,
+    .project-item.reverse .project-content {
+      grid-column: 1 / -1;
+      padding: 2rem;
+      z-index: 5;
+      text-align: left;
+      position: relative;
+      align-items: flex-start;
+    }
+
+    .project-image,
+    .project-item.reverse .project-image {
+      grid-column: 1 / -1;
+      opacity: 0.25;
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      height: 100%;
+    }
+
+    .image-wrapper {
+      height: 100%;
+    }
+
+    .image-wrapper img {
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .project-description {
+      background: transparent !important;
+      padding: 1rem 0 !important;
+      box-shadow: none !important;
+    }
+
+    .project-tech-list,
+    .project-item.reverse .project-tech-list {
+      justify-content: flex-start !important;
+    }
+
+    .project-links,
+    .project-item.reverse .project-links {
+      justify-content: flex-start !important;
+    }
+  }
+</style>
