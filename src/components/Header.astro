@@ -1,0 +1,196 @@
+---
+import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+import LanguagePicker from './LanguagePicker.astro';
+import { Image } from 'astro:assets';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const navItems = [
+  {
+    title: t('nav.about'),
+    label: 'sobre-mi',
+    url: '/#sobre-mi',
+  },
+  {
+    title: t('nav.experience'),
+    label: 'experiencia',
+    url: '/#experiencia',
+  },
+  {
+    title: t('nav.projects'),
+    label: 'proyectos',
+    url: '/#proyectos',
+  },
+  {
+    title: t('nav.contact'),
+    label: 'contacto',
+    url: '/#contacto',
+  },
+  {
+    title: t('nav.cv'),
+    label: 'cv',
+    url: '/cv',
+  },
+];
+---
+
+<header class="fixed top-0 z-50 flex items-center justify-between w-full px-4 md:px-8 py-4">
+  <a href="/" aria-label="Home" class="flex items-center z-50">
+    <Image
+      src="/logo.svg"
+      alt="Logo"
+      width={48}
+      height={48}
+      loading="eager"
+      class="w-10 h-10 md:w-12 md:h-12 hover:scale-110 transition-transform"
+    />
+  </a>
+
+  <!-- Desktop Navigation -->
+  <nav
+    id="desktop-nav"
+    class="hidden md:flex px-4 py-2 text-sm font-medium rounded-full bg-gray-900/80 backdrop-blur-md shadow-lg border border-gray-800 justify-center items-center gap-2"
+  >
+    {
+      navItems.map((link) => (
+        <a
+          class="relative px-3 py-2 transition-colors hover:text-primary-green-vivid rounded-lg"
+          aria-label={link.label}
+          href={link.url}
+        >
+          {link.title}
+        </a>
+      ))
+    }
+    <div class="h-6 w-px bg-gray-700 mx-2"></div>
+    <LanguagePicker />
+  </nav>
+
+  <!-- Mobile Menu Button -->
+  <button
+    id="mobile-menu-btn"
+    class="md:hidden relative z-50 w-10 h-10 flex flex-col items-center justify-center gap-1.5"
+    aria-label="Toggle menu"
+  >
+    <span class="menu-line w-6 h-0.5 bg-white transition-all"></span>
+    <span class="menu-line w-6 h-0.5 bg-white transition-all"></span>
+    <span class="menu-line w-6 h-0.5 bg-white transition-all"></span>
+  </button>
+
+  <!-- Mobile Navigation -->
+  <nav
+    id="mobile-nav"
+    class="fixed inset-0 bg-primary-black/95 backdrop-blur-md z-40 flex flex-col items-center justify-center gap-8 opacity-0 pointer-events-none transition-opacity duration-300 md:hidden"
+  >
+    {
+      navItems.map((link) => (
+        <a
+          class="mobile-nav-link text-2xl font-medium text-white hover:text-primary-green-vivid transition-colors"
+          href={link.url}
+        >
+          {link.title}
+        </a>
+      ))
+    }
+    <div class="mt-4">
+      <LanguagePicker />
+    </div>
+  </nav>
+</header>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileNav = document.getElementById('mobile-nav');
+    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+    const menuLines = document.querySelectorAll('.menu-line');
+
+    let isOpen = false;
+
+    // Toggle mobile menu
+    mobileMenuBtn?.addEventListener('click', () => {
+      isOpen = !isOpen;
+
+      if (isOpen) {
+        mobileNav?.classList.remove('opacity-0', 'pointer-events-none');
+        menuLines[0]?.classList.add('rotate-45', 'translate-y-2');
+        menuLines[1]?.classList.add('opacity-0');
+        menuLines[2]?.classList.add('-rotate-45', '-translate-y-2');
+      } else {
+        mobileNav?.classList.add('opacity-0', 'pointer-events-none');
+        menuLines[0]?.classList.remove('rotate-45', 'translate-y-2');
+        menuLines[1]?.classList.remove('opacity-0');
+        menuLines[2]?.classList.remove('-rotate-45', '-translate-y-2');
+      }
+    });
+
+    // Close menu when clicking a link
+    mobileNavLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        isOpen = false;
+        mobileNav?.classList.add('opacity-0', 'pointer-events-none');
+        menuLines[0]?.classList.remove('rotate-45', 'translate-y-2');
+        menuLines[1]?.classList.remove('opacity-0');
+        menuLines[2]?.classList.remove('-rotate-45', '-translate-y-2');
+      });
+    });
+
+    // Desktop navigation intersection observer
+    const sections = document.querySelectorAll('section');
+    const navItems = document.querySelectorAll('#desktop-nav a');
+
+    const callback = (entries: any[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          navItems.forEach((item) => {
+            if (item.getAttribute('aria-label') == entry.target.id) {
+              item.classList.add('text-primary-green-vivid');
+              item.classList.add('bg-gray-800');
+            } else {
+              item.classList.remove('text-primary-green-vivid');
+              item.classList.remove('bg-gray-800');
+            }
+          });
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(callback, {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.3,
+    });
+
+    sections.forEach((section) => {
+      observer.observe(section);
+    });
+
+    document.onvisibilitychange = () => {
+      if (document.visibilityState === 'hidden') {
+        observer.disconnect();
+      } else {
+        sections.forEach((section) => {
+          observer.observe(section);
+        });
+      }
+    };
+  });
+</script>
+
+<style>
+  header {
+    animation: header-appear 0.5s ease-out;
+  }
+
+  @keyframes header-appear {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

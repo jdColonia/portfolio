@@ -1,0 +1,56 @@
+---
+import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+import { SITE_CONFIG } from '@/config';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="mt-16 md:mt-20 py-6 md:py-8 border-t border-gray-800">
+  <div class="max-w-6xl mx-auto px-4 md:px-8">
+    <div
+      class="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left"
+    >
+      <p class="text-xs md:text-sm text-gray-400 font-inter">
+        © {currentYear}
+        {SITE_CONFIG.name}. {t('footer.rights')}.
+      </p>
+
+      <div class="flex items-center gap-3 md:gap-4 text-xs md:text-sm">
+        <a
+          href={SITE_CONFIG.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-gray-400 hover:text-primary-green-vivid transition-colors"
+        >
+          GitHub
+        </a>
+        <span class="text-gray-400">•</span>
+        <a
+          href={SITE_CONFIG.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-gray-400 hover:text-primary-green-vivid transition-colors"
+        >
+          LinkedIn
+        </a>
+        <span class="text-gray-400">•</span>
+        <a
+          href={SITE_CONFIG.medium}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-gray-400 hover:text-primary-green-vivid transition-colors"
+        >
+          Medium
+        </a>
+      </div>
+    </div>
+
+    <div class="text-center mt-4">
+      <p class="text-xs text-gray-500 font-inter">
+        {t('footer.text')}
+      </p>
+    </div>
+  </div>
+</footer>

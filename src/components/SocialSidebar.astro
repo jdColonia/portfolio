@@ -1,0 +1,53 @@
+---
+import { SOCIAL_MEDIA } from '@/config';
+import GitHub from './icons/GitHub.astro';
+import LinkedIn from './icons/LinkedIn.astro';
+import Medium from './icons/Medium.astro';
+
+const iconMap = {
+  github: GitHub,
+  linkedin: LinkedIn,
+  medium: Medium,
+};
+---
+
+<aside class="fixed left-8 bottom-0 hidden lg:flex flex-col items-center gap-6 z-10">
+  <ul class="flex flex-col items-center gap-5">
+    {
+      SOCIAL_MEDIA.map((social) => {
+        const Icon = iconMap[social.icon as keyof typeof iconMap];
+        return (
+          <li>
+            <a
+              href={social.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-gray-400 hover:text-primary-green-vivid transition-all duration-300 hover:-translate-y-1"
+              aria-label={social.name}
+            >
+              <Icon />
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+  <div class="w-[1px] h-24 bg-gray-400"></div>
+</aside>
+
+<style>
+  aside {
+    animation: fadeIn 1s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

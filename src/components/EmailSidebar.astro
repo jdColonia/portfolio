@@ -1,0 +1,61 @@
+---
+import { SITE_CONFIG } from '@/config';
+---
+
+<aside class="fixed right-4 md:right-8 bottom-0 hidden lg:flex flex-col items-center gap-6 z-10">
+  <div class="relative group">
+    <button
+      id="email-sidebar"
+      class="[writing-mode:vertical-rl] text-sm tracking-widest text-gray-400 hover:text-primary-green-vivid transition-all duration-300 hover:-translate-y-1 font-inter cursor-pointer"
+      aria-label="Copiar email al portapapeles"
+    >
+      {SITE_CONFIG.email}
+    </button>
+  </div>
+
+  <div class="w-[1px] h-24 bg-gray-400"></div>
+</aside>
+
+<style>
+  aside {
+    animation: fadeIn 1s ease-in-out 0.2s backwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<script>
+  import { SITE_CONFIG } from '@/config';
+
+  document.addEventListener('astro:page-load', () => {
+    const emailButton = document.getElementById('email-sidebar');
+    const tooltip = document.getElementById('email-tooltip');
+
+    emailButton?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(SITE_CONFIG.email);
+
+        if (tooltip) {
+          tooltip.classList.remove('hidden');
+          emailButton.classList.add('text-primary-green-vivid', 'scale-105');
+
+          setTimeout(() => {
+            tooltip.classList.add('hidden');
+            emailButton.classList.remove('text-primary-green-vivid', 'scale-105');
+          }, 2000);
+        }
+      } catch (err) {
+        console.error('Error al copiar email:', err);
+      }
+    });
+  });
+</script>
