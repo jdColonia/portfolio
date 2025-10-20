@@ -2,7 +2,7 @@
 import { languages } from '@/i18n/ui';
 
 const { pathname } = Astro.url;
-const currentLang = pathname.startsWith('/en') ? 'en' : 'es';
+const currentLang = pathname.includes('/en') ? 'en' : 'es';
 ---
 
 <div class="relative inline-block">
@@ -24,7 +24,12 @@ const currentLang = pathname.startsWith('/en') ? 'en' : 'es';
   >
     {
       Object.entries(languages).map(([lang, label]) => {
-        const href = lang === 'es' ? pathname.replace('/en', '') : `/en${pathname}`;
+        let href = '/';
+        if (lang === 'en') {
+          href = pathname.includes('/cv') ? '/en/cv' : '/en';
+        } else {
+          href = pathname.includes('/cv') ? '/cv' : '/';
+        }
         return (
           <a
             href={href}

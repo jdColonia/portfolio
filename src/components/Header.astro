@@ -6,37 +6,44 @@ import { Image } from 'astro:assets';
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
+const langPrefix = lang === 'en' ? '/en' : '';
+
 const navItems = [
   {
     title: t('nav.about'),
     label: 'sobre-mi',
-    url: '/#sobre-mi',
+    url: `${langPrefix}/sobre-mi`,
+    isSection: true,
   },
   {
     title: t('nav.experience'),
     label: 'experiencia',
-    url: '/#experiencia',
+    url: `${langPrefix}/experiencia`,
+    isSection: true,
   },
   {
     title: t('nav.projects'),
     label: 'proyectos',
-    url: '/#proyectos',
+    url: `${langPrefix}/proyectos`,
+    isSection: true,
   },
   {
     title: t('nav.contact'),
     label: 'contacto',
-    url: '/#contacto',
+    url: `${langPrefix}/contacto`,
+    isSection: true,
   },
   {
     title: t('nav.cv'),
     label: 'cv',
-    url: '/cv',
+    url: lang === 'en' ? '/en/cv' : '/cv',
+    isSection: false,
   },
 ];
 ---
 
 <header class="fixed top-0 z-50 flex items-center justify-between w-full px-4 md:px-8 py-4">
-  <a href="/" aria-label="Home" class="flex items-center z-50">
+  <a href={langPrefix || '/'} aria-label="Home" class="flex items-center z-50">
     <Image
       src="/logo.svg"
       alt="Logo"
@@ -55,9 +62,10 @@ const navItems = [
     {
       navItems.map((link) => (
         <a
-          class="relative px-3 py-2 transition-colors hover:text-primary-green-vivid rounded-lg"
+          class="relative px-3 py-2 transition-colors hover:text-primary-green-vivid rounded-lg nav-link"
           aria-label={link.label}
           href={link.url}
+          data-section={link.isSection ? link.label : ''}
         >
           {link.title}
         </a>
@@ -86,8 +94,9 @@ const navItems = [
     {
       navItems.map((link) => (
         <a
-          class="mobile-nav-link text-2xl font-medium text-white hover:text-primary-green-vivid transition-colors"
+          class="mobile-nav-link text-2xl font-medium text-white hover:text-primary-green-vivid transition-colors nav-link"
           href={link.url}
+          data-section={link.isSection ? link.label : ''}
         >
           {link.title}
         </a>
@@ -136,6 +145,94 @@ const navItems = [
       });
     });
 
+    // Handle navigation with clean URLs (no hash)
+    const navLinks = document.querySelectorAll('.nav-link');
+    const isOnCvPage = window.location.pathname.includes('/cv');
+
+    navLinks.forEach((link) => {
+      link.addEventListener('click', (e) => {
+        const sectionId = (link as HTMLElement).getAttribute('data-section');
+
+        if (sectionId) {
+          const section = document.getElementById(sectionId);
+
+          // If we're on CV page, modify the link to go to home page and store section in sessionStorage
+          if (isOnCvPage) {
+            e.preventDefault();
+            sessionStorage.setItem('scrollToSection', sectionId);
+            const langPrefix = window.location.pathname.includes('/en') ? '/en' : '';
+            window.location.href = langPrefix || '/';
+            return;
+          }
+
+          // If section doesn't exist on current page, navigate to home
+          if (!section) {
+            e.preventDefault();
+            sessionStorage.setItem('scrollToSection', sectionId);
+            const langPrefix = window.location.pathname.includes('/en') ? '/en' : '';
+            window.location.href = langPrefix || '/';
+            return;
+          }
+
+          // We're on main page and section exists, prevent default and scroll
+          e.preventDefault();
+
+          // Update URL without hash
+          const url = (link as HTMLAnchorElement).href;
+          window.history.pushState({}, '', url);
+
+          // Smooth scroll to section
+          section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Check if we need to scroll to a section from sessionStorage
+    const scrollToSection = sessionStorage.getItem('scrollToSection');
+    if (scrollToSection) {
+      sessionStorage.removeItem('scrollToSection');
+      const section = document.getElementById(scrollToSection);
+      if (section) {
+        setTimeout(() => {
+          section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Update URL
+          const langPrefix = window.location.pathname.includes('/en') ? '/en' : '';
+          const newUrl = `${langPrefix}/${scrollToSection}`;
+          window.history.pushState({}, '', newUrl);
+        }, 100);
+      }
+    }
+
+    // Handle direct URL navigation (e.g., /experiencia)
+    const handleDirectNavigation = () => {
+      const path = window.location.pathname;
+      const pathSegments = path.split('/').filter(Boolean);
+      const lastSegment = pathSegments[pathSegments.length - 1];
+
+      // Map of URL segments to section IDs
+      const sectionMap: Record<string, string> = {
+        'sobre-mi': 'sobre-mi',
+        experiencia: 'experiencia',
+        proyectos: 'proyectos',
+        contacto: 'contacto',
+      };
+
+      if (sectionMap[lastSegment]) {
+        const section = document.getElementById(sectionMap[lastSegment]);
+        if (section) {
+          // Small delay to ensure page is fully loaded
+          setTimeout(() => {
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 100);
+        }
+      }
+    };
+
+    // Run on page load only if we're on the main page (not CV page)
+    if (!window.location.pathname.includes('/cv') && !scrollToSection) {
+      handleDirectNavigation();
+    }
+
     // Desktop navigation intersection observer
     const sections = document.querySelectorAll('section');
     const navItems = document.querySelectorAll('#desktop-nav a');
@@ -147,6 +244,13 @@ const navItems = [
             if (item.getAttribute('aria-label') == entry.target.id) {
               item.classList.add('text-primary-green-vivid');
               item.classList.add('bg-gray-800');
+
+              // Update URL when scrolling through sections (only on main page, not on CV page)
+              if (!window.location.pathname.includes('/cv')) {
+                const langPrefix = window.location.pathname.includes('/en') ? '/en' : '';
+                const newUrl = `${langPrefix}/${entry.target.id}`;
+                window.history.replaceState({}, '', newUrl);
+              }
             } else {
               item.classList.remove('text-primary-green-vivid');
               item.classList.remove('bg-gray-800');
