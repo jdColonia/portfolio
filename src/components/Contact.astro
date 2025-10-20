@@ -1,0 +1,75 @@
+---
+import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+import { SITE_CONFIG } from '@/config';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<div class="max-w-xl mx-auto px-4 text-center">
+  <h3 class="text-2xl md:text-3xl font-bold font-dm-sans mb-4 text-white">
+    {t('contact.title')}
+  </h3>
+
+  <p class="text-base md:text-lg text-gray-300 font-inter mb-12">
+    {t('contact.description')}
+  </p>
+
+  <div class="space-y-4">
+    <p class="text-gray-400 text-sm">
+      {lang === 'es' ? 'Envíame un correo a' : 'Send me an email to'}
+    </p>
+
+    <button
+      id="copy-email-contact"
+      class="group relative inline-flex items-center gap-2 text-lg md:text-xl font-mono text-primary-green-vivid hover:text-primary-green-muted transition-colors cursor-pointer"
+      aria-label="Copiar email al portapapeles"
+    >
+      <span>{SITE_CONFIG.email}</span>
+      <svg
+        class="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+        ></path>
+      </svg>
+    </button>
+
+    <div id="copy-notification-contact" class="hidden">
+      <p class="text-xs text-gray-500 mt-2">
+        {lang === 'es' ? '✓ Copiado al portapapeles' : '✓ Copied to clipboard'}
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { SITE_CONFIG } from '@/config';
+
+  document.addEventListener('astro:page-load', () => {
+    const copyButton = document.getElementById('copy-email-contact');
+    const notification = document.getElementById('copy-notification-contact');
+
+    copyButton?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(SITE_CONFIG.email);
+
+        if (notification) {
+          notification.classList.remove('hidden');
+
+          setTimeout(() => {
+            notification.classList.add('hidden');
+          }, 2000);
+        }
+      } catch (err) {
+        console.error('Error al copiar:', err);
+      }
+    });
+  });
+</script>
