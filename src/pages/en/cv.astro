@@ -7,7 +7,12 @@ import Download from '@/components/icons/Download.astro';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
-const cvUrl = lang === 'es' ? SITE_CONFIG.cvEs : SITE_CONFIG.cvEn;
+const base = import.meta.env.BASE_URL;
+const normalizedBase = base.endsWith('/') ? base : `${base}/`;
+const cvUrl =
+  lang === 'es'
+    ? `${normalizedBase}${SITE_CONFIG.cvEs.slice(1)}`
+    : `${normalizedBase}${SITE_CONFIG.cvEn.slice(1)}`;
 const title = lang === 'es' ? 'Currículum Vitae' : 'Resume';
 ---
 
@@ -42,7 +47,7 @@ const title = lang === 'es' ? 'Currículum Vitae' : 'Resume';
 
       <div class="mt-6 md:mt-8 text-center">
         <a
-          href="/en"
+          href={`${normalizedBase}en`}
           class="text-primary-green-vivid hover:underline font-medium text-sm md:text-base"
         >
           ← {lang === 'es' ? 'Volver al inicio' : 'Back to home'}

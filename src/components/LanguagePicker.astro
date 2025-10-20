@@ -2,7 +2,10 @@
 import { languages } from '@/i18n/ui';
 
 const { pathname } = Astro.url;
-const currentLang = pathname.includes('/en') ? 'en' : 'es';
+const base = import.meta.env.BASE_URL;
+const normalizedBase = base.endsWith('/') ? base : `${base}/`;
+const pathWithoutBase = pathname.replace(base, '/');
+const currentLang = pathWithoutBase.includes('/en') ? 'en' : 'es';
 ---
 
 <div class="relative inline-block">
@@ -24,11 +27,11 @@ const currentLang = pathname.includes('/en') ? 'en' : 'es';
   >
     {
       Object.entries(languages).map(([lang, label]) => {
-        let href = '/';
+        let href = base;
         if (lang === 'en') {
-          href = pathname.includes('/cv') ? '/en/cv' : '/en';
+          href = pathWithoutBase.includes('/cv') ? `${normalizedBase}en/cv` : `${normalizedBase}en`;
         } else {
-          href = pathname.includes('/cv') ? '/cv' : '/';
+          href = pathWithoutBase.includes('/cv') ? `${normalizedBase}cv` : base;
         }
         return (
           <a

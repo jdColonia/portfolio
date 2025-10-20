@@ -20,7 +20,7 @@ export const ui = {
 
     'hero.badge': 'Disponible para trabajar',
     'hero.title': 'Hola, soy Juan David Colonia',
-    'hero.subtitle': 'Ingeniero de Software | DevOps & AI',
+    'hero.subtitle': 'Ingeniero de Software | DevOps & IA',
     'hero.tagline': 'Codificar. Automatizar. Adaptar.',
     'hero.description':
       'Ingeniero de Sistemas apasionado por DevOps, Cloud e IA. Transformo infraestructuras complejas en sistemas eficientes y escalables. Creo no solo en escribir código, sino en construir equipos que innovan.',

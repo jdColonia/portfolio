@@ -1,7 +1,7 @@
 export const SITE_CONFIG = {
   name: 'Juan David Colonia Aldana',
   title: {
-    es: 'Juan David Colonia - Ingeniero de Software | DevOps & AI',
+    es: 'Juan David Colonia - Ingeniero de Software | DevOps & IA',
     en: 'Juan David Colonia - Software Engineer | DevOps & AI',
   },
   description: {
