@@ -1,0 +1,50 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<h2
+  class={`flex items-center gap-2 md:gap-3 text-2xl md:text-3xl lg:text-4xl font-bold font-dm-sans mb-6 md:mb-8 text-white ${className || ''}`}
+>
+  <slot />
+</h2>
+
+<style>
+  h2 {
+    position: relative;
+  }
+
+  h2::after {
+    content: '';
+    display: block;
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    height: 1px;
+    margin-left: 1rem;
+    background-color: #374151;
+    flex-grow: 1;
+  }
+
+  @media (max-width: 768px) {
+    h2::after {
+      max-width: 150px;
+      margin-left: 0.5rem;
+    }
+  }
+
+  h2 :global(svg) {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    h2 :global(svg) {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+</style>

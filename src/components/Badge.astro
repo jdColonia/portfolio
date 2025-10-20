@@ -1,0 +1,19 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<span
+  class={`relative inline-flex items-center gap-2 rounded-full border border-primary-green-vivid/30 bg-primary-green-vivid/10 px-3 py-1 text-xs md:text-sm font-semibold text-primary-green-vivid backdrop-blur-md ${className || ''}`}
+>
+  <span class="relative flex h-2 w-2">
+    <span
+      class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-green-vivid opacity-75"
+    ></span>
+    <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-green-vivid"></span>
+  </span>
+  <slot />
+</span>
