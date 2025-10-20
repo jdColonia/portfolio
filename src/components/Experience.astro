@@ -1,0 +1,332 @@
+---
+import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const experiences = {
+  es: [
+    {
+      company: 'Universidad Icesi',
+      title: 'Monitor Académico',
+      url: 'https://www.icesi.edu.co',
+      range: 'Enero 2024 - Presente',
+      roles: [
+        {
+          role: 'Monitor Académico',
+          period: 'Julio 2025 - Presente',
+          tasks: [
+            'Soporte en cursos de Algoritmos, Ingeniería de Software, Estructuras Discretas, Computación en Internet y Gerencia de Proyectos',
+            'Fortalecimiento del entendimiento técnico mediante sesiones de mentoría personalizadas',
+          ],
+        },
+        {
+          role: 'Monitor Académico - Inteligencia Artificial I',
+          period: 'Julio 2025 - Presente',
+          tasks: [
+            'Soporte a más de 30 estudiantes en proyectos de IA aplicando metodología CRISP-DM',
+            'Guía en análisis exploratorio de datos y entrenamiento de modelos supervisados',
+            'Implementación de APIs REST para servir modelos de Machine Learning en producción',
+          ],
+        },
+        {
+          role: 'Monitor Académico - Proyecto Integrador I',
+          period: 'Julio 2024 - Presente',
+          tasks: [
+            'Mentoría técnica y arquitectónica para más de 100 estudiantes organizados en 20+ equipos de desarrollo',
+            'Supervisión del ciclo completo de desarrollo de aplicaciones full-stack con Python y Django',
+            'Revisión de 20+ tableros Jira, asegurando historias de usuario bien escritas',
+            'Liderazgo de talleres de GitHub sobre estrategias de branching, pull requests y workflows colaborativos',
+          ],
+        },
+        {
+          role: 'Monitor Académico - Computación en Internet I',
+          period: 'Enero 2025 - Junio 2025',
+          tasks: [
+            'Asistencia en conceptos de computación en Internet, modelo OSI e inspección de paquetes',
+            'Desarrollo de talleres sobre servicios RESTful y arquitecturas cliente-servidor',
+            'Enseñanza práctica de JavaScript, Express.js, HTML y CSS',
+          ],
+        },
+        {
+          role: 'Monitor Académico - Matemáticas Aplicadas I',
+          period: 'Enero 2024 - Junio 2024',
+          tasks: [
+            'Soporte personalizado en la aplicación de Python para resolver problemas matemáticos de series, secuencias, derivadas y técnicas de optimización',
+            'Desarrollo de estrategias de enseñanza inclusivas para estudiantes con discapacidades, incluyendo mentoría a un estudiante con discapacidad visual para programar efectivamente en Python usando herramientas de asistencia',
+          ],
+        },
+      ],
+    },
+  ],
+  en: [
+    {
+      company: 'Universidad Icesi',
+      title: 'Academic Monitor',
+      url: 'https://www.icesi.edu.co',
+      range: 'January 2024 - Present',
+      roles: [
+        {
+          role: 'Academic Monitor',
+          period: 'July 2025 - Present',
+          tasks: [
+            'Support in Algorithms, Software Engineering, Discrete Structures, Internet Computing, and Project Management courses',
+            'Strengthened technical understanding through personalized mentoring sessions',
+          ],
+        },
+        {
+          role: 'Academic Monitor - Artificial Intelligence I',
+          period: 'July 2025 - Present',
+          tasks: [
+            'Supported 30+ students in AI projects applying CRISP-DM methodology',
+            'Guided exploratory data analysis and supervised model training',
+            'Implemented REST APIs to serve Machine Learning models in production',
+          ],
+        },
+        {
+          role: 'Academic Monitor - Integrative Project I',
+          period: 'July 2024 - Present',
+          tasks: [
+            'Technical and architectural mentorship for 100+ students organized in 20+ development teams',
+            'Supervised full development cycle of full-stack applications with Python and Django',
+            'Reviewed 20+ Jira boards, ensuring well-written user stories',
+            'Led GitHub workshops on branching strategies, pull requests, and collaborative workflows',
+          ],
+        },
+        {
+          role: 'Academic Monitor - Internet Computing I',
+          period: 'January 2025 - June 2025',
+          tasks: [
+            'Assisted in Internet computing concepts, OSI model, and packet inspection',
+            'Developed workshops on RESTful services and client-server architectures',
+            'Taught practical JavaScript, Express.js, HTML, and CSS',
+          ],
+        },
+        {
+          role: 'Academic Monitor - Applied Mathematics I',
+          period: 'January 2024 - June 2024',
+          tasks: [
+            'Provided tailored support for students applying Python to solve mathematical problems involving series, sequences, derivatives, and optimization techniques',
+            'Developed inclusive teaching strategies for students with disabilities, including mentoring a visually impaired student to effectively program in Python using assistive tools',
+          ],
+        },
+      ],
+    },
+  ],
+};
+
+const jobs = experiences[lang];
+---
+
+<div class="experience-container max-w-full md:max-w-3xl lg:max-w-4xl">
+  <div class="flex flex-col md:flex-row gap-4">
+    <div class="tab-list flex md:flex-col overflow-x-auto md:overflow-visible scrollbar-hide">
+      {
+        jobs.map((job, index) => (
+          <button
+            class={`tab-button ${index === 0 ? 'active' : ''}`}
+            data-index={index}
+            role="tab"
+            aria-selected={index === 0}
+          >
+            {job.company}
+          </button>
+        ))
+      }
+      <div class="tab-indicator" data-index="0"></div>
+    </div>
+
+    <!-- Tab Panels -->
+    <div class="tab-panels flex-1">
+      {
+        jobs.map((job, index) => (
+          <div
+            class={`tab-panel ${index === 0 ? 'active' : ''}`}
+            data-index={index}
+            role="tabpanel"
+          >
+            <h3 class="text-xl md:text-2xl font-semibold text-white mb-1">
+              {job.title}
+              <span class="text-primary-green-vivid">
+                {' '}
+                @{' '}
+                <a href={job.url} target="_blank" rel="noopener noreferrer" class="hover:underline">
+                  {job.company}
+                </a>
+              </span>
+            </h3>
+            <p class="text-xs md:text-sm text-gray-400 mb-6 font-mono">{job.range}</p>
+
+            <div class="space-y-6">
+              {job.roles.map((role) => (
+                <div class="role-section">
+                  <h4 class="text-base md:text-lg font-semibold text-primary-green-vivid mb-1">
+                    {role.role}
+                  </h4>
+                  <p class="text-xs text-gray-500 mb-3 font-mono">{role.period}</p>
+                  <ul class="space-y-2 md:space-y-3">
+                    {role.tasks.map((task) => (
+                      <li class="flex items-start text-sm md:text-base text-gray-300">
+                        <span class="text-primary-green-vivid mr-2 md:mr-3 mt-1 flex-shrink-0">
+                          ▹
+                        </span>
+                        <span>{task}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  .experience-container {
+    max-width: 700px;
+  }
+
+  .tab-list {
+    position: relative;
+    gap: 0;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .tab-button {
+    padding: 0.75rem 1.25rem;
+    text-align: left;
+    white-space: nowrap;
+    font-size: 0.875rem;
+    color: #9ca3af;
+    background: transparent;
+    border: none;
+    border-left: 2px solid #374151;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  @media (max-width: 768px) {
+    .tab-button {
+      border-left: none;
+      border-bottom: 2px solid #374151;
+      text-align: center;
+      min-width: 120px;
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem;
+    }
+  }
+
+  .tab-button:hover,
+  .tab-button.active {
+    color: #53fb57;
+    background-color: rgba(83, 251, 87, 0.05);
+  }
+
+  .tab-indicator {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 2px;
+    height: var(--tab-height, 42px);
+    background: #53fb57;
+    transition: transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    transform: translateY(calc(var(--index, 0) * var(--tab-height, 42px)));
+  }
+
+  @media (max-width: 768px) {
+    .tab-indicator {
+      width: var(--tab-width, 120px);
+      height: 2px;
+      top: auto;
+      bottom: 0;
+      transform: translateX(calc(var(--index, 0) * var(--tab-width, 120px)));
+    }
+  }
+
+  .tab-panels {
+    position: relative;
+    min-height: 340px;
+  }
+
+  .tab-panel {
+    display: none;
+    opacity: 0;
+    animation: fadeIn 0.3s ease-in-out forwards;
+  }
+
+  .tab-panel.active {
+    display: block;
+  }
+
+  .role-section {
+    padding-left: 1rem;
+    border-left: 2px solid rgba(83, 251, 87, 0.2);
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+    const indicator = document.querySelector('.tab-indicator') as HTMLElement;
+
+    // Set initial indicator position
+    const firstButton = tabButtons[0] as HTMLElement;
+    if (indicator && firstButton) {
+      const height = firstButton.offsetHeight;
+      const width = firstButton.offsetWidth;
+      indicator.style.setProperty('--tab-height', `${height}px`);
+      indicator.style.setProperty('--tab-width', `${width}px`);
+    }
+
+    tabButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const index = (button as HTMLElement).dataset.index;
+
+        // Update buttons
+        tabButtons.forEach((btn) => {
+          btn.classList.remove('active');
+          btn.setAttribute('aria-selected', 'false');
+        });
+        button.classList.add('active');
+        button.setAttribute('aria-selected', 'true');
+
+        // Update panels
+        tabPanels.forEach((panel) => {
+          panel.classList.remove('active');
+        });
+        const activePanel = document.querySelector(`.tab-panel[data-index="${index}"]`);
+        if (activePanel) {
+          activePanel.classList.add('active');
+        }
+
+        // Update indicator
+        if (indicator) {
+          indicator.style.setProperty('--index', index || '0');
+        }
+      });
+    });
+  });
+</script>

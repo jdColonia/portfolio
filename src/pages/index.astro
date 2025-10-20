@@ -1,0 +1,81 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Hero from '@/components/Hero.astro';
+import SectionContainer from '@/components/SectionContainer.astro';
+import TitleSection from '@/components/TitleSection.astro';
+import Experience from '@/components/Experience.astro';
+import Projects from '@/components/Projects.astro';
+import AboutMe from '@/components/AboutMe.astro';
+import Contact from '@/components/Contact.astro';
+
+import Briefcase from '@/components/icons/Briefcase.astro';
+import Code from '@/components/icons/Code.astro';
+import User from '@/components/icons/User.astro';
+import Mail from '@/components/icons/Mail.astro';
+
+import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+import { SITE_CONFIG } from '@/config';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const title = typeof SITE_CONFIG.title === 'object' ? SITE_CONFIG.title[lang] : SITE_CONFIG.title;
+const description =
+  typeof SITE_CONFIG.description === 'object'
+    ? SITE_CONFIG.description[lang]
+    : SITE_CONFIG.description;
+---
+
+<Layout title={title} description={description}>
+  <SectionContainer class="min-h-screen flex items-center justify-center py-20 md:py-24">
+    <Hero />
+  </SectionContainer>
+
+  <SectionContainer
+    id="sobre-mi"
+    class="min-h-screen flex flex-col justify-center py-12 md:py-16 lg:py-20"
+  >
+    <TitleSection>
+      <User />
+      <span class="text-primary-green-vivid mr-2">01.</span>
+      {t('section.about')}
+    </TitleSection>
+    <AboutMe />
+  </SectionContainer>
+
+  <SectionContainer
+    id="experiencia"
+    class="min-h-screen flex flex-col justify-center py-12 md:py-16 lg:py-20"
+  >
+    <TitleSection>
+      <Briefcase />
+      <span class="text-primary-green-vivid mr-2">02.</span>
+      {t('section.experience')}
+    </TitleSection>
+    <Experience />
+  </SectionContainer>
+
+  <SectionContainer
+    id="proyectos"
+    class="min-h-screen flex flex-col justify-center py-12 md:py-16 lg:py-20"
+  >
+    <TitleSection>
+      <Code />
+      <span class="text-primary-green-vivid mr-2">03.</span>
+      {t('section.projects')}
+    </TitleSection>
+    <Projects />
+  </SectionContainer>
+
+  <SectionContainer
+    id="contacto"
+    class="min-h-screen flex flex-col justify-center py-12 md:py-16 lg:py-20"
+  >
+    <TitleSection>
+      <Mail />
+      <span class="text-primary-green-vivid mr-2">04.</span>
+      {t('section.contact')}
+    </TitleSection>
+    <Contact />
+  </SectionContainer>
+</Layout>
