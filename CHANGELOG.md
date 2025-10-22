@@ -1,3 +1,16 @@
+# [1.3.0](https://github.com/jdColonia/portfolio/compare/v1.2.1...v1.3.0) (2025-10-22)
+
+
+### Bug Fixes
+
+* **header:** temporarily disable LanguagePicker component and related elements ([f7a2e19](https://github.com/jdColonia/portfolio/commit/f7a2e19566043f825d69169a0b5669cbf3d8f40f))
+* update CV files; add new project image files ([28bb82c](https://github.com/jdColonia/portfolio/commit/28bb82cded580237981a76abf8f8fdd6334a8c4f))
+
+
+### Features
+
+* **projects:** update project details and add new entries for MicroTodoSuite and EcommerceCoZam ([3f70c0d](https://github.com/jdColonia/portfolio/commit/3f70c0d079acf2322aaa044f30518546dac4b469))
+
 ## [1.2.1](https://github.com/jdColonia/portfolio/compare/v1.2.0...v1.2.1) (2025-10-22)
 
 
