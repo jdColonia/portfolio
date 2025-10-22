@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/jdColonia/portfolio/compare/v1.1.1...v1.2.0) (2025-10-22)
+
+
+### Features
+
+* **layout:** integrate Google Analytics tracking script for improved site analytics ([ed67908](https://github.com/jdColonia/portfolio/commit/ed6790893357e939c2d6cf1a38ab01ae874a305a))
+
 ## [1.1.1](https://github.com/jdColonia/portfolio/compare/v1.1.0...v1.1.1) (2025-10-20)
 
 
