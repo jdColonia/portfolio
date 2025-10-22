@@ -1,6 +1,6 @@
 ---
 import { getLangFromUrl, useTranslations } from '@/i18n/utils';
-import LanguagePicker from './LanguagePicker.astro';
+// import LanguagePicker from './LanguagePicker.astro'; // Desactivado temporalmente
 import { Image } from 'astro:assets';
 
 const lang = getLangFromUrl(Astro.url);
@@ -77,8 +77,9 @@ const navItems = [
         </a>
       ))
     }
-    <div class="h-6 w-px bg-gray-700 mx-2"></div>
-    <LanguagePicker />
+    <!-- Selector de idioma desactivado temporalmente -->
+    <!-- <div class="h-6 w-px bg-gray-700 mx-2"></div>
+    <LanguagePicker /> -->
   </nav>
 
   <!-- Mobile Menu Button -->
@@ -108,9 +109,10 @@ const navItems = [
         </a>
       ))
     }
-    <div class="mt-4">
+    <!-- Selector de idioma desactivado temporalmente -->
+    <!-- <div class="mt-4">
       <LanguagePicker />
-    </div>
+    </div> -->
   </nav>
 </header>
 
