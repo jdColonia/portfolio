@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/jdColonia/portfolio/compare/v1.3.0...v1.3.1) (2025-10-22)
+
+
+### Bug Fixes
+
+* **projects:** update project image paths to use normalized base URL ([aa3b9d7](https://github.com/jdColonia/portfolio/commit/aa3b9d7b90e3f5d2d4f8e58e7c27837781ff5c3d))
+
 # [1.3.0](https://github.com/jdColonia/portfolio/compare/v1.2.1...v1.3.0) (2025-10-22)
 
 
