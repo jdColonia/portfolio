@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/jdColonia/portfolio/compare/v1.2.0...v1.2.1) (2025-10-22)
+
+
+### Bug Fixes
+
+* **layout:** update Google Analytics script to use inline attribute for improved performance ([1aaa67a](https://github.com/jdColonia/portfolio/commit/1aaa67a1c3960872c98e44e6c476d8ea0cf3c90d))
+
 # [1.2.0](https://github.com/jdColonia/portfolio/compare/v1.1.1...v1.2.0) (2025-10-22)
 
 
