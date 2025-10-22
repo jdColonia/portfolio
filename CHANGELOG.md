@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/jdColonia/portfolio/compare/v1.3.1...v1.3.2) (2025-10-22)
+
+
+### Bug Fixes
+
+* **layout:** update favicon URL to use normalized base URL ([2950b3a](https://github.com/jdColonia/portfolio/commit/2950b3a4d59479ea59e1d8108c538980f7f084d3))
+
 ## [1.3.1](https://github.com/jdColonia/portfolio/compare/v1.3.0...v1.3.1) (2025-10-22)
 
 
