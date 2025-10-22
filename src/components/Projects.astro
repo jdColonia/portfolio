@@ -7,13 +7,16 @@ import { Image } from 'astro:assets';
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
+const base = import.meta.env.BASE_URL;
+const normalizedBase = base.endsWith('/') ? base : `${base}/`;
+
 const projects = {
   es: [
     {
       title: 'MicroTodoSuite',
       description:
         'Plataforma integral que demuestra una arquitectura moderna de microservicios en la nube, combinando desarrollo ágil, patrones de diseño cloud-native y estrategias avanzadas de DevOps. Implementación completa con CI/CD, monitoreo y observabilidad.',
-      image: '/projects/project1.webp',
+      image: `${normalizedBase}projects/project1.webp`,
       tags: [
         'Azure',
         'Terraform',
@@ -33,7 +36,7 @@ const projects = {
       title: 'EcommerceCoZam',
       description:
         'Plataforma de e-commerce basada en microservicios con pipelines CI/CD, pruebas automatizadas e infraestructura como código. Implementación multi-cloud con orquestación de Kubernetes, análisis de código con SonarQube y escaneo de vulnerabilidades con Trivy.',
-      image: '/projects/project2.webp',
+      image: `${normalizedBase}projects/project2.webp`,
       tags: [
         'Java',
         'Spring Boot',
@@ -55,7 +58,7 @@ const projects = {
       title: 'MicroTodoSuite',
       description:
         'Comprehensive platform demonstrating modern microservices architecture in the cloud, combining agile development, cloud-native design patterns, and advanced DevOps strategies. Complete implementation with CI/CD, monitoring, and observability.',
-      image: '/projects/project1.webp',
+      image: `${normalizedBase}projects/project1.webp`,
       tags: [
         'Azure',
         'Terraform',
@@ -75,7 +78,7 @@ const projects = {
       title: 'EcommerceCoZam',
       description:
         'Microservices-based e-commerce platform with CI/CD pipelines, automated testing, and infrastructure as code. Multi-cloud implementation with Kubernetes orchestration, code analysis with SonarQube, and vulnerability scanning with Trivy.',
-      image: '/projects/project2.webp',
+      image: `${normalizedBase}projects/project2.webp`,
       tags: [
         'Java',
         'Spring Boot',
