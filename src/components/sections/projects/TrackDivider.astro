@@ -1,0 +1,62 @@
+---
+interface Props {
+  label: string;
+  description: string;
+}
+
+const { label, description } = Astro.props;
+---
+
+<div class="track-divider">
+  <h3 class="track-label">{label}</h3>
+  <p class="track-desc">{description}</p>
+</div>
+
+<style>
+  .track-divider {
+    flex: none;
+    align-self: flex-start;
+    width: 11rem;
+    padding-top: 0.25rem;
+    scroll-snap-align: start;
+  }
+
+  .track-label {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 1.05;
+    color: var(--layer-text);
+  }
+
+  .track-desc {
+    margin-top: 0.5rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--layer-muted);
+  }
+
+  @media (min-width: 1024px) {
+    .track-divider {
+      width: 10rem;
+      align-self: center;
+      padding-top: 0;
+    }
+
+    .track-label {
+      font-size: clamp(1.75rem, 2.6vw, 2.5rem);
+    }
+
+    .track-desc {
+      margin-top: 0.5rem;
+      font-size: 0.8125rem;
+    }
+  }
+
+  /* Compact divider while the gallery is in the sticky mode (phones and tablets). */
+  :global(.gallery[data-mode='sticky']) .track-divider {
+    width: 8.5rem;
+    align-self: center;
+    padding-top: 0;
+  }
+</style>

@@ -1,0 +1,195 @@
+---
+import { Image } from 'astro:assets';
+import { getLangFromUrl } from '@i18n/utils';
+import { SITE_CONFIG } from '@data/config';
+import meImg from '@assets/me.png';
+import { manifesto } from '@data/manifesto';
+import TitleSection from '@components/ui/TitleSection.astro';
+import Metrics from '@components/sections/about/Metrics.astro';
+
+const lang = getLangFromUrl(Astro.url);
+const c = manifesto[lang];
+---
+
+<div class="about">
+  <div class="about-head">
+    <TitleSection path={c.path}>{c.heading}</TitleSection>
+
+    <div class="about-photo">
+      <Image
+        src={meImg}
+        alt={SITE_CONFIG.name}
+        width={192}
+        height={192}
+        format="webp"
+        quality={80}
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  </div>
+
+  <div class="about-blocks">
+    {
+      c.blocks.map((block) => (
+        <div class="about-block">
+          <h3 class="about-title">{block.title}</h3>
+          <p class="manifesto-text">{block.text}</p>
+        </div>
+      ))
+    }
+  </div>
+
+  <Metrics compact />
+</div>
+
+<style>
+  .about {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .about-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+  }
+
+  .about-head :global(.title-section) {
+    min-width: 0;
+    margin-bottom: 0;
+  }
+
+  .about-photo {
+    position: relative;
+    isolation: isolate;
+    flex: none;
+    width: 96px;
+    height: 96px;
+    overflow: hidden;
+    border-radius: 50%;
+  }
+
+  .about-photo :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    filter: grayscale(1);
+  }
+
+  .about-photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--layer-tint);
+    mix-blend-mode: color;
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .about-blocks {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.75rem;
+  }
+
+  .about-block {
+    padding-top: 0.875rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .about-title {
+    margin-bottom: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--layer-text);
+  }
+
+  .manifesto-text {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--layer-muted);
+  }
+
+  @media (min-width: 768px) {
+    .about-blocks {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: 1.5rem;
+    }
+  }
+
+  /* One screen: tight vertical rhythm inside the content zone. */
+  @media (min-width: 1024px) {
+    .about {
+      gap: 1.5rem;
+    }
+
+    .about-blocks {
+      column-gap: 1.25rem;
+    }
+
+    .about-block {
+      padding-top: 0.75rem;
+    }
+
+    .manifesto-text {
+      font-size: 0.8125rem;
+      line-height: 1.55;
+    }
+  }
+
+  @media (min-width: 1440px) {
+    .about {
+      gap: 2rem;
+    }
+
+    .about-blocks {
+      column-gap: 1.5rem;
+    }
+
+    .manifesto-text {
+      font-size: 0.875rem;
+    }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { SplitText } from 'gsap/SplitText';
+  import { onDestroy, prefersReducedMotion } from '@lib/motion';
+
+  gsap.registerPlugin(ScrollTrigger, SplitText);
+
+  document.addEventListener('astro:page-load', () => {
+    const paragraphs = gsap.utils.toArray<HTMLElement>('.manifesto-text');
+    if (paragraphs.length === 0 || prefersReducedMotion()) return;
+
+    // Each paragraph reveals once, line by line behind a mask.
+    const ctx = gsap.context(() => {
+      paragraphs.forEach((paragraph) => {
+        SplitText.create(paragraph, {
+          type: 'lines',
+          mask: 'lines',
+          autoSplit: true,
+          onSplit: (self) =>
+            gsap.from(self.lines, {
+              yPercent: 100,
+              duration: 0.9,
+              stagger: 0.08,
+              ease: 'expo.out',
+              scrollTrigger: { trigger: paragraph, start: 'top 90%', once: true },
+            }),
+        });
+      });
+    });
+
+    onDestroy(() => ctx.revert());
+  });
+</script>

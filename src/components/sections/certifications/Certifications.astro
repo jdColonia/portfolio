@@ -1,0 +1,147 @@
+---
+import TechIcon from '@components/ui/TechIcon.astro';
+import { getLangFromUrl, useTranslations } from '@i18n/utils';
+import { certifications } from '@data/certifications';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const items = certifications[lang];
+
+const groups = [
+  { kind: 'certification', label: t('certifications.group.certs') },
+  { kind: 'bootcamp', label: t('certifications.group.bootcamps') },
+]
+  .map((group) => ({ ...group, items: items.filter((cert) => cert.kind === group.kind) }))
+  .filter((group) => group.items.length > 0);
+---
+
+{
+  groups.map((group) => (
+    <div class="certs-group">
+      <h3 class="certs-group-title">{group.label}</h3>
+      <ul class="certs">
+        {group.items.map((cert) => (
+          <li class="cert">
+            <span class="cert-icon" aria-hidden="true">
+              {cert.icon && <TechIcon name={cert.icon} size={22} />}
+            </span>
+            <div class="cert-main">
+              <p class="cert-name">
+                {cert.url ? (
+                  <a class="cert-link" href={cert.url} target="_blank" rel="noopener noreferrer">
+                    {cert.name}
+                  </a>
+                ) : (
+                  cert.name
+                )}
+              </p>
+              <p class="cert-issuer">{cert.issuer}</p>
+            </div>
+            <p class="cert-date">{cert.date}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  ))
+}
+
+<style>
+  .certs-group + .certs-group {
+    margin-top: 1.75rem;
+  }
+
+  .certs-group-title {
+    margin-bottom: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--layer-tint);
+  }
+
+  .certs {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cert {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 0.25rem 1rem;
+    padding-block: 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .cert:last-child {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .cert-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.75rem;
+    color: var(--layer-tint);
+  }
+
+  .cert-main {
+    min-width: 0;
+  }
+
+  .cert-name {
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--layer-text);
+  }
+
+  .cert-issuer {
+    margin-top: 0.125rem;
+    font-size: 0.9375rem;
+    color: var(--layer-muted);
+  }
+
+  .cert-date {
+    grid-column: 2;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--layer-muted);
+  }
+
+  .cert-link {
+    text-decoration: underline;
+    text-decoration-color: var(--layer-tint);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.25em;
+    transition: text-decoration-color 0.2s;
+  }
+
+  .cert-link:hover {
+    text-decoration-color: var(--layer-accent);
+  }
+
+  @media (min-width: 1024px) {
+    .certs-group + .certs-group {
+      margin-top: 1.25rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .cert {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .cert-date {
+      grid-column: auto;
+      white-space: nowrap;
+    }
+  }
+</style>

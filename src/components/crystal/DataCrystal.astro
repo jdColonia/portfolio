@@ -1,0 +1,199 @@
+---
+// Isometric cube outline: loading placeholder while the 3D crystal downloads, and the static
+// fallback when WebGL is unavailable, motion is reduced, the viewport is small or data saving is on.
+// Three visible faces, each a 3x3 grid of small cells.
+const S = 28;
+const COS = 0.866;
+const ex = { x: COS * S, y: 0.5 * S };
+const ey = { x: -COS * S, y: 0.5 * S };
+const ez = { x: 0, y: S };
+
+type Point = { x: number; y: number };
+const add = (a: Point, b: Point, k = 1): Point => ({ x: a.x + b.x * k, y: a.y + b.y * k });
+const toPoints = (pts: Point[]) => pts.map((p) => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' ');
+
+const cells: { points: string; opacity: number }[] = [];
+for (let a = 0; a < 3; a++) {
+  for (let b = 0; b < 3; b++) {
+    // Top face
+    const t0 = add(add({ x: 0, y: 0 }, ex, a), ey, b);
+    cells.push({
+      points: toPoints([t0, add(t0, ex), add(add(t0, ex), ey), add(t0, ey)]),
+      opacity: 0.95,
+    });
+    // Left face (spans ex and down)
+    const l0 = add(add(add({ x: 0, y: 0 }, ey, 3), ex, a), ez, b);
+    cells.push({
+      points: toPoints([l0, add(l0, ex), add(add(l0, ex), ez), add(l0, ez)]),
+      opacity: 0.6,
+    });
+    // Right face (spans ey and down)
+    const r0 = add(add(add({ x: 0, y: 0 }, ex, 3), ey, a), ez, b);
+    cells.push({
+      points: toPoints([r0, add(r0, ey), add(add(r0, ey), ez), add(r0, ez)]),
+      opacity: 0.35,
+    });
+  }
+}
+---
+
+<div id="crystal-root" aria-hidden="true" data-crystal="loading" transition:persist="crystal">
+  <div id="crystal-glow"></div>
+  <canvas id="crystal-canvas"></canvas>
+  <svg id="crystal-fallback" viewBox="-80 -6 160 180" fill="none" stroke-linejoin="round">
+    {
+      cells.map((cell) => (
+        <polygon
+          points={cell.points}
+          stroke="var(--layer-tint)"
+          stroke-width="1.2"
+          stroke-opacity={cell.opacity}
+          fill="var(--layer-tint)"
+          fill-opacity={cell.opacity * 0.08}
+        />
+      ))
+    }
+  </svg>
+</div>
+
+<style>
+  /* Mobile: full viewport. Desktop: a 45%-wide box that moves between stages (html[data-stage],
+     set by the section scroll triggers): right, left, or centered (large and dim). Stage 'none'
+     fades the crystal out at every width (sections that use the full width). The canvas keeps its
+     size; only the box transform and opacity animate. */
+  #crystal-root {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    transition: opacity 0.6s;
+  }
+
+  @media (min-width: 1024px) {
+    #crystal-root {
+      inset: 0 auto auto 0;
+      width: 45vw;
+      height: 100svh;
+      transform: translateX(calc(var(--vw, 100vw) * 0.55));
+      will-change: transform;
+      transition:
+        transform 0.9s cubic-bezier(0.65, 0, 0.35, 1),
+        opacity 0.6s;
+    }
+
+    :global(html[data-stage='right']) #crystal-root {
+      transform: translateX(calc(var(--vw, 100vw) * 0.55));
+    }
+
+    :global(html[data-stage='left']) #crystal-root {
+      transform: translateX(0);
+    }
+
+    :global(html[data-stage='center']) #crystal-root {
+      transform: translateX(calc(var(--vw, 100vw) * 0.275)) scale(1.3);
+      opacity: 0.45;
+    }
+  }
+
+  :global(html[data-stage='none']) #crystal-root {
+    opacity: 0;
+  }
+
+  /* One element behind the canvas; its color follows the layer tint (see --glow-color in global.css). */
+  #crystal-glow {
+    position: absolute;
+    inset: 0;
+    --glow-color: var(--layer-tint);
+    background: radial-gradient(
+      circle closest-side,
+      color-mix(in srgb, var(--glow-color) 18%, transparent),
+      transparent
+    );
+    transition: --glow-color 0.6s;
+  }
+
+  /* data-crystal (set by the script) drives what is visible:
+     loading  -> SVG placeholder, pulsing on desktop; canvas hidden
+     ready    -> canvas fades in, SVG fades out and stops animating
+     fallback -> static SVG; canvas removed */
+  #crystal-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.6s;
+  }
+
+  #crystal-root[data-crystal='ready'] #crystal-canvas {
+    opacity: 1;
+  }
+
+  #crystal-root[data-crystal='fallback'] #crystal-canvas {
+    display: none;
+  }
+
+  #crystal-fallback {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(70vw, 360px);
+    height: auto;
+    transform: translate(-50%, -50%);
+    opacity: 0.2;
+    transition: opacity 0.6s;
+  }
+
+  #crystal-root[data-crystal='ready'] #crystal-fallback {
+    opacity: 0;
+    animation: none;
+  }
+
+  @media (min-width: 1024px) {
+    #crystal-fallback {
+      width: min(30vw, 440px);
+      opacity: 1;
+    }
+  }
+
+  /* Phones: the canvas (only mounted if the viewport grew and shrank again) stays faint. */
+  @media (max-width: 1023px) {
+    #crystal-root[data-crystal='ready'] #crystal-canvas {
+      opacity: 0.2;
+    }
+  }
+
+  @keyframes crystal-pulse {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    #crystal-root[data-crystal='loading'] #crystal-fallback {
+      animation: crystal-pulse 1.6s ease-in-out infinite;
+    }
+  }
+</style>
+
+<script>
+  import {
+    desktopQuery,
+    onDesktopChange,
+    pauseCrystal,
+    releaseDetachedCrystal,
+    sync,
+  } from '@components/crystal/crystal-mount';
+
+  document.addEventListener('astro:before-swap', pauseCrystal);
+  document.addEventListener('astro:after-swap', releaseDetachedCrystal);
+  document.addEventListener('astro:page-load', sync);
+
+  // Resized or rotated past the desktop breakpoint: the crystal may mount now.
+  desktopQuery.addEventListener('change', onDesktopChange);
+</script>

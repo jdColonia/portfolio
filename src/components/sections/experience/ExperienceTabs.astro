@@ -1,0 +1,121 @@
+---
+import type { ExperienceCompany } from '@data/experience';
+
+interface Props {
+  items: ExperienceCompany[];
+  label: string;
+}
+
+const { items, label } = Astro.props;
+---
+
+<div class="exp-tabs" role="tablist" aria-label={label} aria-orientation="vertical" data-tablist>
+  <span class="exp-indicator" aria-hidden="true" data-indicator></span>
+  {
+    items.map((item, index) => (
+      <button
+        type="button"
+        role="tab"
+        id={`exp-tab-${item.id}`}
+        class="exp-tab"
+        aria-selected={index === 0 ? 'true' : 'false'}
+        aria-controls={`exp-panel-${item.id}`}
+        tabindex={index === 0 ? 0 : -1}
+      >
+        {item.tabLabel ?? item.company}
+      </button>
+    ))
+  }
+</div>
+
+<style>
+  /* ---- Tabs: horizontal scrolling row on small screens (company name only) ------ */
+  .exp-tabs {
+    position: relative;
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .exp-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .exp-tab {
+    flex: none;
+    min-width: 7.5rem;
+    padding: 0.5rem 1rem;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.4;
+    text-align: center;
+    white-space: nowrap;
+    color: var(--layer-muted);
+    background: transparent;
+    cursor: pointer;
+    transition:
+      color 0.3s ease,
+      background-color 0.3s ease;
+  }
+
+  .exp-tab:hover,
+  .exp-tab[aria-selected='true'] {
+    color: var(--layer-accent);
+    background-color: color-mix(in srgb, var(--layer-accent) 6%, transparent);
+  }
+
+  .exp-tab:focus-visible {
+    outline: 2px solid var(--layer-accent);
+    outline-offset: -2px;
+  }
+
+  /* Moves with transforms only (translate + scale of a 1px bar). */
+  .exp-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 1px;
+    height: 2px;
+    background: var(--layer-accent);
+    opacity: 0;
+    transform-origin: left top;
+    pointer-events: none;
+  }
+
+  /* data-ready / data-animated are set by the script on the .exp root (Experience.astro). */
+  :global(.exp[data-ready]) .exp-indicator {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.exp[data-animated]) .exp-indicator {
+      transition: transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    }
+  }
+
+  /* ---- Desktop: vertical tabs on the left ---------------------------------------- */
+  @media (min-width: 1024px) {
+    .exp-tabs {
+      flex-direction: column;
+      overflow: visible;
+    }
+
+    .exp-tab {
+      min-width: 0;
+      padding: 0.75rem 1.25rem;
+      border-bottom: 0;
+      border-left: 2px solid rgba(255, 255, 255, 0.12);
+      font-size: 0.8125rem;
+      text-align: left;
+    }
+
+    .exp-indicator {
+      top: 0;
+      bottom: auto;
+      left: 0;
+      width: 2px;
+      height: 1px;
+    }
+  }
+</style>

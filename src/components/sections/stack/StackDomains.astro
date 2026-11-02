@@ -1,0 +1,188 @@
+---
+import TechIcon from '@components/ui/TechIcon.astro';
+import { getLangFromUrl, useTranslations } from '@i18n/utils';
+import { stackDomains } from '@data/stack';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<div class="stack" data-stack>
+  <div class="stack-domains" role="list" aria-label={t('stack.aria')}>
+    {
+      stackDomains.map((domain, i) => (
+        <article class="domain" role="listitem">
+          <header class="domain-head">
+            <span class="domain-index" aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <h3 class="domain-title">{domain.label[lang]}</h3>
+            <p class="domain-desc">{domain.description[lang]}</p>
+          </header>
+          <ul class="domain-tiles">
+            {domain.items.map((item) => (
+              <li class="tile" data-tile>
+                {item.icon && <TechIcon name={item.icon} size={22} />}
+                <span class="tile-name">{item.name}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .stack-domains {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  /* The centered section sets text-align: center; the panels read left to right. The dim crystal
+     sits behind them, so a soft blur keeps the tiles legible. */
+  .domain {
+    padding: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    background: rgba(14, 16, 20, 0.6);
+    backdrop-filter: blur(6px);
+    text-align: left;
+  }
+
+  .domain-head {
+    margin-bottom: 1rem;
+  }
+
+  .domain-index {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--layer-tint);
+  }
+
+  .domain-title {
+    margin-top: 0.25rem;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--layer-text);
+  }
+
+  .domain-desc {
+    margin-top: 0.25rem;
+    font-size: 0.8125rem;
+    color: var(--layer-muted);
+  }
+
+  .domain-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr));
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    padding: 0.625rem 0.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--color-ink-muted);
+    transition:
+      transform 0.2s,
+      border-color 0.2s,
+      background-color 0.2s,
+      color 0.2s;
+  }
+
+  .tile-name {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    line-height: 1.2;
+    text-align: center;
+    color: var(--layer-muted);
+    transition: color 0.2s;
+  }
+
+  /* Hover (and :active, so a tap on touch screens works) turns the tile orange. */
+  .tile:hover,
+  .tile:active {
+    border-color: color-mix(in srgb, var(--color-lava) 55%, transparent);
+    background: color-mix(in srgb, var(--color-lava) 8%, transparent);
+    transform: translateY(-2px);
+    color: var(--color-lava);
+  }
+
+  .tile:hover .tile-name,
+  .tile:active .tile-name {
+    color: var(--layer-text);
+  }
+
+  @media (min-width: 768px) {
+    .stack-domains {
+      grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .stack {
+      text-align: center;
+    }
+
+    .stack-domains {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .domain {
+      padding: 1rem 1.125rem;
+    }
+
+    .domain-tiles {
+      grid-template-columns: repeat(auto-fill, minmax(4.25rem, 1fr));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tile:hover,
+    .tile:active {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { onDestroy, prefersReducedMotion } from '@lib/motion';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener('astro:page-load', () => {
+    const stack = document.querySelector<HTMLElement>('[data-stack]');
+    if (!stack || prefersReducedMotion()) return;
+
+    // Tiles fade in panel by panel as it scrolls into view; without JS they are simply visible.
+    const ctx = gsap.context(() => {
+      gsap.utils.toArray<HTMLElement>('.domain', stack).forEach((domain) => {
+        gsap.from(domain.querySelectorAll('[data-tile]'), {
+          opacity: 0,
+          y: 12,
+          duration: 0.5,
+          ease: 'power2.out',
+          stagger: 0.025,
+          scrollTrigger: { trigger: domain, start: 'top 85%', once: true },
+        });
+      });
+    }, stack);
+
+    onDestroy(() => ctx.revert());
+  });
+</script>

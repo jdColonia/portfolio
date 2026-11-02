@@ -1,0 +1,90 @@
+---
+// The name is split at build time (line > word > char) so the intro is pure CSS and starts at
+// first paint. `index` is global across lines: it drives the stagger.
+const nameLines = ['Juan David', 'Colonia'];
+let charIndex = 0;
+const nameWords = nameLines.map((line) =>
+  line.split(' ').map((word) => [...word].map((char) => ({ char, index: charIndex++ })))
+);
+---
+
+<h1 class="hero-name" aria-label="Juan David Colonia">
+  <span class="block" aria-hidden="true">
+    {
+      nameWords.map((words) => (
+        <span class="block">
+          {words.map((chars, wordIndex) => (
+            <Fragment>
+              <span class="hero-word">
+                {chars.map(({ char, index }) => (
+                  <span class="hero-char-mask">
+                    <span class="hero-char" style={`--i:${index}`}>
+                      {char}
+                    </span>
+                  </span>
+                ))}
+              </span>
+              {wordIndex < words.length - 1 && ' '}
+            </Fragment>
+          ))}
+        </span>
+      ))
+    }
+  </span>
+</h1>
+
+<style>
+  .hero-name {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(3.25rem, 8.2vw, 8rem);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: var(--layer-text);
+    margin-bottom: 1.25rem;
+    will-change: transform, opacity;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-name {
+      font-size: clamp(3.25rem, 9vw, 8.5rem);
+    }
+  }
+
+  /* Words never break inside; the masks clip the chars while they rise. */
+  .hero-word {
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  /* Inline-block in both motion modes: it drops the whitespace the build leaves around each
+     char, which inline spans would render as gaps between letters. */
+  .hero-char-mask {
+    display: inline-block;
+  }
+
+  /* CSS-only intro (starts at first paint, no JS): the name's chars rise out of their masks.
+     Reduced motion shows everything at once. */
+  @media (prefers-reduced-motion: no-preference) {
+    /* line-height is below 1: the padding keeps the glyphs inside the clip, the negative margin
+       keeps the layout unchanged. */
+    .hero-char-mask {
+      overflow: hidden;
+      vertical-align: top;
+      padding: 0.1em 0.05em;
+      margin: -0.1em -0.05em;
+    }
+
+    .hero-char {
+      display: inline-block;
+      animation: hero-char-in 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation-delay: calc(0.1s + var(--i) * 0.03s);
+    }
+
+    @keyframes hero-char-in {
+      from {
+        transform: translateY(120%);
+      }
+    }
+  }
+</style>

@@ -1,0 +1,122 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'section'> {
+  layer?: string;
+  /** Plain page section (e.g. the CV): no screen-sized layout and no crystal content zone. */
+  plain?: boolean;
+  /**
+   * Desktop crystal stage for this section: where the crystal box sits. Content goes to the
+   * opposite side ('left' crystal -> content right), or is centered over a dim crystal ('center').
+   * 'none' hides the crystal and the content takes the full width between the docks.
+   */
+  stage?: 'center' | 'left' | 'right' | 'none';
+}
+
+const { id, class: className, layer, plain = false, stage = 'right', ...rest } = Astro.props;
+---
+
+<section
+  id={id}
+  data-layer={layer}
+  data-stage={stage}
+  class:list={['section', { 'section-plain': plain }, className]}
+  {...rest}
+>
+  <div class="section-content"><slot /></div>
+</section>
+
+<style>
+  .section {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+
+  .section:not(.section-plain) {
+    padding-block: 3rem;
+  }
+
+  .section-plain {
+    max-width: 80rem;
+  }
+
+  @media (min-width: 768px) {
+    .section {
+      padding-inline: 1.5rem;
+    }
+
+    .section:not(.section-plain) {
+      padding-block: 4rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .section-plain {
+      padding-inline: 2rem;
+    }
+
+    /* "Each section is a page": one screen, vertically centered. The 88px top clears the header;
+       the side padding clears the docks. */
+    .section:not(.section-plain) {
+      display: flex;
+      min-height: 100svh;
+      flex-direction: column;
+      justify-content: center;
+      margin-inline: 0;
+      padding: 5.5rem var(--dock-w) 2.5rem;
+    }
+
+    /* Content zone: 55% of the viewport; the crystal owns the other side. Stage 'right' keeps the
+       content on the left (default), stage 'left' pushes it to the right edge. */
+    .section:not(.section-plain) > .section-content {
+      width: var(--zone-w);
+      max-width: 100%;
+    }
+
+    .section[data-stage='left']:not(.section-plain) > .section-content {
+      margin-left: auto;
+    }
+
+    /* Stage 'center': a centered cover screen; the crystal is large and dim behind it, so a soft
+       scrim keeps the text legible. The content is its own stacking context (above the crystal,
+       scrim behind the text). */
+    .section[data-stage='center']:not(.section-plain) > .section-content {
+      position: relative;
+      isolation: isolate;
+      width: 100%;
+      max-width: min(56rem, 100%);
+      margin-inline: auto;
+      text-align: center;
+    }
+
+    .section[data-stage='center']:not(.section-plain) > .section-content::before {
+      content: '';
+      position: absolute;
+      inset: -10% -15%;
+      z-index: -1;
+      background: radial-gradient(closest-side, rgba(14, 16, 20, 0.7), transparent);
+      pointer-events: none;
+    }
+
+    /* Wide centered sections (stack): room for three panels side by side. */
+    .section.section-wide[data-stage='center']:not(.section-plain) > .section-content {
+      max-width: min(72rem, 100%);
+    }
+
+    /* Stage 'none': the crystal is hidden, so the content spans everything between the docks. */
+    .section[data-stage='none']:not(.section-plain) > .section-content {
+      width: 100%;
+    }
+
+    /* Contact shares its screen with the compact footer that follows it. */
+    .section.section-contact {
+      min-height: calc(100svh - var(--footer-h));
+    }
+
+    /* The pinned gallery manages its own vertical space. */
+    .section.section-flush {
+      padding-block: 0;
+    }
+  }
+</style>

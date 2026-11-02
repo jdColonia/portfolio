@@ -1,0 +1,27 @@
+---
+import { withBase } from '@lib/urls';
+
+interface Props {
+  /** Iconify id listed in the tech icon sprite (`simple-icons:python`). */
+  name: string;
+  size?: number;
+  class?: string;
+  title?: string;
+}
+
+const { name, size = 24, class: className, title } = Astro.props;
+
+const id = name.replace(':', '--');
+---
+
+<svg
+  width={size}
+  height={size}
+  fill="currentColor"
+  aria-hidden={title ? undefined : 'true'}
+  role={title ? 'img' : undefined}
+  class={className}
+>
+  {title && <title>{title}</title>}
+  <use href={`${withBase('tech-icons.svg')}#${id}`}></use>
+</svg>

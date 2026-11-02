@@ -1,0 +1,123 @@
+---
+import { getLangFromUrl, useTranslations } from '@i18n/utils';
+import { SITE_CONFIG } from '@data/config';
+import SocialLinks from '@components/ui/SocialLinks.astro';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<div id="side-dock" class="dock">
+  <SocialLinks class="dock-links" linkClass="dock-link" size={24} aria-label={t('dock.social')} />
+
+  <span class="dock-line dock-line-end" aria-hidden="true"></span>
+</div>
+
+<div id="side-dock-mail" class="dock dock-right">
+  <a class="dock-mail" href={`mailto:${SITE_CONFIG.email}`} aria-label={t('dock.mail')}>
+    {SITE_CONFIG.email}
+  </a>
+
+  <span class="dock-line dock-line-end" aria-hidden="true"></span>
+</div>
+
+<style>
+  /* Two fixed columns (desktop only): social links bottom-left, the email bottom-right. Both
+     leave the center free for the crystal and the sections (--dock-w wide, see global.css). */
+  .dock {
+    --dock-x: 10px;
+    position: fixed;
+    bottom: 0;
+    left: 1.25rem;
+    z-index: 20;
+    display: none;
+    width: 20px;
+    flex-direction: column;
+    justify-content: flex-end;
+    pointer-events: none;
+  }
+
+  .dock-right {
+    left: auto;
+    right: 1.25rem;
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .dock {
+      display: flex;
+    }
+  }
+
+  /* Thin vertical line running to the bottom edge of the viewport. */
+  .dock-line {
+    display: block;
+    width: 1px;
+    margin-left: var(--dock-x);
+    background: var(--layer-muted);
+    opacity: 0.35;
+  }
+
+  .dock-right .dock-line {
+    margin-left: 0;
+  }
+
+  .dock-line-end {
+    flex: none;
+    height: 4.5rem;
+  }
+
+  .dock :global(.dock-links) {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin: 0.75rem 0;
+    padding: 0;
+    list-style: none;
+    pointer-events: auto;
+  }
+
+  .dock :global(.dock-link) {
+    display: flex;
+    width: 2rem;
+    height: 2rem;
+    align-items: center;
+    justify-content: center;
+    margin-left: calc(var(--dock-x) - 1rem);
+    color: var(--layer-muted);
+    transition:
+      color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .dock :global(.dock-link svg) {
+    width: 20px;
+    height: 20px;
+  }
+
+  .dock :global(.dock-link:hover),
+  .dock :global(.dock-link:focus-visible) {
+    color: var(--color-lava);
+    transform: translateY(-2px);
+  }
+
+  .dock-mail {
+    margin: 0.75rem 0;
+    writing-mode: vertical-rl;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    color: var(--layer-muted);
+    pointer-events: auto;
+    transition:
+      color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .dock-mail:hover,
+  .dock-mail:focus-visible {
+    color: var(--color-lava);
+    transform: translateY(-2px);
+  }
+</style>

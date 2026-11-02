@@ -1,0 +1,33 @@
+---
+import { Icon } from 'astro-icon/components';
+import type { HTMLAttributes } from 'astro/types';
+import { SOCIAL_LINKS } from '@data/config';
+
+interface Props extends HTMLAttributes<'ul'> {
+  /** Class of each <a>. */
+  linkClass?: string;
+  /** Icon width and height in px. */
+  size?: number;
+}
+
+// The icon list for SOCIAL_LINKS. `class` and any other attribute (aria-label...) go to the <ul>.
+const { linkClass, size = 24, ...attrs } = Astro.props;
+---
+
+<ul {...attrs}>
+  {
+    SOCIAL_LINKS.map((link) => (
+      <li>
+        <a
+          class={linkClass}
+          href={link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={link.name}
+        >
+          <Icon name={link.icon} size={size} />
+        </a>
+      </li>
+    ))
+  }
+</ul>

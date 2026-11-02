@@ -1,0 +1,63 @@
+---
+import Layout from '@layouts/Layout.astro';
+import Hero from '@components/sections/hero/Hero.astro';
+import Manifesto from '@components/sections/about/Manifesto.astro';
+import SectionContainer from '@components/ui/SectionContainer.astro';
+import TitleSection from '@components/ui/TitleSection.astro';
+import StackDomains from '@components/sections/stack/StackDomains.astro';
+import Experience from '@components/sections/experience/Experience.astro';
+import Certifications from '@components/sections/certifications/Certifications.astro';
+import ProjectsGallery from '@components/sections/projects/ProjectsGallery.astro';
+import ZoomTransition from '@components/sections/zoom/ZoomTransition.astro';
+import Contact from '@components/sections/contact/Contact.astro';
+
+import { getLangFromUrl, useTranslations } from '@i18n/utils';
+import { SITE_CONFIG } from '@data/config';
+import { certifications } from '@data/certifications';
+
+// Single source for the home page: index, en/index and every section route render it.
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const title = SITE_CONFIG.title[lang];
+const description = SITE_CONFIG.description[lang];
+---
+
+<Layout title={title} description={description} crystal canonical="home">
+  <SectionContainer layer="raw" stage="center">
+    <Hero />
+  </SectionContainer>
+
+  <SectionContainer id="sobre-mi" layer="bronze" stage="left">
+    <Manifesto />
+  </SectionContainer>
+
+  <SectionContainer id="stack" layer="silver" stage="center" class="section-wide">
+    <TitleSection path="silver.stack">{t('section.stack')}</TitleSection>
+    <StackDomains />
+  </SectionContainer>
+
+  <SectionContainer id="experiencia" layer="silver" stage="left">
+    <TitleSection path="silver.experiencia">{t('section.experience')}</TitleSection>
+    <Experience />
+  </SectionContainer>
+
+  {
+    certifications[lang].length > 0 && (
+      <SectionContainer id="certificaciones" layer="silver" stage="right">
+        <TitleSection path="silver.certificaciones">{t('section.certifications')}</TitleSection>
+        <Certifications />
+      </SectionContainer>
+    )
+  }
+
+  <SectionContainer id="proyectos" layer="gold" stage="none" class="section-flush">
+    <ProjectsGallery />
+  </SectionContainer>
+
+  <ZoomTransition />
+
+  <SectionContainer id="contacto" layer="serve" stage="center" class="section-contact">
+    <Contact />
+  </SectionContainer>
+</Layout>
