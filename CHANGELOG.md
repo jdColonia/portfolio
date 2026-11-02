@@ -1,3 +1,18 @@
+# [1.4.0](https://github.com/jdColonia/portfolio/compare/v1.3.2...v1.4.0) (2026-11-02)
+
+
+### Bug Fixes
+
+* **hero:** separate the name lines and letters in reduced motion ([c50dc68](https://github.com/jdColonia/portfolio/commit/c50dc682a64e89a36a1f335e34ab264c046492a0))
+
+
+### Features
+
+* **content:** rewrite portfolio content around data engineering and software ([7ce908e](https://github.com/jdColonia/portfolio/commit/7ce908eb5e67e4611c3e8f57b7d069cf82c76a5d))
+* **layout:** add medallion-layer layout, scroll engine and 3D data crystal ([169d95a](https://github.com/jdColonia/portfolio/commit/169d95a37e6a264efa16124ecf3a2a418953a045))
+* **sections:** redesign home sections, CV view and bilingual 404 page ([424375d](https://github.com/jdColonia/portfolio/commit/424375d013cabc30ad4879fa7fb93045aea805c7))
+* **seo:** generate sitemap with hreflang alternates and git-based lastmod ([418ee00](https://github.com/jdColonia/portfolio/commit/418ee00025e1c03d9a999129a55694e578a400cd))
+
 ## [1.3.2](https://github.com/jdColonia/portfolio/compare/v1.3.1...v1.3.2) (2025-10-22)
 
 
