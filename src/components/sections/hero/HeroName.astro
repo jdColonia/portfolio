@@ -38,7 +38,7 @@ const nameWords = nameLines.map((line) =>
     font-family: var(--font-display);
     font-weight: 400;
     font-size: clamp(3.25rem, 8.2vw, 8rem);
-    line-height: 0.88;
+    line-height: 1;
     letter-spacing: -0.01em;
     color: var(--layer-text);
     margin-bottom: 1.25rem;
@@ -57,13 +57,18 @@ const nameWords = nameLines.map((line) =>
     white-space: nowrap;
   }
 
+  /* Inline-block in both motion modes: it drops the whitespace the build leaves around each
+     char, which inline spans would render as gaps between letters. */
+  .hero-char-mask {
+    display: inline-block;
+  }
+
   /* CSS-only intro (starts at first paint, no JS): the name's chars rise out of their masks.
      Reduced motion shows everything at once. */
   @media (prefers-reduced-motion: no-preference) {
     /* line-height is below 1: the padding keeps the glyphs inside the clip, the negative margin
        keeps the layout unchanged. */
     .hero-char-mask {
-      display: inline-block;
       overflow: hidden;
       vertical-align: top;
       padding: 0.1em 0.05em;
