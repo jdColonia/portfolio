@@ -1,3 +1,11 @@
+# [1.5.0](https://github.com/jdColonia/portfolio/compare/v1.4.0...v1.5.0) (2026-11-02)
+
+
+### Features
+
+* **analytics:** track CV, contact, project and section events and flag internal traffic ([985bd2e](https://github.com/jdColonia/portfolio/commit/985bd2ea451557840f3f3078bb8005601e75fb8a))
+* **seo:** add Search Console verification meta tag ([df1b424](https://github.com/jdColonia/portfolio/commit/df1b4248e1b9d5021a2daf64eb80e2889bb8cbcd))
+
 # [1.4.0](https://github.com/jdColonia/portfolio/compare/v1.3.2...v1.4.0) (2026-11-02)
 
 
