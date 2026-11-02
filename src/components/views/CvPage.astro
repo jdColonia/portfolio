@@ -23,11 +23,25 @@ const homeUrl = localizePath(lang);
     <p class="cv-lead">{t('cv.lead')}</p>
 
     <div class="cv-actions cv-actions-top">
-      <Button href={cvUrl} download>
+      <Button
+        href={cvUrl}
+        download
+        data-track="cv_download"
+        data-track-cv-language={lang}
+        data-track-location="cv_page"
+      >
         <Icon slot="icon" name="tabler:download" size={24} />
         {t('hero.download-cv')}
       </Button>
-      <Button href={cvUrl} target="_blank" rel="noopener noreferrer" variant="glass">
+      <Button
+        href={cvUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        variant="glass"
+        data-track="cv_open"
+        data-track-cv-language={lang}
+        data-track-location="cv_page"
+      >
         {t('cv.open')}
       </Button>
     </div>
@@ -40,11 +54,25 @@ const homeUrl = localizePath(lang);
         <Icon name="tabler:file-cv" size={40} aria-hidden="true" />
         <p>{t('cv.fallback')}</p>
         <div class="cv-actions">
-          <Button href={cvUrl} download>
+          <Button
+            href={cvUrl}
+            download
+            data-track="cv_download"
+            data-track-cv-language={lang}
+            data-track-location="cv_page"
+          >
             <Icon slot="icon" name="tabler:download" size={24} />
             {t('hero.download-cv')}
           </Button>
-          <Button href={cvUrl} target="_blank" rel="noopener noreferrer" variant="glass">
+          <Button
+            href={cvUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="glass"
+            data-track="cv_open"
+            data-track-cv-language={lang}
+            data-track-location="cv_page"
+          >
             {t('cv.open')}
           </Button>
         </div>

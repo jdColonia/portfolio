@@ -8,10 +8,12 @@ interface Props extends HTMLAttributes<'ul'> {
   linkClass?: string;
   /** Icon width and height in px. */
   size?: number;
+  /** Where the list is rendered (hero, dock...): reported with the contact_click event. */
+  location?: string;
 }
 
 // The icon list for SOCIAL_LINKS. `class` and any other attribute (aria-label...) go to the <ul>.
-const { linkClass, size = 24, ...attrs } = Astro.props;
+const { linkClass, size = 24, location, ...attrs } = Astro.props;
 ---
 
 <ul {...attrs}>
@@ -24,6 +26,9 @@ const { linkClass, size = 24, ...attrs } = Astro.props;
           target="_blank"
           rel="noopener noreferrer"
           aria-label={link.name}
+          data-track={location ? 'contact_click' : undefined}
+          data-track-method={location ? link.name.toLowerCase() : undefined}
+          data-track-location={location}
         >
           <Icon name={link.icon} size={size} />
         </a>

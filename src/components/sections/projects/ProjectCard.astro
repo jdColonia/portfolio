@@ -60,6 +60,9 @@ const t = useTranslations(lang);
             <a
               href={project.github}
               aria-label={`${t('projects.github')} ${project.title}`}
+              data-track="project_click"
+              data-track-project-id={project.id}
+              data-track-link-type="repo"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -70,6 +73,9 @@ const t = useTranslations(lang);
             <a
               href={project.demo}
               aria-label={`${t('projects.demo')}: ${project.title}`}
+              data-track="project_click"
+              data-track-project-id={project.id}
+              data-track-link-type="demo"
               target="_blank"
               rel="noopener noreferrer"
             >

@@ -8,13 +8,26 @@ const t = useTranslations(lang);
 ---
 
 <div id="side-dock" class="dock">
-  <SocialLinks class="dock-links" linkClass="dock-link" size={24} aria-label={t('dock.social')} />
+  <SocialLinks
+    class="dock-links"
+    linkClass="dock-link"
+    size={24}
+    aria-label={t('dock.social')}
+    location="dock"
+  />
 
   <span class="dock-line dock-line-end" aria-hidden="true"></span>
 </div>
 
 <div id="side-dock-mail" class="dock dock-right">
-  <a class="dock-mail" href={`mailto:${SITE_CONFIG.email}`} aria-label={t('dock.mail')}>
+  <a
+    class="dock-mail"
+    href={`mailto:${SITE_CONFIG.email}`}
+    aria-label={t('dock.mail')}
+    data-track="contact_click"
+    data-track-method="email"
+    data-track-location="dock"
+  >
     {SITE_CONFIG.email}
   </a>
 
