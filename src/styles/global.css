@@ -1,0 +1,114 @@
+@import 'tailwindcss';
+
+/* Components that no page renders: keep their utilities out of the bundle. */
+@source not '../components/ui/LanguagePicker.astro';
+
+/* Inter Variable, latin subset only (the package ships a single CSS with every subset). Same
+   woff2 the Layout preloads. */
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2')
+    format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@theme {
+  --color-lava: #ff3621;
+  --color-lava-400: #ff5f46;
+  --color-lava-300: #ff8a6b;
+
+  --color-coal: #0e1014;
+
+  --color-ink: #f1f1ef;
+  --color-ink-muted: #9a9da3;
+
+  --font-display: 'Anton', 'Impact', sans-serif;
+  --font-sans: 'Inter Variable', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* The crystal glow color transitions between layers: it needs a typed custom property. */
+@property --glow-color {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #ff3621;
+}
+
+/* Graphite palette: every layer shares text/muted/accent, only the tint changes.
+   motion.ts just sets html[data-layer]; no per-frame custom-property writes. */
+:root {
+  --layer-accent: #ff3621;
+  --layer-tint: #ff3621;
+  --layer-text: #f1f1ef;
+  --layer-muted: #9a9da3;
+}
+
+html[data-layer='raw'] {
+  --layer-tint: #ff3621;
+}
+
+html[data-layer='bronze'] {
+  --layer-tint: #d08c55;
+}
+
+html[data-layer='silver'] {
+  --layer-tint: #b4bcc4;
+}
+
+html[data-layer='gold'] {
+  --layer-tint: #e3b341;
+}
+
+html[data-layer='serve'] {
+  --layer-tint: #ff5f46;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+  }
+
+  body {
+    background: #0e1014;
+    color: var(--layer-text);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-lava);
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  /* Dark glass surface. */
+  .glass {
+    background: rgba(22, 24, 28, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+      0 10px 30px -12px rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(10px) saturate(115%);
+    -webkit-backdrop-filter: blur(10px) saturate(115%);
+  }
+}
+
+/* Stage layout (>= 1024px): the fixed crystal box is 45% of the viewport wide and moves between
+   stages (html[data-stage]); the content sits in the opposite 55%. --dock-w clears the side docks;
+   --zone-w is the content width in that 55%. */
+:root {
+  --dock-w: 4.5rem;
+  --zone-gutter: 1.5rem;
+  --footer-h: 7.5rem;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --zone-w: calc(var(--vw, 100vw) * 0.55 - var(--dock-w) - var(--zone-gutter));
+  }
+}
