@@ -41,6 +41,8 @@ const canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site).href : unde
     <link rel="icon" type="image/svg+xml" href={faviconUrl} />
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
     <meta name="generator" content={Astro.generator} />
+    <!-- Search Console ownership (also verified through Google Analytics). -->
+    <meta name="google-site-verification" content="uIMl2BE9OG2ub7SdyI5z5KW5--UE-3IcrNtrpoTPQg8" />
     <title>{title}</title>
     <link rel="preload" as="font" type="font/woff2" crossorigin href={interLatin} />
     <link rel="preload" as="font" type="font/woff2" crossorigin href={antonLatin} />
