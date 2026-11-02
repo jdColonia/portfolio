@@ -2,6 +2,7 @@
 import { Icon } from 'astro-icon/components';
 // import LanguagePicker from '@components/ui/LanguagePicker.astro'; // Desactivado temporalmente
 import type { NavItem } from '@components/layout/header/types';
+import { getLangFromUrl } from '@i18n/utils';
 
 interface Props {
   navItems: NavItem[];
@@ -9,6 +10,7 @@ interface Props {
 }
 
 const { navItems, cvItem } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
 ---
 
 <!-- Mobile Menu Button -->
@@ -43,7 +45,15 @@ const { navItems, cvItem } = Astro.props;
       </a>
     ))
   }
-  <a class="mobile-cv nav-link" href={cvItem.url} data-section="" data-nav={cvItem.label}>
+  <a
+    class="mobile-cv nav-link"
+    href={cvItem.url}
+    data-section=""
+    data-nav={cvItem.label}
+    data-track="cv_open"
+    data-track-cv-language={lang}
+    data-track-location="mobile_nav"
+  >
     <Icon name="tabler:file-cv" size={20} aria-hidden="true" />
     {cvItem.title}
   </a>

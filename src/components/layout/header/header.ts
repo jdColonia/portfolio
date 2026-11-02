@@ -7,6 +7,7 @@ import {
   prefersReducedMotion,
   type LayerName,
 } from '@lib/motion';
+import { trackSectionView } from '@lib/analytics';
 
 interface MobileMenuRefs {
   button: HTMLElement | null;
@@ -329,6 +330,7 @@ function initActiveLink(
         }
 
         setActive(target.id);
+        if (!isOnCvPage) trackSectionView(target.id);
 
         // Update URL when scrolling through sections (only on main page, not on CV page)
         if (!isOnCvPage) {

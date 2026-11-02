@@ -40,12 +40,19 @@ const projectsUrl = localizePath(lang, 'proyectos');
       <Button href={projectsUrl} data-section="proyectos" class="nav-link">
         {t('hero.cta-projects')}
       </Button>
-      <Button href={cvUrl} download variant="glass">
+      <Button
+        href={cvUrl}
+        download
+        variant="glass"
+        data-track="cv_download"
+        data-track-cv-language={lang}
+        data-track-location="hero"
+      >
         <Icon slot="icon" name="tabler:download" size={24} />
         {t('hero.download-cv')}
       </Button>
 
-      <SocialLinks class="hero-socials" linkClass="hero-social-link" />
+      <SocialLinks class="hero-socials" linkClass="hero-social-link" location="hero" />
     </div>
   </div>
 </div>

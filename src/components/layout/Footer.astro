@@ -20,14 +20,39 @@ const cvPage = localizePath(lang, 'cv');
           {
             SOCIAL_LINKS.map((link) => (
               <li>
-                <a href={link.url} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-track="contact_click"
+                  data-track-method={link.name.toLowerCase()}
+                  data-track-location="footer"
+                >
                   {link.name}
                 </a>
               </li>
             ))
           }
-          <li><a href={`mailto:${SITE_CONFIG.email}`}>{SITE_CONFIG.email}</a></li>
-          <li><a href={cvPage}>{t('nav.cv')}</a></li>
+          <li>
+            <a
+              href={`mailto:${SITE_CONFIG.email}`}
+              data-track="contact_click"
+              data-track-method="email"
+              data-track-location="footer"
+            >
+              {SITE_CONFIG.email}
+            </a>
+          </li>
+          <li>
+            <a
+              href={cvPage}
+              data-track="cv_open"
+              data-track-cv-language={lang}
+              data-track-location="footer"
+            >
+              {t('nav.cv')}
+            </a>
+          </li>
         </ul>
       </nav>
     </div>

@@ -50,7 +50,15 @@ const contactLinks = ['LinkedIn', 'GitHub'].flatMap((name) =>
 
     {
       contactLinks.map((link) => (
-        <a class="contact-link" href={link.url} target="_blank" rel="noopener noreferrer">
+        <a
+          class="contact-link"
+          href={link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-track="contact_click"
+          data-track-method={link.name.toLowerCase()}
+          data-track-location="contact"
+        >
           {link.name}
         </a>
       ))
@@ -209,6 +217,7 @@ const contactLinks = ['LinkedIn', 'GitHub'].flatMap((name) =>
   import { gsap } from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { onDestroy, prefersReducedMotion } from '@lib/motion';
+  import { track } from '@lib/analytics';
 
   gsap.registerPlugin(ScrollTrigger);
 
@@ -220,6 +229,7 @@ const contactLinks = ['LinkedIn', 'GitHub'].flatMap((name) =>
 
     button?.addEventListener('click', async () => {
       const email = button.dataset.email ?? '';
+      track('contact_click', { method: 'email', location: 'contact' });
       try {
         await navigator.clipboard.writeText(email);
         if (status) {

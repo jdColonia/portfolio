@@ -41,6 +41,8 @@ const canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site).href : unde
     <link rel="icon" type="image/svg+xml" href={faviconUrl} />
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
     <meta name="generator" content={Astro.generator} />
+    <!-- Search Console ownership (also verified through Google Analytics). -->
+    <meta name="google-site-verification" content="uIMl2BE9OG2ub7SdyI5z5KW5--UE-3IcrNtrpoTPQg8" />
     <title>{title}</title>
     <link rel="preload" as="font" type="font/woff2" crossorigin href={interLatin} />
     <link rel="preload" as="font" type="font/woff2" crossorigin href={antonLatin} />
@@ -73,7 +75,20 @@ const canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site).href : unde
     </script>
 
     <!-- Google Analytics runs in a Partytown web worker (gtag.js is the heaviest script on the
-         page), once per full load: a ClientRouter navigation does not re-run these scripts. -->
+         page), once per full load: a ClientRouter navigation does not re-run these scripts, so
+         @lib/analytics sends page_view itself on navigations (GA's history-based page views are
+         off in the GA admin: header.ts rewrites the URL while scrolling through sections).
+         Internal traffic (any host but production, or the ga_internal flag) carries
+         traffic_type=internal for GA's data filter. The flag is set with ?interno=1 and cleared
+         with ?interno=0 by the plain inline script below: it must read the query string at parse
+         time, because header.ts rewrites the URL (dropping the query) before the worker runs. -->
+    <script is:inline>
+      try {
+        var interno = new URLSearchParams(location.search).get('interno');
+        if (interno === '1') localStorage.setItem('ga_internal', '1');
+        else if (interno === '0') localStorage.removeItem('ga_internal');
+      } catch (e) {}
+    </script>
     <script
       is:inline
       type="text/partytown"
@@ -85,7 +100,12 @@ const canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site).href : unde
       };
       gtag('js', new Date());
 
-      gtag('config', 'G-W9MRJJPZG4');
+      var internal = location.hostname !== 'jdcolonia.github.io';
+      try {
+        if (localStorage.getItem('ga_internal') === '1') internal = true;
+      } catch (e) {}
+
+      gtag('config', 'G-W9MRJJPZG4', internal ? { traffic_type: 'internal' } : {});
     </script>
   </head>
 
@@ -128,8 +148,10 @@ const canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site).href : unde
 
     <script>
       import { initMotion, destroyMotion } from '@lib/motion';
+      import { initAnalytics } from '@lib/analytics';
 
       document.addEventListener('astro:page-load', () => initMotion());
+      document.addEventListener('astro:page-load', () => initAnalytics());
       document.addEventListener('astro:before-swap', () => destroyMotion());
     </script>
   </body>
