@@ -1,16 +1,21 @@
+// Text of the "About me" section (components/sections/about/Manifesto.astro): a heading and
+// three short blocks that mirror the hero tagline (Build, Deploy, Analyze).
 import type { Localized } from '@data/types';
 
+/** One of the short blocks under the heading. */
 export interface ManifestoBlock {
   title: string;
   text: string;
 }
 
 export interface ManifestoContent {
+  /** Small monospace line above the heading, written like a dataset name (`layer.name`). */
   path: string;
   heading: string;
   blocks: ManifestoBlock[];
 }
 
+/** Section content per language. */
 export const manifesto: Localized<ManifestoContent> = {
   es: {
     path: 'bronze.sobre_mi',

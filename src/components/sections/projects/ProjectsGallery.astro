@@ -1,4 +1,11 @@
 ---
+// Projects section: a horizontal row of project cards, grouped by track (data, software,
+// platform) with a divider card before each group. The same markup has three behaviours, chosen
+// by gallery.ts and exposed as `data-mode` on the .gallery element:
+//   - no `data-mode` (reduced motion): a native, swipeable horizontal scroll with snap points;
+//   - `pinned` (desktop): the section is held in place while scrolling moves the cards sideways;
+//   - `sticky` (phones and tablets): the cards stick with CSS while scrolling moves them sideways.
+// The data-gallery-* attributes below are the hooks gallery.ts uses to find each part.
 import { getLangFromUrl, useTranslations } from '@i18n/utils';
 import ProjectCard from '@components/sections/projects/ProjectCard.astro';
 import TrackDivider from '@components/sections/projects/TrackDivider.astro';
@@ -8,12 +15,14 @@ import TitleSection from '@components/ui/TitleSection.astro';
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
+// Translation keys for each track's heading and one-line description.
 const trackKeys = {
   data: { label: 'projects.track.data', desc: 'projects.track.data.desc' },
   software: { label: 'projects.track.software', desc: 'projects.track.software.desc' },
   platform: { label: 'projects.track.platform', desc: 'projects.track.platform.desc' },
 } as const;
 
+// Display order of the tracks. A track without projects is dropped.
 const trackOrder: ProjectTrack[] = ['data', 'software', 'platform'];
 const groups = trackOrder
   .map((track) => ({ track, items: projects[lang].filter((project) => project.track === track) }))
@@ -27,8 +36,13 @@ const groups = trackOrder
       <p class="projects-lead">{t('projects.intro')}</p>
     </div>
 
+    {/* gallery-scroll and gallery-stage are only used in sticky mode (see the styles below). */}
     <div class="gallery-scroll" data-gallery-scroll>
       <div class="gallery-stage" data-gallery-stage>
+        {
+          /* tabindex="0" lets keyboard users scroll the row natively; gallery.ts removes it when
+            it takes over the scrolling. */
+        }
         <div
           class="gallery-viewport"
           data-gallery-viewport
@@ -77,7 +91,10 @@ const groups = trackOrder
     color: var(--layer-muted);
   }
 
-  /* ---- Gallery: full-bleed native snap carousel on small screens ------------------ */
+  /* ---- Base styles: a full-bleed native carousel with snap points. This is what small screens
+     and users with reduced motion get; the other modes below build on it. ---------------- */
+  /* Full-bleed: --vw is the viewport width without the scrollbar (set in Layout.astro), and the
+     negative margin pulls the gallery out of the padded <main>. */
   .gallery {
     --gallery-pad: 1rem;
     position: relative;
@@ -128,8 +145,8 @@ const groups = trackOrder
     transform-origin: left center;
   }
 
-  /* ---- Desktop: the crystal is hidden here (stage 'none'), so the gallery uses the full
-     width between the docks and shows about three cards at once ------------------------- */
+  /* ---- Desktop: this section uses stage 'none', so the 3D crystal is hidden and the gallery
+     can use the full width between the side docks, showing about three cards at once. ------ */
   @media (min-width: 1024px) {
     .gallery {
       --gallery-pad: 0px;
@@ -138,7 +155,8 @@ const groups = trackOrder
       margin-left: 0;
     }
 
-    /* The section has no padding of its own (the pin owns it): clear the header here. */
+    /* The section wrapper has no vertical padding here (it uses `section-flush`), so this
+       element supplies it, including the space that clears the fixed header. */
     .gallery-pin {
       padding: 5.5rem 0 2.5rem;
     }
@@ -162,8 +180,10 @@ const groups = trackOrder
     }
   }
 
-  /* JS switches the gallery to the pinned mode (desktop, motion allowed): one screen with the
-     title; the cards scrub sideways across the full width (no crystal to avoid here). */
+  /* Pinned mode (desktop, motion allowed), switched on by gallery.ts: the title and the cards fill
+     exactly one screen, which is held in place while the page scrolls. The scroll "scrubs" the
+     track sideways, meaning its position follows the scrollbar. Native horizontal scrolling and
+     snapping are turned off because the script moves the track itself. */
   .gallery[data-mode='pinned'] .gallery-pin {
     display: flex;
     flex-direction: column;
@@ -183,10 +203,12 @@ const groups = trackOrder
     will-change: transform;
   }
 
-  /* Phones and tablets (motion allowed): only the cards stick (CSS sticky, no JS pin, so native
-     momentum scrolling never jumps); the title scrolls away above. The stage is only as tall as
-     the cards and sticks centered below the header (--stage-top, set by the script); the scroll
-     box is as tall as the stage plus the horizontal travel. */
+  /* Sticky mode (phones and tablets, motion allowed). Only the cards stay in view, using CSS
+     `position: sticky` instead of a JavaScript pin, because a JS pin can make native momentum
+     scrolling on touch screens jump. The title scrolls away above them. The stage is only as
+     tall as the cards and sticks centered below the header (--stage-top, set by gallery.ts).
+     The surrounding .gallery-scroll box is as tall as the stage plus the horizontal travel,
+     which gives the stage room to stay stuck while the cards move sideways. */
   .gallery[data-mode='sticky'] .gallery-stage {
     position: sticky;
     top: var(--stage-top, 4.5rem);
@@ -212,5 +234,6 @@ const groups = trackOrder
 <script>
   import { initGallery } from '@components/sections/projects/gallery';
 
+  // Fires on the first load and after every client-side navigation (ClientRouter).
   document.addEventListener('astro:page-load', initGallery);
 </script>

@@ -1,4 +1,7 @@
 ---
+// Two fixed columns on the sides of the screen (desktop only): social links at the bottom left
+// and the email, written vertically, at the bottom right. Used by Layout.astro on every page.
+// The `data-track*` attributes are picked up by the click listener in @lib/analytics.
 import { getLangFromUrl, useTranslations } from '@i18n/utils';
 import { SITE_CONFIG } from '@data/config';
 import SocialLinks from '@components/ui/SocialLinks.astro';
@@ -35,8 +38,8 @@ const t = useTranslations(lang);
 </div>
 
 <style>
-  /* Two fixed columns (desktop only): social links bottom-left, the email bottom-right. Both
-     leave the center free for the crystal and the sections (--dock-w wide, see global.css). */
+  /* Both docks are fixed to the viewport edges and hidden below 1024px. They leave the centre
+     free for the crystal and the sections; the width reserved for them is --dock-w (global.css). */
   .dock {
     --dock-x: 10px;
     position: fixed;
@@ -62,7 +65,7 @@ const t = useTranslations(lang);
     }
   }
 
-  /* Thin vertical line running to the bottom edge of the viewport. */
+  /* Thin vertical line running down to the bottom edge of the viewport. */
   .dock-line {
     display: block;
     width: 1px;
@@ -80,6 +83,8 @@ const t = useTranslations(lang);
     height: 4.5rem;
   }
 
+  /* The links come from SocialLinks.astro, a child component, so Astro's scoped styles cannot
+     reach them directly: :global() is used to target the classes passed to it. */
   .dock :global(.dock-links) {
     display: flex;
     flex: none;

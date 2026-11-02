@@ -1,6 +1,10 @@
 ---
+// Desktop navigation (hidden below `md`): a glass pill with the section links, plus a separate CV
+// button on its right. Rendered by Header.astro. header.ts marks the current link with
+// aria-current and slides #nav-drop (the highlight behind the active link) to it.
 import { Icon } from 'astro-icon/components';
-// import LanguagePicker from '@components/ui/LanguagePicker.astro'; // Desactivado temporalmente
+// Language picker temporarily disabled; re-enable together with the commented markup below.
+// import LanguagePicker from '@components/ui/LanguagePicker.astro';
 import type { NavItem } from '@components/layout/header/types';
 import { getLangFromUrl } from '@i18n/utils';
 
@@ -28,10 +32,15 @@ const lang = getLangFromUrl(Astro.url);
         </a>
       ))
     }
-    <!-- Selector de idioma desactivado temporalmente -->
-    <!-- <div class="h-6 w-px bg-gray-700 mx-2"></div>
-    <LanguagePicker /> -->
+    {
+      /* Language picker temporarily disabled. Markup to restore:
+         <div class="h-6 w-px bg-gray-700 mx-2"></div>
+         <LanguagePicker /> */
+    }
   </nav>
+  {
+    /* The data-track* attributes are read by the click listener in @lib/analytics (cv_open event). */
+  }
   <a
     class="nav-link cv-pill glass"
     href={cvItem.url}
@@ -61,7 +70,7 @@ const lang = getLangFromUrl(Astro.url);
     pointer-events: auto;
   }
 
-  /* Desktop pill */
+  /* The section pill. */
   #desktop-nav {
     position: relative;
     grid-column: 2;
@@ -113,6 +122,8 @@ const lang = getLangFromUrl(Astro.url);
     transform: scale(0.92);
   }
 
+  /* The highlight behind the active link. header.ts animates its left offset and width to match
+     the link; here it starts hidden (opacity 0, width 0). */
   #nav-drop {
     position: absolute;
     top: 0.25rem;

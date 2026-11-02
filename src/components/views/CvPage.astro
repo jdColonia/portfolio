@@ -8,11 +8,14 @@ import { SITE_CONFIG } from '@data/config';
 import { getLangFromUrl, useTranslations } from '@i18n/utils';
 import { localizePath, withBase } from '@lib/urls';
 
-// Single source for the CV page: cv and en/cv render it.
+// The resume page: a PDF viewer plus download and open buttons. It is the single implementation
+// behind both routes, pages/cv.astro (Spanish) and pages/en/cv.astro (English); the language is
+// read from the URL, which also picks which PDF is shown.
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
 const cvFile = lang === 'es' ? SITE_CONFIG.cvEs : SITE_CONFIG.cvEn;
+// The configured path starts with "/", so drop it to let withBase add the deployment base.
 const cvUrl = withBase(cvFile.slice(1));
 const homeUrl = localizePath(lang);
 ---
@@ -22,6 +25,14 @@ const homeUrl = localizePath(lang);
     <TitleSection as="h1" path="serve.cv">{t('cv.title')}</TitleSection>
     <p class="cv-lead">{t('cv.lead')}</p>
 
+    {
+      /*
+      The two buttons appear twice on purpose: here, above the viewer (tablet and desktop), and
+      again inside the fallback card below (phones). CSS shows only one of the two sets, see the
+      media query in the style block. The data-track attributes feed the analytics events
+      cv_download and cv_open (handled by the click listener in @lib/analytics).
+    */
+    }
     <div class="cv-actions cv-actions-top">
       <Button
         href={cvUrl}
@@ -49,7 +60,10 @@ const homeUrl = localizePath(lang);
     <div class="cv-frame">
       <iframe src={cvUrl} title={t('cv.title')} class="cv-iframe"></iframe>
 
-      <!-- Phones: mobile browsers usually can't render a PDF in an iframe. -->
+      {
+        /* Phones: mobile browsers usually cannot render a PDF inside an iframe, so a card with the
+          buttons replaces the viewer there. */
+      }
       <div class="cv-fallback">
         <Icon name="tabler:file-cv" size={40} aria-hidden="true" />
         <p>{t('cv.fallback')}</p>
@@ -84,7 +98,8 @@ const homeUrl = localizePath(lang);
 </Layout>
 
 <style>
-  /* Clears the fixed header. */
+  /* Top padding leaves room for the fixed site header. :global is needed because the class is
+     applied to SectionContainer, a child component whose elements Astro does not scope here. */
   :global(.cv-section) {
     padding-top: 6rem;
     padding-bottom: 4rem;
@@ -115,6 +130,7 @@ const homeUrl = localizePath(lang);
     background: rgba(14, 16, 20, 0.6);
   }
 
+  /* Hidden below 768px (the fallback card is shown instead); see the media query further down. */
   .cv-iframe {
     display: none;
     width: 100%;
@@ -136,7 +152,8 @@ const homeUrl = localizePath(lang);
     justify-content: center;
   }
 
-  /* On phones the card carries the buttons; the row above the frame would repeat them. */
+  /* On phones the fallback card carries the buttons, so the row above the frame (which would
+     repeat them) is hidden. The 768px media query below turns it back on. */
   .cv-actions-top {
     display: none;
   }

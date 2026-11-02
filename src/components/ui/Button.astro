@@ -1,18 +1,21 @@
 ---
+// Pill-shaped call-to-action: solid orange ("primary") or translucent ("glass").
 import type { HTMLAttributes } from 'astro/types';
 
 type Variant = 'primary' | 'glass';
 
 interface Props extends Omit<HTMLAttributes<'a'>, 'class'> {
+  /** Visual style: `primary` is a solid lava-orange fill, `glass` a flat translucent one. */
   variant?: Variant;
+  /** Extra classes, merged with the variant class. */
   class?: string;
-  /** Only for the <button> form (no href). */
+  /** Only used in the `<button>` form (when there is no `href`). */
   type?: 'button' | 'submit' | 'reset';
 }
 
-// An <a> when it has an href, a <button> otherwise. Every other attribute (target, rel, download,
-// data-*, aria-*, type...) goes to the element. Slots: the default one is the label, `icon` goes
-// before it.
+// Renders an <a> when an href is given and a <button> otherwise. Every other attribute (target,
+// rel, download, data-*, aria-*, type) is passed straight to the element. The default slot is the
+// label; the `icon` slot is placed before it.
 const { variant = 'primary', class: className, href, ...attrs } = Astro.props;
 const Tag = href ? 'a' : 'button';
 ---
@@ -47,7 +50,8 @@ const Tag = href ? 'a' : 'button';
     transform: translateY(-2px);
   }
 
-  /* No backdrop-filter here: a flat translucent fill is enough and keeps scrolling cheap. */
+  /* Deliberately no backdrop-filter: blurring what is behind the button is expensive while the
+     page scrolls, and a flat translucent fill looks good enough. */
   .btn-glass {
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.1);

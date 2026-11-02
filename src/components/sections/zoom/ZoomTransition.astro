@@ -1,10 +1,16 @@
 ---
+// Transition screen between sections: a large word that scales up as the user scrolls until it
+// fills the view, with an orange glow behind it. While scrolling, the section is pinned (held in
+// place with CSS `position: sticky`) and the scroll progress drives the zoom; with reduced
+// motion it is just a heading. The animation script is at the bottom of this file.
 import { getLangFromUrl, useTranslations } from '@i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
-// The zoom is centered on an "a" of the word, so the letter fills the stage at the end.
+// The zoom is centered on one letter "a" of the word, so that letter is what ends up filling the
+// stage. The search starts at 40% of the word so a letter in its middle or later part is picked;
+// if there is no "a" there, the first letter is used.
 const word = t('zoom.word');
 const pivotAt = Math.max(0, word.indexOf('a', Math.floor(word.length * 0.4)));
 const before = word.slice(0, pivotAt);
@@ -24,14 +30,16 @@ const after = word.slice(pivotAt + 1);
 </section>
 
 <style>
-  /* Small screens: full-bleed out of the padded <main>. */
+  /* Full-bleed: break out of the padded <main> so the section spans the whole viewport width.
+     --vw is the viewport width without the scrollbar (set in Layout.astro), so the section
+     never causes horizontal overflow. */
   .zoom {
     position: relative;
     width: var(--vw, 100vw);
     margin-left: calc(50% - var(--vw, 100vw) / 2);
   }
 
-  /* Default (and reduced motion): a plain heading block. */
+  /* Default styles, which are also what users with reduced motion get: a plain heading block. */
   .zoom-pin {
     position: relative;
     display: grid;
@@ -63,8 +71,8 @@ const after = word.slice(pivotAt + 1);
     color: var(--layer-text);
   }
 
-  /* Desktop: the zoom spans the full width between the docks (the crystal is centered and dim
-     behind it). The stage clips its contents and fades at both sides. */
+  /* Desktop: the zoom spans the full width between the two side docks. The 3D crystal is centered
+     and dimmed behind it. (The mask at the end of this style block fades the stage's edges.) */
   @media (min-width: 1024px) {
     .zoom {
       width: calc(var(--vw, 100vw) - 2 * var(--dock-w));
@@ -77,11 +85,14 @@ const after = word.slice(pivotAt + 1);
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    /* 150svh: one screen for the pinned stage plus half a screen of extra scrolling, which is the
+       distance over which the zoom plays. */
     .zoom {
       height: 150svh;
     }
 
-    /* The inner stays in view while the section scrolls past: the zoom is scrubbed on that scroll. */
+    /* The inner element stays fixed in view while the section scrolls past. The zoom is
+       "scrubbed", meaning its progress follows that scroll. */
     .zoom-pin {
       position: sticky;
       top: 0;
@@ -94,7 +105,8 @@ const after = word.slice(pivotAt + 1);
       overflow: clip;
     }
 
-    /* Pre-painted lava glow: only its transform and opacity change while scrolling. */
+    /* The orange glow is painted once at full size and only its transform and opacity change
+       while scrolling, which the browser can animate cheaply (no repaint on every frame). */
     .zoom-glow {
       display: block;
       position: absolute;
@@ -115,6 +127,8 @@ const after = word.slice(pivotAt + 1);
       will-change: transform, opacity;
     }
   }
+  /* Desktop with motion: fade the stage out over its left and right 2.5rem, so the scaled word
+     and the glow do not end abruptly at the stage's clipped edges. */
   @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
     .zoom-stage {
       -webkit-mask-image: linear-gradient(
@@ -136,12 +150,15 @@ const after = word.slice(pivotAt + 1);
 </style>
 
 <script>
+  // GSAP is the animation library; ScrollTrigger ties animations to the scroll position.
   import { gsap } from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { onDestroy, prefersReducedMotion } from '@lib/motion';
 
   gsap.registerPlugin(ScrollTrigger);
 
+  // `astro:page-load` fires on the first load and after every client-side navigation
+  // (ClientRouter), so the animation is recreated each time and reverted through `onDestroy`.
   document.addEventListener('astro:page-load', () => {
     const section = document.querySelector<HTMLElement>('[data-zoom]');
     const glow = section?.querySelector<HTMLElement>('[data-zoom-glow]');
@@ -150,7 +167,10 @@ const after = word.slice(pivotAt + 1);
     if (!section || !glow || !word || !pivot || prefersReducedMotion()) return;
 
     const ctx = gsap.context(() => {
-      // Percentages survive resizes; fonts changing the glyph widths re-run it on refresh.
+      // Scale the word around the centre of the pivot letter, so that letter grows in place and
+      // ends up filling the stage. The origin is stored as a percentage so it survives window
+      // resizes; it is recomputed when the fonts load and on every ScrollTrigger refresh, since
+      // both can change the letter widths.
       const setOrigin = () => {
         const width = word.offsetWidth;
         if (width <= 0) return;
@@ -160,8 +180,10 @@ const after = word.slice(pivotAt + 1);
       setOrigin();
       void document.fonts?.ready.then(setOrigin);
 
-      // Shorter than before (section is 150svh): the word fades out early while it is still
-      // small, and the stage clips whatever grows past the content zone.
+      // One timeline of 1 unit, spread over the whole scroll of the section (150svh). The word
+      // scales up, and fades out between 0.5 and 0.8, before it gets huge. The glow grows, fades
+      // in over the first 0.4 and fades out again from 0.6. The stage clips whatever grows past
+      // its edges.
       const tl = gsap.timeline({
         defaults: { ease: 'none' },
         scrollTrigger: {

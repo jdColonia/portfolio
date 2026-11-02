@@ -1,10 +1,14 @@
 ---
+// The content of one company in the experience section: title, date range, roles with their
+// tasks, an optional description and tags. Experience.astro renders one of these per company;
+// experience.ts shows and hides them by toggling the `hidden` attribute.
 import type { ExperienceCompany } from '@data/experience';
 
 interface Props {
   item: ExperienceCompany;
   /** The first panel starts visible; the script toggles `hidden` afterwards. */
   active: boolean;
+  /** Text shown for a company whose details are not available yet. */
   pendingLabel: string;
 }
 
@@ -39,6 +43,10 @@ const { item, active, pendingLabel } = Astro.props;
     <p class="exp-range">{item.range}</p>
   </header>
 
+  {
+    /* data-lenis-prevent: Lenis (the smooth-scroll library) must not hijack the wheel here, so this
+      box can scroll on its own. */
+  }
   <div class="exp-body" data-lenis-prevent data-body>
     {item.pending && <p class="exp-pending">{pendingLabel}</p>}
 
@@ -83,6 +91,8 @@ const { item, active, pendingLabel } = Astro.props;
 
 <style>
   /* ---- Panel ------------------------------------------------------------------ */
+  /* The `hidden` attribute is what switches panels (see experience.ts). The explicit display rule
+     below is needed because `display: flex` on .exp-panel would otherwise override it. */
   .exp-panel {
     display: flex;
     min-width: 0;
@@ -94,6 +104,8 @@ const { item, active, pendingLabel } = Astro.props;
     display: none;
   }
 
+  /* The fade-in replays each time a panel stops being hidden, because it goes from display: none
+     to visible. */
   @media (prefers-reduced-motion: no-preference) {
     .exp-panel:not([hidden]) {
       animation: exp-fade 0.3s ease-in-out;
@@ -139,6 +151,9 @@ const { item, active, pendingLabel } = Astro.props;
     color: var(--layer-muted);
   }
 
+  /* The only scrolling part of the panel: the header stays put while long role lists scroll.
+     `overscroll-behavior: contain` stops the page from scrolling once this box reaches its end.
+     The scrollbar is thin and styled for both Firefox (scrollbar-*) and WebKit (::-webkit-*). */
   .exp-body {
     min-height: 0;
     flex: 1 1 auto;
@@ -180,7 +195,8 @@ const { item, active, pendingLabel } = Astro.props;
     color: var(--layer-accent);
   }
 
-  /* Data-related role: a small accent mark after the name. */
+  /* Roles flagged as data-related (`highlight` in the data file) get a small accent square after
+     the name. */
   .exp-role[data-highlight]::after {
     content: '';
     display: inline-block;

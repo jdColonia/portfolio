@@ -1,23 +1,36 @@
+// Generates /sitemap.xml at build time (an Astro endpoint: this file becomes a static XML file).
+// The sitemap tells search engines which pages exist and when each one last changed.
+// To make a new indexable page appear here, add it to `entries` below, together with the source
+// files whose history dates it. The build must see the full git history for the dates to be
+// right, which is why the deploy workflow checks out with `fetch-depth: 0`.
 import type { APIRoute } from 'astro';
 import { execFileSync } from 'node:child_process';
 import { withBase } from '@lib/urls';
 
 /**
- * Canonical, indexable pages only. The section routes (/stack, /en/proyectos, ...) render the home
- * and declare it as canonical, and 404 is not a page to index, so none of them are listed.
- * Each entry pairs the Spanish and English versions (hreflang alternates).
+ * One page of the site in both languages. Only canonical, indexable pages belong here: the
+ * section routes (/stack, /en/proyectos, ...) render the home page and declare it as their
+ * canonical URL (the address search engines should treat as the original), and the 404 page is
+ * not meant to be indexed, so none of those are listed.
+ * The Spanish and English versions are linked as `hreflang` alternates, the markup that tells
+ * search engines which URL to show to speakers of each language.
  */
 type Entry = {
+  /** Spanish path relative to the site base ('' is the home page). */
   es: string;
+  /** English path relative to the site base. */
   en: string;
-  /** Sources whose last change dates the page (lastmod). */
+  /** Files and folders whose last change dates the page, used for `<lastmod>`. */
   sources: string[];
+  /** Relative importance among this site's pages, from 0.0 to 1.0 (a hint for crawlers). */
   priority: string;
+  /** How often the page tends to change (also only a hint for crawlers). */
   changefreq: 'weekly' | 'monthly' | 'yearly';
 };
 
 const entries: Entry[] = [
-  // Primary page: projects, experience and stack land here as they change.
+  // Home page: projects, experience and stack are updated here as they change, so it depends on
+  // most of the source tree.
   {
     es: '',
     en: 'en/',
@@ -25,9 +38,9 @@ const entries: Entry[] = [
     priority: '1.0',
     changefreq: 'monthly',
   },
-  // Section-level page: changes only when the CV PDF is reissued.
+  // Resume page: it changes only when its template or one of the CV PDFs is updated.
   {
-    // Trailing slash: the canonical form (GitHub Pages redirects /cv to /cv/).
+    // Trailing slash: that is the canonical form, because GitHub Pages redirects /cv to /cv/.
     es: 'cv/',
     en: 'en/cv/',
     sources: [
@@ -40,6 +53,7 @@ const entries: Entry[] = [
   },
 ];
 
+/** Runs a git command and returns its trimmed output, or '' if git fails or is not installed. */
 const git = (args: string[]): string => {
   try {
     return execFileSync('git', args, {
@@ -51,17 +65,24 @@ const git = (args: string[]): string => {
   }
 };
 
-/** Last commit touching the sources; today if they have uncommitted changes or git is missing. */
+/**
+ * Date (YYYY-MM-DD) of the last commit that touched any of the sources. It falls back to today
+ * when those files have uncommitted changes or when git history is not available.
+ */
 const lastmod = (sources: string[]): string => {
-  // Local calendar date, like git's %cs.
+  // Local calendar date in the same YYYY-MM-DD shape as git's %cs. The 'sv-SE' locale is used
+  // only because it formats dates that way.
   const today = new Date().toLocaleDateString('sv-SE');
   if (git(['status', '--porcelain', '--', ...sources])) return today;
   return git(['log', '-1', '--format=%cs', '--', ...sources]) || today;
 };
 
+/** Builds the XML. `site` comes from the Astro config and makes every URL absolute. */
 export const GET: APIRoute = ({ site }) => {
   const url = (path: string) => new URL(withBase(path), site).href;
 
+  // Each page produces two <url> blocks, one per language, and both list the same alternates.
+  // x-default is the version for visitors whose language matches neither (Spanish here).
   const urls = entries.flatMap((entry) => {
     const alternates = [
       `    <xhtml:link rel="alternate" hreflang="es" href="${url(entry.es)}"/>`,

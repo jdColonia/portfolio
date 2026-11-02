@@ -1,4 +1,8 @@
 ---
+// Site footer: name, social links, email, CV link and copyright. Used by Layout.astro on every
+// page. On desktop it is a compact strip between the side docks that shares the last screen with
+// the contact section. The `data-track*` attributes are picked up by the click listener in
+// @lib/analytics.
 import { getLangFromUrl, useTranslations } from '@i18n/utils';
 import { SITE_CONFIG, SOCIAL_LINKS } from '@data/config';
 import { localizePath } from '@lib/urls';
@@ -125,8 +129,9 @@ const cvPage = localizePath(lang, 'cv');
     font-size: 0.8125rem;
   }
 
-  /* Desktop: a compact centered footer between the docks (fixed height = --footer-h); on the home
-     it shares the last screen with the contact section. */
+  /* Desktop: a compact centred footer between the side docks, with a fixed height (--footer-h,
+     defined in global.css). The extra .site-footer-zone class overrides the stacked mobile layout
+     above. */
   @media (min-width: 1024px) {
     .site-footer-zone {
       height: var(--footer-h);

@@ -5,9 +5,13 @@ import Button from '@components/ui/Button.astro';
 import NotebookCell from '@components/views/NotebookCell.astro';
 import { withBase } from '@lib/urls';
 
-// GitHub Pages serves this page at whatever unknown URL was requested, so every link and asset
-// must be absolute with the base, never relative. The path and the language are resolved on the
-// client: the page is static and there is no language route here.
+// The 404 page. It is built once as 404.html, which GitHub Pages serves at whatever unknown URL
+// was requested. Because it can appear under any path, every link and asset must be absolute
+// (starting with the base), never relative.
+//
+// The page is static and has no language route, so the requested path and the language are
+// resolved in the browser by not-found.ts. The text below is the Spanish default.
+// The look imitates a failed SQL notebook cell, in line with the data-engineering theme.
 const base = withBase('');
 const fallbackPath = '/unknown';
 ---
@@ -17,8 +21,16 @@ const fallbackPath = '/unknown';
   description="Página no encontrada. Vuelve al inicio o revisa la hoja de vida de Juan David Colonia."
   canonical="home"
 >
+  {/* Keeps search engines from indexing the error page. */}
   <meta slot="head" name="robots" content="noindex" />
   <SectionContainer plain class="py-16 md:py-20 lg:py-24">
+    {
+      /*
+      data-notfound marks the root for not-found.ts, and data-base hands it the deployment base.
+      Elements with data-i18n are translated by that script on English URLs. Each .nf-item gets
+      its position in the entrance animation through the --i custom property.
+    */
+    }
     <div class="nf" data-notfound data-base={base}>
       <p class="nf-item nf-label" style="--i: 0">gold.404</p>
 
@@ -96,7 +108,7 @@ const fallbackPath = '/unknown';
     color: var(--layer-muted);
   }
 
-  /* Same buttons as the hero actions. */
+  /* Same button row as the hero actions. */
   .nf-actions {
     display: flex;
     flex-wrap: wrap;
@@ -116,8 +128,9 @@ const fallbackPath = '/unknown';
     }
   }
 
-  /* Staggered fade-up entrance. The notebook cell (NotebookCell.astro) is also an .nf-item,
-     hence :global. */
+  /* Entrance animation: each item fades up slightly after the previous one (90ms per --i step).
+     The notebook cell comes from NotebookCell.astro and is also an .nf-item, which is why the
+     selector needs :global (Astro scopes styles to this component's own elements). */
   @media (prefers-reduced-motion: no-preference) {
     .nf :global(.nf-item) {
       animation: nf-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -138,6 +151,8 @@ const fallbackPath = '/unknown';
 </style>
 
 <script>
+  // astro:page-load fires on the first load and after every navigation made by ClientRouter
+  // (Astro's client-side router, which swaps pages without a full reload).
   import { initNotFound } from '@components/views/not-found';
 
   document.addEventListener('astro:page-load', initNotFound);

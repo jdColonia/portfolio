@@ -1,4 +1,7 @@
 ---
+// Experience section: a tab list (one tab per company) and one panel per company, where only
+// the active panel is visible. The tab behaviour lives in experience.ts; ExperienceTabs and
+// ExperiencePanel hold the markup and styles for each half.
 import { getLangFromUrl, useTranslations } from '@i18n/utils';
 import { experience } from '@data/experience';
 import ExperienceTabs from '@components/sections/experience/ExperienceTabs.astro';
@@ -21,6 +24,7 @@ const items = experience[lang];
   </div>
 </div>
 
+{/* Without JavaScript nothing can switch tabs, so show every panel one after another. */}
 <noscript>
   <style>
     .exp-panel[hidden] {
@@ -43,7 +47,8 @@ const items = experience[lang];
     min-height: 0;
   }
 
-  /* ---- Desktop: tabs left, active company right; the whole block fits one screen --- */
+  /* ---- Desktop: tabs on the left, the active company on the right. The block has a fixed
+     height so the whole section fits in one screen; the panel body scrolls inside it. --- */
   @media (min-width: 1024px) {
     .exp {
       display: grid;
@@ -58,5 +63,6 @@ const items = experience[lang];
 <script>
   import { initExperience } from '@components/sections/experience/experience';
 
+  // Fires on the first load and after every client-side navigation (ClientRouter).
   document.addEventListener('astro:page-load', initExperience);
 </script>

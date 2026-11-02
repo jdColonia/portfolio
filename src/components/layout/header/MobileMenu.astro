@@ -1,6 +1,10 @@
 ---
+// Mobile navigation (hidden from `md` up): the hamburger button and the full-screen menu it opens.
+// Rendered by Header.astro. header.ts toggles the `is-open` class, the `inert` attribute and the
+// aria-expanded state, and animates the links in.
 import { Icon } from 'astro-icon/components';
-// import LanguagePicker from '@components/ui/LanguagePicker.astro'; // Desactivado temporalmente
+// Language picker temporarily disabled; re-enable together with the commented markup below.
+// import LanguagePicker from '@components/ui/LanguagePicker.astro';
 import type { NavItem } from '@components/layout/header/types';
 import { getLangFromUrl } from '@i18n/utils';
 
@@ -13,7 +17,7 @@ const { navItems, cvItem } = Astro.props;
 const lang = getLangFromUrl(Astro.url);
 ---
 
-<!-- Mobile Menu Button -->
+{/* Hamburger button; header.ts turns its three lines into an X while the menu is open. */}
 <button
   id="mobile-menu-btn"
   class="md:hidden relative z-50 w-10 h-10 flex flex-col items-center justify-center gap-1.5"
@@ -26,7 +30,9 @@ const lang = getLangFromUrl(Astro.url);
   <span class="menu-line w-6 h-0.5 bg-current transition-all"></span>
 </button>
 
-<!-- Mobile Navigation -->
+{
+  /* Full-screen menu. It starts `inert`, so it is skipped by keyboard and screen readers until opened. */
+}
 <nav
   id="mobile-nav"
   class="mobile-sheet fixed inset-0 z-40 flex flex-col items-start justify-center gap-5 px-8 md:hidden"
@@ -57,14 +63,18 @@ const lang = getLangFromUrl(Astro.url);
     <Icon name="tabler:file-cv" size={20} aria-hidden="true" />
     {cvItem.title}
   </a>
-  <!-- Selector de idioma desactivado temporalmente -->
-  <!-- <div class="mt-4">
-    <LanguagePicker />
-  </div> -->
+  {
+    /* Language picker temporarily disabled. Markup to restore:
+       <div class="mt-4">
+         <LanguagePicker />
+       </div> */
+  }
 </nav>
 
 <style>
-  /* Mobile sheet: hidden (not just transparent) while closed, so it costs nothing. */
+  /* The menu is hidden with `visibility`, not only made transparent, while closed, so it costs
+     nothing to render and cannot be focused. The closing transition delays the `visibility`
+     change by 0.3s so the fade-out stays visible; opening applies it immediately. */
   .mobile-sheet {
     background: rgba(14, 16, 20, 0.78);
     border: 1px solid rgba(255, 255, 255, 0.1);

@@ -1,14 +1,19 @@
+// The "What I build with" section (components/sections/stack/StackDomains.astro): technologies
+// grouped into three areas. Technology names are not translated, so `items` is shared by both
+// languages and only the label and description are localized.
 import type { Localized } from '@data/types';
 import { techIcons } from '@data/techIcons';
 
 export type StackDomainId = 'software' | 'cloud' | 'data';
 
+/** One technology tile. */
 export interface StackItem {
   name: string;
-  /** Iconify id rendered at build time (see techIcons). */
+  /** Iconify id taken from techIcons.ts. Missing when the technology has no registered icon. */
   icon?: string;
 }
 
+/** One area of the stack, shown as its own panel. */
 export interface StackDomain {
   id: StackDomainId;
   label: Localized<string>;
@@ -16,10 +21,17 @@ export interface StackDomain {
   items: StackItem[];
 }
 
-/** Builds the tiles of a domain, looking up each icon by name. */
+/**
+ * Builds the tiles of a domain, looking up each icon by technology name in techIcons.ts. A name
+ * that is not registered there still gets a tile, just without an icon.
+ */
 const items = (names: string[]): StackItem[] =>
   names.map((name) => ({ name, icon: techIcons[name] }));
 
+/**
+ * The three areas in display order: data first, because it is the main focus of the portfolio.
+ * A technology can appear in more than one area (Python is in both data and software).
+ */
 export const stackDomains: StackDomain[] = [
   {
     id: 'data',

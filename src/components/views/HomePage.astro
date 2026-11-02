@@ -15,7 +15,14 @@ import { getLangFromUrl, useTranslations } from '@i18n/utils';
 import { SITE_CONFIG } from '@data/config';
 import { certifications } from '@data/certifications';
 
-// Single source for the home page: index, en/index and every section route render it.
+// The home page: all sections stacked on one long page, from the hero to the contact section.
+// It is the single implementation behind pages/index.astro, pages/en/index.astro and every
+// section route (pages/[section].astro), so a section URL such as /stack shows the same page.
+//
+// Each SectionContainer takes two visual props, both read by the scroll engine in src/lib/motion:
+//  - `layer` is the "medallion layer" theme (raw, bronze, silver, gold, serve), a data
+//    engineering metaphor for how refined the data is. It sets the accent colour of the section.
+//  - `stage` is where the 3D crystal sits next to the section's content on desktop.
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
@@ -23,6 +30,14 @@ const title = SITE_CONFIG.title[lang];
 const description = SITE_CONFIG.description[lang];
 ---
 
+{
+  /*
+    `crystal` mounts the 3D crystal canvas behind the sections. `canonical="home"` makes every
+    route that renders this page (including /stack, /en/proyectos, ...) declare the language
+    home as its canonical URL (the address search engines should treat as the original), so the
+    section routes are not indexed as duplicates.
+  */
+}
 <Layout title={title} description={description} crystal canonical="home">
   <SectionContainer layer="raw" stage="center">
     <Hero />
@@ -42,6 +57,7 @@ const description = SITE_CONFIG.description[lang];
     <Experience />
   </SectionContainer>
 
+  {/* Hidden while there are no certifications to list. */}
   {
     certifications[lang].length > 0 && (
       <SectionContainer id="certificaciones" layer="silver" stage="right">
@@ -51,10 +67,12 @@ const description = SITE_CONFIG.description[lang];
     )
   }
 
+  {/* The gallery manages its own padding and scrolling, so the section is flush (no padding). */}
   <SectionContainer id="proyectos" layer="gold" stage="none" class="section-flush">
     <ProjectsGallery />
   </SectionContainer>
 
+  {/* Scroll-driven zoom into the word that leads to the contact section. */}
   <ZoomTransition />
 
   <SectionContainer id="contacto" layer="serve" stage="center" class="section-contact">

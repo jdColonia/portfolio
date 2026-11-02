@@ -1,6 +1,10 @@
 ---
+// Heading card placed in the projects row before each group of projects (data, software,
+// platform). It is a flex item of the gallery track, so its width is fixed and it never shrinks.
 interface Props {
+  /** Name of the track, shown in the display font. */
   label: string;
+  /** One-line explanation of what the track contains. */
   description: string;
 }
 
@@ -53,7 +57,9 @@ const { label, description } = Astro.props;
     }
   }
 
-  /* Compact divider while the gallery is in the sticky mode (phones and tablets). */
+  /* A narrower divider while the gallery is in sticky mode (phones and tablets): gallery.ts sets
+     `data-mode="sticky"` on the .gallery ancestor. :global() is needed because that element
+     belongs to another component, so Astro would otherwise scope the selector away. */
   :global(.gallery[data-mode='sticky']) .track-divider {
     width: 8.5rem;
     align-self: center;

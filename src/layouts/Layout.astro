@@ -1,6 +1,14 @@
 ---
-// Latin subsets only: the site is Spanish/English. Inter's @font-face lives in global.css.
-// JetBrains Mono ships one weight: the 500 labels render with the 400 face (no faux bold).
+// Base layout wrapped around every page: the <head> (meta tags, fonts, canonical link, Google
+// Analytics), the page chrome (side dock, header, footer) and, when requested, the 3D crystal.
+// It also starts the scroll engine (@lib/motion) and the analytics listeners. The site uses
+// ClientRouter (Astro's client-side navigation: the page is not reloaded), so those start on every
+// `astro:page-load` and the scroll engine is torn down on `astro:before-swap`.
+
+// Fonts: only the latin subsets are loaded, because the site is Spanish and English. Inter's
+// @font-face lives in global.css instead.
+// JetBrains Mono ships a single weight (400): the labels styled as 500 render with the 400 face,
+// since the browser would otherwise fake a bold.
 import '@fontsource/anton/latin-400.css';
 import '@fontsource/jetbrains-mono/latin-400.css';
 import { ClientRouter } from 'astro:transitions';
@@ -17,6 +25,7 @@ import { localizePath, withBase } from '@lib/urls';
 interface Props {
   title: string;
   description: string;
+  /** Renders the 3D crystal behind the content. Only the home page uses it. */
   crystal?: boolean;
   /** 'home' points the canonical link at the language home (section routes duplicate it). */
   canonical?: 'home' | 'self';
@@ -41,7 +50,9 @@ const canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site).href : unde
     <link rel="icon" type="image/svg+xml" href={faviconUrl} />
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
     <meta name="generator" content={Astro.generator} />
-    <!-- Search Console ownership (also verified through Google Analytics). -->
+    {
+      /* Google Search Console ownership token (the site is also verified through Google Analytics). */
+    }
     <meta name="google-site-verification" content="uIMl2BE9OG2ub7SdyI5z5KW5--UE-3IcrNtrpoTPQg8" />
     <title>{title}</title>
     <link rel="preload" as="font" type="font/woff2" crossorigin href={interLatin} />
@@ -49,7 +60,15 @@ const canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site).href : unde
     <slot name="head" />
     <ClientRouter />
 
-    <!-- --vw: viewport width without the scrollbar, so full-bleed blocks never overflow the page. -->
+    {
+      /*
+        The script below keeps the CSS custom property --vw on <html> equal to the viewport width
+        without the scrollbar (100vw includes it). Full-bleed blocks use --vw so they never cause
+        horizontal overflow. It is inline so the value exists before the first paint, and it
+        writes --vw again after each router swap because the swap replaces the attributes of
+        <html> and drops the inline style.
+      */
+    }
     <script is:inline>
       (function () {
         var root = document.documentElement;
@@ -61,7 +80,6 @@ const canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site).href : unde
           root.style.setProperty('--vw', width + 'px');
         };
         sync();
-        // A router swap replaces the root attributes (dropping the inline --vw): always rewrite then.
         var force = function () {
           lastWidth = -1;
           sync();
@@ -74,14 +92,27 @@ const canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site).href : unde
       })();
     </script>
 
-    <!-- Google Analytics runs in a Partytown web worker (gtag.js is the heaviest script on the
-         page), once per full load: a ClientRouter navigation does not re-run these scripts, so
-         @lib/analytics sends page_view itself on navigations (GA's history-based page views are
-         off in the GA admin: header.ts rewrites the URL while scrolling through sections).
-         Internal traffic (any host but production, or the ga_internal flag) carries
-         traffic_type=internal for GA's data filter. The flag is set with ?interno=1 and cleared
-         with ?interno=0 by the plain inline script below: it must read the query string at parse
-         time, because header.ts rewrites the URL (dropping the query) before the worker runs. -->
+    {
+      /*
+        Google Analytics (GA), in three pieces:
+
+        1. A plain inline script that reads the `?interno=` query parameter. `?interno=1` stores a
+           `ga_internal` flag in localStorage and `?interno=0` removes it. It runs on the main
+           thread at parse time because header.ts rewrites the URL (dropping the query string)
+           while the visitor scrolls through sections, which can happen before the Partytown worker
+           starts. The flag lets the owner mark their own browser as internal traffic.
+        2. The gtag.js loader.
+        3. The gtag setup, which sends traffic_type=internal when the host is not the production
+           one or when the flag is set. GA's "Internal Traffic" data filter then excludes those hits.
+
+        Pieces 2 and 3 use type="text/partytown": Partytown runs third-party scripts in a web
+        worker, so gtag.js (the heaviest script on the page) never blocks the main thread. These
+        scripts run once per full page load, not on each ClientRouter navigation, so
+        @lib/analytics sends the `page_view` events for client-side navigations itself. GA's own
+        history-based page views are switched off in the GA admin, because header.ts changes the
+        URL while the visitor scrolls through sections and they would inflate the count.
+      */
+    }
     <script is:inline>
       try {
         var interno = new URLSearchParams(location.search).get('interno');
@@ -123,10 +154,13 @@ const canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site).href : unde
     <div class="relative z-10"><Footer /></div>
 
     <style is:global>
+      /* Native form controls and scrollbars render in their dark variant. */
       :root {
         color-scheme: dark;
       }
 
+      /* Column layout so the footer stays at the bottom on short pages. `overscroll-behavior`
+         removes the rubber-band bounce at the page edges. */
       body {
         display: flex;
         flex-direction: column;
@@ -135,6 +169,9 @@ const canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site).href : unde
         overflow-x: hidden;
       }
 
+      /* Reduced motion: effectively switch off CSS animations and transitions. The duration is
+         0.01ms rather than 0 so that animationend/transitionend events still fire for any code
+         waiting on them. */
       @media (prefers-reduced-motion: reduce) {
         *,
         *::before,
@@ -150,6 +187,9 @@ const canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site).href : unde
       import { initMotion, destroyMotion } from '@lib/motion';
       import { initAnalytics } from '@lib/analytics';
 
+      // `astro:page-load` fires on the first load and after every client-side navigation;
+      // `astro:before-swap` fires just before the old page is replaced, so the scroll engine can
+      // clean up and be started again for the new page.
       document.addEventListener('astro:page-load', () => initMotion());
       document.addEventListener('astro:page-load', () => initAnalytics());
       document.addEventListener('astro:before-swap', () => destroyMotion());

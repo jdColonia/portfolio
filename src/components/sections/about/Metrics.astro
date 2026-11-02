@@ -1,9 +1,11 @@
 ---
+// Row of headline numbers (years, projects, ...) shown at the bottom of the about section. The
+// numbers count up from 0 once the row scrolls into view (script at the bottom).
 import { getLangFromUrl, useTranslations } from '@i18n/utils';
 import { metrics } from '@data/metrics';
 
 interface Props {
-  /** Tight variant used inside the about screen. */
+  /** Tight variant with smaller type, used inside the about screen so it fits one viewport. */
   compact?: boolean;
 }
 
@@ -70,13 +72,15 @@ const rows = metrics[lang];
     border-left: 1px solid rgba(255, 255, 255, 0.12);
   }
 
-  /* 2x2 grid on mobile: no rule at the start of each row. */
+  /* On mobile the cells form a 2-by-2 grid, so the cells at the start of each row (the odd ones)
+     get no divider line on their left. */
   .metric-cell:nth-child(odd) {
     padding-left: 0;
     border-left: 0;
   }
 
-  /* Flex drops the whitespace text nodes so the suffix hugs the number. */
+  /* As a flex parent, this element ignores the whitespace between the number and the suffix
+     in the markup, so the suffix sits right next to the number. */
   .metric-value {
     display: flex;
     align-items: baseline;
@@ -124,7 +128,7 @@ const rows = metrics[lang];
     }
   }
 
-  /* Compact: one row of Anton numbers that fits under the three blocks. */
+  /* Compact variant: a single row of display-font numbers that fits under the three text blocks. */
   .metrics-compact {
     padding-block: 0;
   }
@@ -178,20 +182,24 @@ const rows = metrics[lang];
 </style>
 
 <script>
+  // GSAP is the animation library; ScrollTrigger starts animations based on scroll position.
   import { gsap } from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { onDestroy, prefersReducedMotion } from '@lib/motion';
 
   gsap.registerPlugin(ScrollTrigger);
 
+  // `astro:page-load` fires on the first load and after every client-side navigation
+  // (ClientRouter), so everything is set up again and cleaned up through `onDestroy`.
   document.addEventListener('astro:page-load', () => {
     const root = document.getElementById('metrics');
     const numbers = gsap.utils.toArray<HTMLElement>('.metric-number', root);
     if (!root || numbers.length === 0 || prefersReducedMotion()) return;
 
-    // Count up once when the row enters the viewport (a single trigger for all counters).
-    // Final values stay in the markup until the animation starts, so no-JS and reduced-motion
-    // users see the real numbers.
+    // Count up from 0 once, when the row enters the viewport. One trigger drives all counters.
+    // The server-rendered HTML already contains the final values, so visitors without JavaScript
+    // or with reduced motion see the real numbers; they are only reset to 0 here, right before
+    // the animation can start.
     const ctx = gsap.context(() => {
       const counters = numbers.map((el) => ({
         el,
@@ -212,6 +220,7 @@ const rows = metrics[lang];
               value: target,
               duration: 1.4,
               ease: 'power2.out',
+              // Round to whole numbers so the counter never shows decimals mid-count.
               snap: { value: 1 },
               onUpdate: () => {
                 el.textContent = String(state.value);
