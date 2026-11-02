@@ -1,7 +1,16 @@
-import { ui, defaultLang } from './ui';
+import { ui, defaultLang } from '@i18n/ui';
+
+/** Removes the deployment base (e.g. "/portfolio") from a pathname, leaving a leading slash. */
+export function stripBase(pathname: string): string {
+  const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+  if (base && (pathname === base || pathname.startsWith(`${base}/`))) {
+    return pathname.slice(base.length) || '/';
+  }
+  return pathname;
+}
 
 export function getLangFromUrl(url: URL) {
-  const [, lang] = url.pathname.split('/');
+  const [, lang] = stripBase(url.pathname).split('/');
   if (lang in ui) return lang as keyof typeof ui;
   return defaultLang;
 }
