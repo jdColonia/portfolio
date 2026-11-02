@@ -1,14 +1,29 @@
 ---
+/**
+ * @file Wrapper for every section of the home page (and the plain CV page).
+ *
+ * On desktop each section fills one screen and the content sits beside a 3D "crystal" drawn by a
+ * fixed canvas behind the page. `data-layer` and `data-stage` are read by the scroll engine
+ * (src/lib/motion) to change the theme colour and move the crystal as this section scrolls into
+ * view.
+ */
+
 import type { HTMLAttributes } from 'astro/types';
 
+/** Props of a home section; any other attribute is passed to the `<section>`. */
 interface Props extends HTMLAttributes<'section'> {
+  /**
+   * Medallion layer of this section (raw, bronze, silver, gold or serve): the site's visual
+   * theme, borrowed from data engineering. It selects the accent tint while the section is active.
+   */
   layer?: string;
   /** Plain page section (e.g. the CV): no screen-sized layout and no crystal content zone. */
   plain?: boolean;
   /**
    * Desktop crystal stage for this section: where the crystal box sits. Content goes to the
-   * opposite side ('left' crystal -> content right), or is centered over a dim crystal ('center').
-   * 'none' hides the crystal and the content takes the full width between the docks.
+   * opposite side (a crystal on the 'left' puts the content on the right), or is centered over a
+   * dim crystal ('center'). 'none' hides the crystal and the content takes the full width between
+   * the docks (the fixed side bars).
    */
   stage?: 'center' | 'left' | 'right' | 'none';
 }
@@ -56,8 +71,8 @@ const { id, class: className, layer, plain = false, stage = 'right', ...rest } =
       padding-inline: 2rem;
     }
 
-    /* "Each section is a page": one screen, vertically centered. The 88px top clears the header;
-       the side padding clears the docks. */
+    /* Each section is one full screen, vertically centered. The 5.5rem (88px) top padding clears
+       the fixed header; the side padding clears the docks. */
     .section:not(.section-plain) {
       display: flex;
       min-height: 100svh;
@@ -67,8 +82,9 @@ const { id, class: className, layer, plain = false, stage = 'right', ...rest } =
       padding: 5.5rem var(--dock-w) 2.5rem;
     }
 
-    /* Content zone: 55% of the viewport; the crystal owns the other side. Stage 'right' keeps the
-       content on the left (default), stage 'left' pushes it to the right edge. */
+    /* Content zone: about 55% of the viewport (--zone-w, defined in global.css); the crystal owns
+       the other side. Stage 'right' (the default) keeps the content on the left; stage 'left'
+       pushes it to the right edge. */
     .section:not(.section-plain) > .section-content {
       width: var(--zone-w);
       max-width: 100%;
@@ -78,9 +94,10 @@ const { id, class: className, layer, plain = false, stage = 'right', ...rest } =
       margin-left: auto;
     }
 
-    /* Stage 'center': a centered cover screen; the crystal is large and dim behind it, so a soft
-       scrim keeps the text legible. The content is its own stacking context (above the crystal,
-       scrim behind the text). */
+    /* Stage 'center': a centered cover screen with the crystal large and dim behind it. A soft
+       dark gradient (the ::before below) keeps the text legible. The `isolation` rule makes the
+       content its own stacking context, so the gradient's negative z-index puts it behind the
+       text but still above the crystal canvas. */
     .section[data-stage='center']:not(.section-plain) > .section-content {
       position: relative;
       isolation: isolate;
@@ -99,7 +116,7 @@ const { id, class: className, layer, plain = false, stage = 'right', ...rest } =
       pointer-events: none;
     }
 
-    /* Wide centered sections (stack): room for three panels side by side. */
+    /* Wide centered sections (the stack section): room for three panels side by side. */
     .section.section-wide[data-stage='center']:not(.section-plain) > .section-content {
       max-width: min(72rem, 100%);
     }
@@ -109,12 +126,14 @@ const { id, class: className, layer, plain = false, stage = 'right', ...rest } =
       width: 100%;
     }
 
-    /* Contact shares its screen with the compact footer that follows it. */
+    /* The contact section shares its screen with the compact footer that follows it, so it is
+       shorter by the footer's height. */
     .section.section-contact {
       min-height: calc(100svh - var(--footer-h));
     }
 
-    /* The pinned gallery manages its own vertical space. */
+    /* The projects gallery is pinned (held in place while the page scrolls) and manages its own
+       vertical padding. */
     .section.section-flush {
       padding-block: 0;
     }

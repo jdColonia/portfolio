@@ -1,5 +1,11 @@
+/**
+ * @file The four figures of the "About me" section, styled as the result of a SQL query
+ * (components/sections/about/Metrics.astro), which counts each number up when it scrolls into view.
+ */
+
 import type { Localized } from '@data/types';
 
+/** One figure: the number that is counted up, an optional suffix such as "+", and its label. */
 export interface Metric {
   value: number;
   suffix?: string;
@@ -7,10 +13,13 @@ export interface Metric {
 }
 
 /**
- * Months of work experience: Pistis Group (Oct 2025 - Feb 2026) counts 5; Gases de Occidente
- * started in Aug 2026 and is ongoing, so add the whole months elapsed since then.
+ * Months of work experience, computed when the site is built so it keeps growing on its own.
+ * The Pistis Group job (Oct 2025 - Feb 2026) is a fixed 5 months. The Gases de Occidente job
+ * started in Aug 2026 and is still ongoing, so the whole months elapsed since then are added.
+ * Update this function if that job ends or a new one starts.
  */
 const workMonths = (): number => {
+  // Month index 7 is August (JavaScript months start at 0).
   const start = new Date(2026, 7, 1);
   const now = new Date();
   const elapsed =
@@ -18,6 +27,10 @@ const workMonths = (): number => {
   return 5 + Math.max(0, elapsed);
 };
 
+/**
+ * The metrics per language, in display order. The footnote "4 rows" in i18n/ui.ts
+ * (`metrics.footnote`) assumes there are exactly four.
+ */
 export const metrics: Localized<Metric[]> = {
   es: [
     { value: 270, suffix: '+', label: 'estudiantes guiados' },

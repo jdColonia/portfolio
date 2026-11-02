@@ -1,4 +1,10 @@
 ---
+/**
+ * @file Certifications section: a list of certificates and bootcamps, grouped by kind.
+ *
+ * Purely static markup, no script.
+ */
+
 import TechIcon from '@components/ui/TechIcon.astro';
 import { getLangFromUrl, useTranslations } from '@i18n/utils';
 import { certifications } from '@data/certifications';
@@ -7,6 +13,7 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const items = certifications[lang];
 
+// One block per kind, in this order; a kind with no entries is skipped.
 const groups = [
   { kind: 'certification', label: t('certifications.group.certs') },
   { kind: 'bootcamp', label: t('certifications.group.bootcamps') },

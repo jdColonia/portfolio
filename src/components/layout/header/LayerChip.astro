@@ -1,10 +1,19 @@
+{
+  /**
+   * @file Small label in the header naming the current medallion layer (raw, bronze, silver, gold
+   * or serve: the site's visual theme from data engineering).
+   *
+   * Rendered by Header.astro. header.ts sets the text from the `layerchange` event and adds
+   * `data-show` on pages that have layered sections. It is purely decorative, hence aria-hidden.
+   */
+}
 <span id="layer-chip" class="layer-chip" aria-hidden="true">
   <span class="layer-chip-dot"></span>
   <span class="layer-chip-text">raw</span>
 </span>
 
 <style>
-  /* Layer chip: a small mono readout of the current pipeline layer. */
+  /* Hidden by default; only shown on desktop and only when header.ts sets `data-show`. */
   .layer-chip {
     display: none;
     align-items: center;

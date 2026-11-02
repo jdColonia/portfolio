@@ -1,6 +1,15 @@
 ---
+/**
+ * @file Section heading: a small monospace "path" line above the big title.
+ *
+ * The path follows the site's data-engineering theme (layer.name, e.g. `gold.proyectos`).
+ */
+
+/** Props of a section heading; the heading text goes in the default slot. */
 interface Props {
+  /** Text of the small monospace line above the heading. */
   path: string;
+  /** Extra classes, appended to the heading block. */
   class?: string;
   /** Heading element; pages without a hero (e.g. the CV) use h1. */
   as?: 'h1' | 'h2';
@@ -35,7 +44,7 @@ const { path, class: className, as: Heading = 'h2' } = Astro.props;
     color: var(--layer-text);
   }
 
-  /* Desktop: sections fit one screen, so titles are tighter. */
+  /* Desktop: each section must fit in one screen, so the title takes less room. */
   @media (min-width: 1024px) {
     .title-section {
       margin-bottom: 1.5rem;

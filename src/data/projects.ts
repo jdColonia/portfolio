@@ -1,25 +1,44 @@
+/**
+ * @file Projects shown in the horizontal gallery of the home page (components/sections/projects).
+ *
+ * Each project is written once per language. The tech stack lists and the images are shared
+ * constants used by both entries, so they cannot drift apart between languages.
+ */
+
 import type { ImageMetadata } from 'astro';
 import type { Localized } from '@data/types';
 import qversityImage from '@assets/projects/qversity-executive-overview.webp';
 import microTodoImage from '@assets/projects/project1.webp';
 import cozamImage from '@assets/projects/project2.webp';
 
-// A project only needs `track: 'software'` to appear in the software group of the gallery.
+/**
+ * Group a project belongs to. The gallery lists projects by group, with a divider and a caption
+ * for each one. A group with no projects does not appear, so a project only needs
+ * `track: 'software'` to create the software group.
+ */
 export type ProjectTrack = 'data' | 'software' | 'platform';
 
+/** One project card. */
 export interface Project {
+  /** Stable identifier, the same in both languages. Sent with the `project_click` event. */
   id: string;
   track: ProjectTrack;
   title: string;
   summary: string;
+  /** Technology names. Names found in techIcons.ts get their icon next to them. */
   stack: string[];
-  /** Imported from src/assets: the gallery serves responsive sizes. Without it, a placeholder shows. */
+  /**
+   * Image imported from src/assets, so Astro can generate responsive sizes at build time.
+   * Without it, the card shows a placeholder.
+   */
   image?: ImageMetadata;
   github?: string;
   demo?: string;
+  /** 'upcoming' shows a "Coming soon" label on the card. */
   status: 'live' | 'upcoming';
 }
 
+// Tech stacks are shared by the Spanish and English entries below.
 const microTodoStack = [
   'Azure',
   'Terraform',
@@ -48,6 +67,7 @@ const cozamStack = [
 
 const qversityStack = ['Airflow', 'PySpark', 'dbt', 'PostgreSQL', 'Power BI', 'Docker'];
 
+/** Projects per language, in display order within each track. */
 export const projects: Localized<Project[]> = {
   es: [
     {

@@ -1,6 +1,15 @@
 ---
-// Monogram: three offset layers (the medallion). The top one takes the layer accent.
+/**
+ * @file Site logo: three stacked, offset slabs that echo the medallion layers (the site's data
+ * engineering theme).
+ *
+ * Drawn with `currentColor`, so it takes the text colour of its parent; the top slab uses the
+ * accent colour of the active layer. Used by Header.astro; pass `class` to size it.
+ */
+
+/** Props of the site logo. */
 interface Props {
+  /** Extra classes, used to size the logo. */
   class?: string;
 }
 

@@ -1,6 +1,13 @@
 ---
-// The name is split at build time (line > word > char) so the intro is pure CSS and starts at
-// first paint. `index` is global across lines: it drives the stagger.
+/**
+ * @file The big name in the hero.
+ *
+ * It is split into lines, words and single characters while the page is built, so the intro
+ * animation is pure CSS and starts at first paint, without waiting for any JavaScript. `index`
+ * counts characters across all lines and sets each character's animation delay, which makes the
+ * letters appear one after another (a "stagger").
+ */
+
 const nameLines = ['Juan David', 'Colonia'];
 let charIndex = 0;
 const nameWords = nameLines.map((line) =>
@@ -8,6 +15,7 @@ const nameWords = nameLines.map((line) =>
 );
 ---
 
+{/* The per-letter spans are hidden from screen readers; aria-label gives them the whole name. */}
 <h1 class="hero-name" aria-label="Juan David Colonia">
   <span class="block" aria-hidden="true">
     {
@@ -51,23 +59,25 @@ const nameWords = nameLines.map((line) =>
     }
   }
 
-  /* Words never break inside; the masks clip the chars while they rise. */
+  /* A word is never broken across lines. Each character sits inside a mask that clips it while
+     it rises into place. */
   .hero-word {
     display: inline-block;
     white-space: nowrap;
   }
 
-  /* Inline-block in both motion modes: it drops the whitespace the build leaves around each
-     char, which inline spans would render as gaps between letters. */
+  /* Needed with and without animation: the generated markup has whitespace between the character
+     spans. Inline spans would render it as gaps between letters; the inline blocks set here do not. */
   .hero-char-mask {
     display: inline-block;
   }
 
-  /* CSS-only intro (starts at first paint, no JS): the name's chars rise out of their masks.
-     Reduced motion shows everything at once. */
+  /* CSS-only intro: the characters rise out of their masks, one after another. Users who prefer
+     reduced motion see the name at once, with no animation. */
   @media (prefers-reduced-motion: no-preference) {
-    /* line-height is below 1: the padding keeps the glyphs inside the clip, the negative margin
-       keeps the layout unchanged. */
+    /* The line-height is tight (1), so the tallest glyphs would be cut off by the mask's overflow
+       clip. The padding gives them room, and the equal negative margin cancels it so the layout
+       does not change. */
     .hero-char-mask {
       overflow: hidden;
       vertical-align: top;
@@ -78,6 +88,7 @@ const nameWords = nameLines.map((line) =>
     .hero-char {
       display: inline-block;
       animation: hero-char-in 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+      /* 0.1s head start, then 30ms per character (--i is set inline in the markup). */
       animation-delay: calc(0.1s + var(--i) * 0.03s);
     }
 

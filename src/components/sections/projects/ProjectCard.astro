@@ -1,4 +1,12 @@
 ---
+/**
+ * @file One project card in the projects gallery: screenshot, title, summary, technology list and
+ * links to the repository and the live demo.
+ *
+ * Its size and layout depend on the gallery's `data-mode` (see ProjectsGallery.astro), so some
+ * rules below target that attribute on an ancestor.
+ */
+
 import { Image } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
 import TechIcon from '@components/ui/TechIcon.astro';
@@ -7,8 +15,11 @@ import type { Project } from '@data/projects';
 import { techIcons } from '@data/techIcons';
 import type { Lang } from '@data/types';
 
+/** Props of one project card. */
 interface Props {
+  /** Project to show; its text is already in the page language. */
   project: Project;
+  /** Language of the page, used for the interface texts (the project text is already localized). */
   lang: Lang;
 }
 
@@ -18,6 +29,12 @@ const t = useTranslations(lang);
 
 <article class="card" data-card data-status={project.status}>
   <div class="card-media">
+    {
+      /* The `media` slot lets a caller replace the screenshot; by default the project image is
+        used, or an empty dashed placeholder when the project has none. The image `sizes` value
+        mirrors the card width in the styles below (about 26vw on desktop, 85vw on small
+        screens), so the browser downloads a suitable size from `widths`. */
+    }
     <slot name="media">
       {
         project.image ? (
@@ -38,6 +55,7 @@ const t = useTranslations(lang);
   </div>
 
   <div class="card-body">
+    {/* Projects marked `upcoming` get a "coming soon" label. */}
     {project.status === 'upcoming' && <span class="card-soon">{t('projects.soon')}</span>}
     <h4 class="card-title">{project.title}</h4>
     <p class="card-summary">{project.summary}</p>
@@ -53,6 +71,7 @@ const t = useTranslations(lang);
       }
     </ul>
 
+    {/* The data-track attributes report a `project_click` analytics event (see @lib/analytics). */}
     {
       (project.github || project.demo) && (
         <div class="card-links">
@@ -168,6 +187,9 @@ const t = useTranslations(lang);
     flex: none;
   }
 
+  /* `margin-top: auto` pushes the links to the bottom of the card. The negative left margin
+     cancels the icons' padding so they line up with the text above, and the negative bottom
+     margin trims the extra space that padding adds. The padding keeps the touch targets large. */
   .card-links {
     display: flex;
     gap: 0.25rem;
@@ -185,7 +207,8 @@ const t = useTranslations(lang);
     color: var(--layer-accent);
   }
 
-  /* No image yet (e.g. a coming-soon project): a dashed box instead. */
+  /* Placeholder for a project without an image (for example one that is coming soon): an empty
+     dashed box. */
   .card-media-empty {
     position: absolute;
     inset: 1rem;
@@ -193,7 +216,8 @@ const t = useTranslations(lang);
     border-radius: 14px;
   }
 
-  /* Desktop: stacked card, a short media strip on top, so card + title fit one screen. */
+  /* Desktop: the media is a short strip above the text, so the cards and the section title fit in
+     one screen. --card-w is set by ProjectsGallery.astro. */
   @media (min-width: 1024px) {
     .card {
       width: var(--card-w);
@@ -241,8 +265,10 @@ const t = useTranslations(lang);
     }
   }
 
-  /* A compact card (short media strip, smaller type) so card + bar fit even a 360x560 screen,
-     while the gallery is in the sticky mode (phones and tablets). */
+  /* A compact card (shorter media strip, smaller type) while the gallery is in sticky mode (phones
+     and tablets), so the card and the progress bar fit even a 360x560 screen. The selectors use
+     :global() because `data-mode` is set on the .gallery ancestor, which belongs to another
+     component. */
   :global(.gallery[data-mode='sticky']) .card-media {
     height: clamp(5.5rem, 16svh, 9rem);
     aspect-ratio: auto;

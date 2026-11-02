@@ -1,4 +1,12 @@
 ---
+/**
+ * @file Language dropdown (ES/EN).
+ *
+ * Currently unused: the header imports it only in commented-out code while the selector is
+ * disabled, and global.css excludes this file from the Tailwind scan so its utility classes stay
+ * out of the bundle. Remove that exclusion when re-enabling it.
+ */
+
 import { languages } from '@i18n/ui';
 import type { Lang } from '@data/types';
 import { getLangFromUrl, stripBase } from '@i18n/utils';
@@ -45,24 +53,27 @@ const isCv = /\/cv\/?$/.test(pathWithoutBase);
 </div>
 
 <script>
-  // Función para inicializar el language picker
+  // Wires up the dropdown. Runs after every client-side navigation (ClientRouter, Astro's
+  // navigation without full page reloads), so it must not stack duplicate listeners.
   function initLanguagePicker() {
     const toggle = document.getElementById('lang-toggle');
     const menu = document.getElementById('lang-menu');
 
     if (!toggle || !menu) return;
 
-    // Remover event listeners previos (si existen)
+    // Replace the button with a clone of itself: a clone carries no event listeners, which drops
+    // any handler attached by an earlier run of this function.
     const newToggle = toggle.cloneNode(true) as HTMLElement;
     toggle.parentNode?.replaceChild(newToggle, toggle);
 
-    // Agregar click event al nuevo botón
+    // stopPropagation keeps this click from reaching the document-level "click outside" handler
+    // below, which would close the menu again right after it opens.
     newToggle.addEventListener('click', (e) => {
       e.stopPropagation();
       menu.classList.toggle('hidden');
     });
 
-    // Cerrar el menú cuando se hace click fuera
+    // Close the menu when the user clicks anywhere outside it.
     const clickOutside = (e: MouseEvent) => {
       if (!newToggle.contains(e.target as Node) && !menu.contains(e.target as Node)) {
         menu.classList.add('hidden');
@@ -71,7 +82,8 @@ const isCv = /\/cv\/?$/.test(pathWithoutBase);
 
     document.addEventListener('click', clickOutside);
 
-    // Cleanup cuando la página cambia
+    // The listener is on `document`, which outlives page swaps, so remove it before the next page
+    // replaces the DOM.
     document.addEventListener(
       'astro:before-swap',
       () => {
@@ -81,6 +93,6 @@ const isCv = /\/cv\/?$/.test(pathWithoutBase);
     );
   }
 
-  // Inicializar cuando la página carga
+  // `astro:page-load` fires on the first load and after every client-side navigation.
   document.addEventListener('astro:page-load', initLanguagePicker);
 </script>

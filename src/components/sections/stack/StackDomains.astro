@@ -1,4 +1,11 @@
 ---
+/**
+ * @file Tech stack section: one panel per domain (data, software, ...) with a grid of technology
+ * tiles.
+ *
+ * The tiles fade in panel by panel as they scroll into view (script at the bottom).
+ */
+
 import TechIcon from '@components/ui/TechIcon.astro';
 import { getLangFromUrl, useTranslations } from '@i18n/utils';
 import { stackDomains } from '@data/stack';
@@ -40,8 +47,9 @@ const t = useTranslations(lang);
     gap: 1rem;
   }
 
-  /* The centered section sets text-align: center; the panels read left to right. The dim crystal
-     sits behind them, so a soft blur keeps the tiles legible. */
+  /* The section is centered on desktop (text-align: center), but the panel text reads better
+     left-aligned. The dim 3D crystal is drawn behind the panels, so a translucent background and
+     a soft blur keep the tiles legible. */
   .domain {
     padding: 1.25rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -112,7 +120,8 @@ const t = useTranslations(lang);
     transition: color 0.2s;
   }
 
-  /* Hover (and :active, so a tap on touch screens works) turns the tile orange. */
+  /* Hovering a tile turns it orange. :active is included so a tap on a touch screen, which has
+     no real hover, gives the same feedback. */
   .tile:hover,
   .tile:active {
     border-color: color-mix(in srgb, var(--color-lava) 55%, transparent);
@@ -159,17 +168,22 @@ const t = useTranslations(lang);
 </style>
 
 <script>
+  // GSAP is the animation library; ScrollTrigger starts animations based on scroll position.
   import { gsap } from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { onDestroy, prefersReducedMotion } from '@lib/motion';
 
   gsap.registerPlugin(ScrollTrigger);
 
+  // `astro:page-load` fires on the first load and after every client-side navigation
+  // (ClientRouter), so the animation is recreated each time and reverted through `onDestroy`.
   document.addEventListener('astro:page-load', () => {
     const stack = document.querySelector<HTMLElement>('[data-stack]');
     if (!stack || prefersReducedMotion()) return;
 
-    // Tiles fade in panel by panel as it scrolls into view; without JS they are simply visible.
+    // Within each panel the tiles fade in one after another, once, when the panel's top reaches
+    // 85% of the viewport height. `gsap.from` animates towards the CSS values, so without
+    // JavaScript the tiles are simply visible.
     const ctx = gsap.context(() => {
       gsap.utils.toArray<HTMLElement>('.domain', stack).forEach((domain) => {
         gsap.from(domain.querySelectorAll('[data-tile]'), {

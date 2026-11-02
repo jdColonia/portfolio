@@ -1,8 +1,19 @@
 ---
+/**
+ * @file The tab list of the experience section, one tab per company, plus a sliding bar that marks
+ * the active one.
+ *
+ * Selection, keyboard navigation and the bar's position are handled in experience.ts; this file
+ * only has the markup and styles.
+ */
+
 import type { ExperienceCompany } from '@data/experience';
 
+/** Props of the experience tab list. */
 interface Props {
+  /** One tab per company, in this order. */
   items: ExperienceCompany[];
+  /** Accessible name of the tab list (read by screen readers). */
   label: string;
 }
 
@@ -29,7 +40,7 @@ const { items, label } = Astro.props;
 </div>
 
 <style>
-  /* ---- Tabs: horizontal scrolling row on small screens (company name only) ------ */
+  /* ---- Tabs: on small screens, a horizontally scrolling row showing only the company name --- */
   .exp-tabs {
     position: relative;
     display: flex;
@@ -70,7 +81,9 @@ const { items, label } = Astro.props;
     outline-offset: -2px;
   }
 
-  /* Moves with transforms only (translate + scale of a 1px bar). */
+  /* The active-tab bar is a 1px-wide element that experience.ts translates and stretches
+     (scale) to cover the active tab. Only transforms change, which the browser can animate
+     without recomputing the layout. */
   .exp-indicator {
     position: absolute;
     bottom: 0;
@@ -83,7 +96,9 @@ const { items, label } = Astro.props;
     pointer-events: none;
   }
 
-  /* data-ready / data-animated are set by the script on the .exp root (Experience.astro). */
+  /* The script adds `data-ready` to the .exp root (Experience.astro) once the bar has its first
+     position, and `data-animated` a frame later. The bar stays invisible and does not animate
+     until then, so it never visibly slides in from the corner on page load. */
   :global(.exp[data-ready]) .exp-indicator {
     opacity: 1;
   }
@@ -94,7 +109,7 @@ const { items, label } = Astro.props;
     }
   }
 
-  /* ---- Desktop: vertical tabs on the left ---------------------------------------- */
+  /* ---- Desktop: tabs stacked vertically on the left; the bar becomes a vertical one ---- */
   @media (min-width: 1024px) {
     .exp-tabs {
       flex-direction: column;

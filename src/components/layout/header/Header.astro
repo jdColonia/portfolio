@@ -1,4 +1,12 @@
 ---
+/**
+ * @file Fixed site header: logo, current-layer chip, desktop nav pill and mobile menu.
+ *
+ * It also renders the thin scroll progress bar. Used by Layout.astro on every page; the behaviour
+ * (compact mode, active link, mobile menu) lives in header.ts, which finds these elements by id and
+ * class.
+ */
+
 import { getLangFromUrl, useTranslations } from '@i18n/utils';
 import Logo from '@components/layout/Logo.astro';
 import LayerChip from '@components/layout/header/LayerChip.astro';
@@ -9,9 +17,11 @@ import { localizePath } from '@lib/urls';
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
-// The logo link keeps its historical form: no trailing slash.
+// The logo link keeps the URL form it has always had (no trailing slash in English, the bare base
+// in Spanish), so existing links and analytics keep matching.
 const homeUrl = lang === 'en' ? localizePath(lang).replace(/\/$/, '') : import.meta.env.BASE_URL;
 
+// Section links shown in the nav. `label` doubles as the section id on the home page.
 const navItems = [
   { title: t('nav.about'), label: 'sobre-mi', url: localizePath(lang, 'sobre-mi') },
   { title: t('nav.stack'), label: 'stack', url: localizePath(lang, 'stack') },
@@ -20,17 +30,21 @@ const navItems = [
   { title: t('nav.contact'), label: 'contacto', url: localizePath(lang, 'contacto') },
 ];
 
-// The CV is its own page, so it lives outside the section pill.
+// The CV is a separate page, not a section of the home, so it is shown outside the section pill.
 const cvItem = { title: t('nav.cv'), label: 'cv', url: localizePath(lang, 'cv') };
 ---
 
+{/* Thin bar at the top of the screen that fills as the page is scrolled (driven by header.ts). */}
 <div id="scroll-progress" aria-hidden="true"></div>
 
 <header
   id="site-header"
   class="fixed top-0 z-50 flex items-center justify-between w-full px-4 md:px-8 py-4"
 >
-  <!-- Mobile glass bar: its own layer so backdrop-filter does not trap the fixed menu sheet. -->
+  {
+    /* Mobile glass bar. It is a separate element, not a style on <header>: a backdrop-filter on an
+     ancestor would become the containing block of the fixed full-screen menu inside and make it smaller. */
+  }
   <div id="header-bar" class="header-bar glass rounded-b-2xl md:hidden" aria-hidden="true"></div>
 
   <div class="flex items-center gap-4 z-50">
@@ -38,23 +52,26 @@ const cvItem = { title: t('nav.cv'), label: 'cv', url: localizePath(lang, 'cv') 
       <Logo class="w-10 h-10 md:w-12 md:h-12" />
     </a>
 
-    <!-- Current pipeline layer (desktop, home only): follows the section in view. -->
+    {/* Name of the pipeline layer in view (desktop, home page only). */}
     <LayerChip />
   </div>
 
-  <!-- Desktop Navigation: the section pill stays centered; the CV button sits to its right. -->
+  {/* Desktop navigation: the section pill stays centred; the CV button sits to its right. */}
   <DesktopNav navItems={navItems} cvItem={cvItem} />
 
   <MobileMenu navItems={navItems} cvItem={cvItem} />
 </header>
 
 <script>
+  // `astro:page-load` fires on the first load and after every ClientRouter navigation, so the
+  // header behaviour is bound again each time the new page's markup is in place.
   import { initHeader } from '@components/layout/header/header';
 
   document.addEventListener('astro:page-load', initHeader);
 </script>
 
 <style>
+  /* Slides the header in when the page appears. */
   header {
     animation: header-appear 0.5s ease-out;
   }
@@ -70,6 +87,7 @@ const cvItem = { title: t('nav.cv'), label: 'cv', url: localizePath(lang, 'cv') 
     }
   }
 
+  /* Scaled horizontally from 0 to 1 by header.ts (a transform is cheap to animate). */
   #scroll-progress {
     position: fixed;
     top: 0;
@@ -83,6 +101,7 @@ const cvItem = { title: t('nav.cv'), label: 'cv', url: localizePath(lang, 'cv') 
     pointer-events: none;
   }
 
+  /* Logo shrinks towards its left edge in compact mode (see #site-header.is-compact below). */
   .site-logo {
     transform-origin: left center;
     transition: transform 0.3s ease;
@@ -114,10 +133,12 @@ const cvItem = { title: t('nav.cv'), label: 'cv', url: localizePath(lang, 'cv') 
     transition: opacity 0.3s ease;
   }
 
+  /* header.ts adds `is-scrolled` once the page has scrolled a few pixels. */
   #site-header.is-scrolled .header-bar {
     opacity: 1;
   }
 
+  /* header.ts adds `is-compact` after scrolling a little further. */
   #site-header.is-compact .site-logo {
     transform: scale(0.85);
   }

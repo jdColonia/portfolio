@@ -1,10 +1,15 @@
+/* Global styles: Tailwind 4 setup, design tokens (colours, fonts) and the per-layer palette.
+   The "layers" are the medallion stages raw, bronze, silver, gold and serve (the site's visual
+   theme, borrowed from data engineering). Each one sets a tint colour on <html data-layer=...>. */
 @import 'tailwindcss';
 
-/* Components that no page renders: keep their utilities out of the bundle. */
+/* LanguagePicker is not rendered on any page. Without this line Tailwind would still scan the
+   file and generate CSS for its classes, so exclude it to keep the bundle smaller. */
 @source not '../components/ui/LanguagePicker.astro';
 
-/* Inter Variable, latin subset only (the package ships a single CSS with every subset). Same
-   woff2 the Layout preloads. */
+/* Inter Variable, latin subset only. The package's own CSS declares every subset, so the face is
+   declared here by hand to load just this one. It is the same woff2 file that Layout.astro
+   preloads, so the preload is actually used. */
 @font-face {
   font-family: 'Inter Variable';
   font-style: normal;
@@ -17,6 +22,8 @@
     U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* Tailwind 4 design tokens: each variable becomes utilities such as `text-lava` or `font-display`.
+   "Lava" is the site's orange-red accent. */
 @theme {
   --color-lava: #ff3621;
   --color-lava-400: #ff5f46;
@@ -32,15 +39,19 @@
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 
-/* The crystal glow color transitions between layers: it needs a typed custom property. */
+/* Registering --glow-color as a <color> lets the browser animate it. Plain custom properties are
+   treated as text and change instantly, so without this the crystal glow (DataCrystal.astro)
+   would snap between layers instead of fading. */
 @property --glow-color {
   syntax: '<color>';
   inherits: false;
   initial-value: #ff3621;
 }
 
-/* Graphite palette: every layer shares text/muted/accent, only the tint changes.
-   motion.ts just sets html[data-layer]; no per-frame custom-property writes. */
+/* Graphite palette: every layer shares the text, muted and accent colours; only the tint changes.
+   lib/motion only sets the `data-layer` attribute on <html> when the scroll reaches a new section;
+   the rules below do the rest, so no colour is animated from JavaScript on every frame. The
+   values here are the defaults used before any layer is active. */
 :root {
   --layer-accent: #ff3621;
   --layer-tint: #ff3621;
@@ -78,6 +89,7 @@ html[data-layer='serve'] {
     color: var(--layer-text);
   }
 
+  /* Visible keyboard focus ring on every focusable element. */
   :focus-visible {
     outline: 2px solid var(--color-lava);
     outline-offset: 3px;
@@ -85,7 +97,8 @@ html[data-layer='serve'] {
 }
 
 @layer components {
-  /* Dark glass surface. */
+  /* Dark translucent "glass" surface with a blurred backdrop (used by the header, nav and
+     buttons, among others). The -webkit- prefixed line is for Safari. */
   .glass {
     background: rgba(22, 24, 28, 0.45);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -98,9 +111,15 @@ html[data-layer='serve'] {
   }
 }
 
-/* Stage layout (>= 1024px): the fixed crystal box is 45% of the viewport wide and moves between
-   stages (html[data-stage]); the content sits in the opposite 55%. --dock-w clears the side docks;
-   --zone-w is the content width in that 55%. */
+/* Layout variables shared by the page and the crystal.
+   On desktop (>= 1024px) the fixed crystal box is 45% of the viewport wide and moves between
+   "stages" (html[data-stage], set by lib/motion): left, right or centre. The page content sits in
+   the opposite 55%.
+   --dock-w:      width reserved for the fixed side docks, so content does not go under them.
+   --zone-gutter: breathing room between the content column and the crystal's side.
+   --footer-h:    height of the footer on desktop.
+   --zone-w:      width of the content column inside that 55% (desktop only). It is based on
+                  --vw, the viewport width without the scrollbar, written by Layout.astro. */
 :root {
   --dock-w: 4.5rem;
   --zone-gutter: 1.5rem;

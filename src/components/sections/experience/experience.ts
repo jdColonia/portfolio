@@ -1,5 +1,17 @@
+/**
+ * @file Behaviour of the experience tabs (see Experience.astro): selecting a company shows its
+ * panel, arrow keys move between tabs, and a bar slides to mark the active tab.
+ *
+ * The tabs are a row on small screens and a column from 1024px up, so the bar and the arrow keys
+ * follow that layout.
+ */
+
 import { onDestroy, prefersReducedMotion } from '@lib/motion';
 
+/**
+ * Wires up the experience tabs. Call it on `astro:page-load`, which fires on the first load and
+ * after every client-side navigation (ClientRouter); the cleanup is registered with `onDestroy`.
+ */
 export function initExperience() {
   const root = document.querySelector<HTMLElement>('[data-experience]');
   const list = root?.querySelector<HTMLElement>('[data-tablist]');
@@ -16,7 +28,8 @@ export function initExperience() {
   const reduced = prefersReducedMotion();
   let current = 0;
 
-  // The indicator is a 1px bar scaled and translated to the active tab: transforms only.
+  // The indicator is a 1px bar that is moved and stretched over the active tab. Only transforms
+  // are used (no top/left/width changes), so moving it does not trigger a layout recalculation.
   const placeIndicator = () => {
     const tab = tabs[current];
     if (desktop.matches) {
@@ -26,6 +39,7 @@ export function initExperience() {
     }
   };
 
+  // The tab list is a column on desktop and a row on mobile; screen readers need to know which.
   const syncOrientation = () => {
     list.setAttribute('aria-orientation', desktop.matches ? 'vertical' : 'horizontal');
     placeIndicator();
@@ -35,6 +49,8 @@ export function initExperience() {
     if (index < 0 || index >= tabs.length) return;
     current = index;
 
+    // Roving tabindex: only the active tab is reachable with the Tab key; the arrow keys (see
+    // the keydown handler below) move between tabs.
     tabs.forEach((tab, i) => {
       const active = i === index;
       tab.setAttribute('aria-selected', String(active));
@@ -46,7 +62,8 @@ export function initExperience() {
     if (focus) tabs[index].focus();
     placeIndicator();
 
-    // Mobile row: keep the active tab in view without scrolling the page.
+    // On the mobile row, scroll the tab list sideways to center the active tab. Scrolling the
+    // list itself (rather than calling scrollIntoView) leaves the page scroll position alone.
     if (!desktop.matches) {
       const tab = tabs[index];
       list.scrollTo({
@@ -55,7 +72,8 @@ export function initExperience() {
       });
     }
 
-    // The fade-in runs in CSS when the panel stops being hidden.
+    // Start the newly shown panel from the top. Its fade-in is pure CSS and plays on its own as
+    // soon as the panel is no longer hidden.
     panels[index]?.querySelector<HTMLElement>('[data-body]')?.scrollTo({ top: 0 });
   };
 
@@ -63,6 +81,8 @@ export function initExperience() {
     tab.addEventListener('click', () => select(index));
   });
 
+  // Keyboard support following the WAI-ARIA tabs pattern: arrows wrap around, Home and End jump
+  // to the first and last tab. The arrow axis depends on the tab list's orientation.
   list.addEventListener('keydown', (event) => {
     const horizontal = !desktop.matches;
     const prevKey = horizontal ? 'ArrowLeft' : 'ArrowUp';
@@ -82,6 +102,8 @@ export function initExperience() {
   syncOrientation();
   desktop.addEventListener('change', syncOrientation);
 
+  // The tab sizes change when the list is resized or when the web fonts finish loading, so the
+  // bar is re-measured then. The ResizeObserver callback is throttled to one run per frame.
   let frame = 0;
   const observer = new ResizeObserver(() => {
     cancelAnimationFrame(frame);
@@ -90,7 +112,9 @@ export function initExperience() {
   observer.observe(list);
   void document.fonts?.ready.then(placeIndicator);
 
-  // Show the bar only after its first placement, so it never slides in from the origin.
+  // Reveal the bar only after its first placement so it never slides in from the origin. The
+  // second frame is what turns its transition on (see the `data-ready` and `data-animated`
+  // rules in ExperienceTabs.astro).
   requestAnimationFrame(() => {
     root.setAttribute('data-ready', '');
     requestAnimationFrame(() => root.setAttribute('data-animated', ''));

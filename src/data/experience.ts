@@ -1,3 +1,11 @@
+/**
+ * @file Content of the "Experience" section (components/sections/experience): one tab per company,
+ * ordered from the most recent job, plus a last tab for the degree.
+ *
+ * The text comes from the resume, so keep it in sync with it when the resume changes. Dates are
+ * display strings already written in each language.
+ */
+
 import type { Localized } from '@data/types';
 import { education } from '@data/education';
 
@@ -12,6 +20,7 @@ export interface ExperienceRole {
 
 /** One tab of the experience section: a company (or the education block) with its roles. */
 export interface ExperienceCompany {
+  /** Identifier of the tab, the same in both languages. */
   id: string;
   company: string;
   /** Tab text when it should differ from the company name (e.g. the education tab). */
@@ -22,7 +31,10 @@ export interface ExperienceCompany {
   /** Overall range shown under the heading. */
   range: string;
   roles: ExperienceRole[];
-  /** Content not written yet: the panel shows an honest "coming soon" note instead of roles. */
+  /**
+   * Set while the content of this entry is not written yet. The panel then shows a "coming soon"
+   * note (the `experience.pending` text in i18n/ui.ts) instead of the roles.
+   */
   pending?: boolean;
   /** Education tab: free text and tags instead of roles. */
   description?: string;
@@ -31,6 +43,11 @@ export interface ExperienceCompany {
 
 const ICESI_URL = 'https://www.icesi.edu.co';
 
+/**
+ * Builds the education tab from the first entry of data/education.ts, so the degree text lives
+ * in one place. `tabLabel` is passed in because the tab says "Education"/"Formación" instead
+ * of the university name.
+ */
 const educationTab = (lang: 'es' | 'en', tabLabel: string): ExperienceCompany => {
   const degree = education[lang][0];
   return {
@@ -46,6 +63,7 @@ const educationTab = (lang: 'es' | 'en', tabLabel: string): ExperienceCompany =>
   };
 };
 
+/** Tabs per language. Both lists must keep the same order and ids. */
 export const experience: Localized<ExperienceCompany[]> = {
   es: [
     {

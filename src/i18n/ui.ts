@@ -1,15 +1,31 @@
+/**
+ * @file Interface text (menus, buttons, labels, meta tags) in Spanish and English.
+ *
+ * Longer content such as projects, experience or the manifesto lives in src/data instead, as
+ * `Localized` objects. Components read these strings through `useTranslations()` in ./utils.ts.
+ */
+
+/** Language names as shown to visitors. Same list as `languages`; nothing imports it right now. */
 export const locales = {
   es: 'Español',
   en: 'English',
 };
 
+/** Language names shown in the language picker, each written in its own language. */
 export const languages = {
   es: 'Español',
   en: 'English',
 };
 
+/** Language used for URLs without a prefix, and as a fallback for missing strings. */
 export const defaultLang = 'es';
 
+/**
+ * Dictionary of interface strings, one object per language. Keys are grouped by where they are
+ * used and namespaced with dots (`nav.*`, `hero.*`, `cv.*`...).
+ * The Spanish object defines the valid keys (see `useTranslations`), so every key added there
+ * should also be added to the English one to keep both languages in sync.
+ */
 export const ui = {
   es: {
     'nav.about': 'Sobre mí',
@@ -18,6 +34,8 @@ export const ui = {
     'nav.projects': 'Proyectos',
     'nav.contact': 'Contacto',
     'nav.cv': 'CV',
+    'nav.label': 'Principal',
+    'nav.toggle': 'Abrir o cerrar el menú',
 
     'hero.badge': 'Disponible para trabajar',
     'hero.subtitle': 'Ingeniero de Sistemas · Datos y Software',
@@ -34,9 +52,12 @@ export const ui = {
     'certifications.group.certs': 'Certificaciones',
     'certifications.group.bootcamps': 'Bootcamps',
 
+    // The metrics block is styled as a SQL result: a fake query above and a row count below.
+    // The "4 rows" must match the number of entries in data/metrics.ts.
     'metrics.query': 'SELECT metric, value FROM juan.impacto;',
     'metrics.footnote': '4 rows · 0.02s',
 
+    // Keys ending in ".aria" are accessible names read by screen readers, not visible text.
     'stack.aria': 'Herramientas por área',
 
     'experience.aria': 'Experiencia y formación',
@@ -83,6 +104,8 @@ export const ui = {
     'nav.projects': 'Projects',
     'nav.contact': 'Contact',
     'nav.cv': 'Resume',
+    'nav.label': 'Main',
+    'nav.toggle': 'Toggle menu',
 
     'hero.badge': 'Open to work',
     'hero.subtitle': 'Systems Engineer · Data & Software',

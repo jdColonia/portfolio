@@ -1,4 +1,10 @@
 ---
+/**
+ * @file "About" section: portrait, three short text blocks and the compact metrics row.
+ *
+ * The text paragraphs are revealed line by line when they scroll into view (script at the bottom).
+ */
+
 import { Image } from 'astro:assets';
 import { getLangFromUrl } from '@i18n/utils';
 import { SITE_CONFIG } from '@data/config';
@@ -62,6 +68,9 @@ const c = manifesto[lang];
     margin-bottom: 0;
   }
 
+  /* The photo is turned black and white and then tinted with the current layer colour: the ::after
+     overlay below uses `mix-blend-mode: color`. The `isolation` rule keeps that blending inside
+     the photo instead of mixing with the page behind it. */
   .about-photo {
     position: relative;
     isolation: isolate;
@@ -124,7 +133,7 @@ const c = manifesto[lang];
     }
   }
 
-  /* One screen: tight vertical rhythm inside the content zone. */
+  /* Desktop: the whole section must fit in one screen, so spacing and type are tighter. */
   @media (min-width: 1024px) {
     .about {
       gap: 1.5rem;
@@ -160,6 +169,8 @@ const c = manifesto[lang];
 </style>
 
 <script>
+  // GSAP is the animation library; ScrollTrigger starts animations based on scroll position and
+  // SplitText splits text into lines so each one can be animated separately.
   import { gsap } from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { SplitText } from 'gsap/SplitText';
@@ -167,11 +178,15 @@ const c = manifesto[lang];
 
   gsap.registerPlugin(ScrollTrigger, SplitText);
 
+  // `astro:page-load` fires on the first load and after every client-side navigation
+  // (ClientRouter), so the animation is rebuilt each time and reverted through `onDestroy`.
   document.addEventListener('astro:page-load', () => {
     const paragraphs = gsap.utils.toArray<HTMLElement>('.manifesto-text');
     if (paragraphs.length === 0 || prefersReducedMotion()) return;
 
-    // Each paragraph reveals once, line by line behind a mask.
+    // Each paragraph plays once: its lines slide up from behind a mask (a box with hidden overflow
+    // wrapper per line) as the paragraph reaches 90% of the viewport height. `autoSplit` re-splits
+    // the text if a resize changes where the lines wrap, and `onSplit` rebuilds the tween then.
     const ctx = gsap.context(() => {
       paragraphs.forEach((paragraph) => {
         SplitText.create(paragraph, {

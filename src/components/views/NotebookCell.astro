@@ -1,6 +1,18 @@
 ---
+/**
+ * @file Decorative "failed notebook cell" used only by the 404 page (NotFound.astro): a SQL query
+ * for the missing page and the error it supposedly produced.
+ *
+ * The text is always English because it mimics SQL engine output. Only the page path inside it
+ * changes, see `path` below.
+ */
+
+/** Props of the decorative notebook cell. */
 interface Props {
-  /** Server-rendered placeholder; the script swaps it for the requested pathname. */
+  /**
+   * Placeholder path rendered at build time. The 404 script (not-found.ts) replaces the text of
+   * every `[data-path]` element with the pathname that was actually requested.
+   */
   path: string;
 }
 
@@ -17,6 +29,7 @@ const { path } = Astro.props;
     </span>
   </div>
 
+  {/* The query is on a single line inside <pre> on purpose: extra whitespace would be rendered. */}
   <pre
     class="nf-sql"><span class="kw">SELECT</span> * <span class="kw">FROM</span> portfolio.gold.pages <span class="kw">WHERE</span> path = <span class="str">'<span data-path>{path}</span>'</span>;</pre>
 
@@ -31,7 +44,7 @@ const { path } = Astro.props;
 </div>
 
 <style>
-  /* Notebook cell that failed. */
+  /* The cell itself: a card with a title bar, the query and the red error output below. */
   .nf-card {
     width: 100%;
     overflow: hidden;

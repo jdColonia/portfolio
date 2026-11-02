@@ -1,5 +1,13 @@
+/**
+ * @file Academic background.
+ *
+ * It is not rendered on its own: experience.ts reads the first entry and shows it as the last tab
+ * ("Education") of the experience section.
+ */
+
 import type { Localized } from '@data/types';
 
+/** One degree. `year` is the display range, `highlights` become the tags shown under it. */
 export interface Education {
   degree: string;
   institution: string;
@@ -8,6 +16,7 @@ export interface Education {
   highlights: string[];
 }
 
+/** Degrees per language. Only the first entry of each list is used by the experience tab. */
 export const education: Localized<Education[]> = {
   es: [
     {

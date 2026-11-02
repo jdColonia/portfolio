@@ -1,6 +1,13 @@
 /**
- * Iconify ids (rendered at build time by astro-icon) keyed by the technology name shown in the UI.
- * Single source for the stack panels and the project stack lines.
+ * @file Iconify ids for every technology icon shown on the site.
+ */
+
+/**
+ * Iconify ids keyed by the technology name shown in the UI (the same text used in data/stack.ts
+ * and in the project stacks). It is the single source for the stack panels and the project
+ * cards. The ids are collected by pages/tech-icons.svg.ts into one shared SVG sprite, so a new
+ * technology only needs an entry here, as long as its icon set is installed. The keys are
+ * grouped by area in the comments below, which is only for readability.
  */
 export const techIcons: Record<string, string> = {
   // Software
