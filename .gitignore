@@ -24,3 +24,6 @@ pnpm-debug.log*
 # Misc
 *.log
 .cache
+
+# Verify skill output (captures, diffs, baseline worktree)
+.verify/
