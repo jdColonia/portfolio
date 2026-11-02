@@ -1,0 +1,124 @@
+---
+import { getLangFromUrl, useTranslations } from '@i18n/utils';
+import Logo from '@components/layout/Logo.astro';
+import LayerChip from '@components/layout/header/LayerChip.astro';
+import DesktopNav from '@components/layout/header/DesktopNav.astro';
+import MobileMenu from '@components/layout/header/MobileMenu.astro';
+import { localizePath } from '@lib/urls';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+// The logo link keeps its historical form: no trailing slash.
+const homeUrl = lang === 'en' ? localizePath(lang).replace(/\/$/, '') : import.meta.env.BASE_URL;
+
+const navItems = [
+  { title: t('nav.about'), label: 'sobre-mi', url: localizePath(lang, 'sobre-mi') },
+  { title: t('nav.stack'), label: 'stack', url: localizePath(lang, 'stack') },
+  { title: t('nav.experience'), label: 'experiencia', url: localizePath(lang, 'experiencia') },
+  { title: t('nav.projects'), label: 'proyectos', url: localizePath(lang, 'proyectos') },
+  { title: t('nav.contact'), label: 'contacto', url: localizePath(lang, 'contacto') },
+];
+
+// The CV is its own page, so it lives outside the section pill.
+const cvItem = { title: t('nav.cv'), label: 'cv', url: localizePath(lang, 'cv') };
+---
+
+<div id="scroll-progress" aria-hidden="true"></div>
+
+<header
+  id="site-header"
+  class="fixed top-0 z-50 flex items-center justify-between w-full px-4 md:px-8 py-4"
+>
+  <!-- Mobile glass bar: its own layer so backdrop-filter does not trap the fixed menu sheet. -->
+  <div id="header-bar" class="header-bar glass rounded-b-2xl md:hidden" aria-hidden="true"></div>
+
+  <div class="flex items-center gap-4 z-50">
+    <a href={homeUrl} aria-label="Home" class="site-logo flex items-center z-50">
+      <Logo class="w-10 h-10 md:w-12 md:h-12" />
+    </a>
+
+    <!-- Current pipeline layer (desktop, home only): follows the section in view. -->
+    <LayerChip />
+  </div>
+
+  <!-- Desktop Navigation: the section pill stays centered; the CV button sits to its right. -->
+  <DesktopNav navItems={navItems} cvItem={cvItem} />
+
+  <MobileMenu navItems={navItems} cvItem={cvItem} />
+</header>
+
+<script>
+  import { initHeader } from '@components/layout/header/header';
+
+  document.addEventListener('astro:page-load', initHeader);
+</script>
+
+<style>
+  header {
+    animation: header-appear 0.5s ease-out;
+  }
+
+  @keyframes header-appear {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  #scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 60;
+    width: 100%;
+    height: 2px;
+    background: var(--layer-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    pointer-events: none;
+  }
+
+  .site-logo {
+    transform-origin: left center;
+    transition: transform 0.3s ease;
+  }
+
+  .site-logo {
+    color: var(--layer-text);
+  }
+
+  .site-logo :global(svg) {
+    transition: transform 0.3s ease;
+  }
+
+  .site-logo:hover :global(svg) {
+    transform: scale(1.08);
+  }
+
+  /* Mobile glass bar: appears once the page scrolls so titles do not run under the logo. */
+  .header-bar {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-top-width: 0;
+    background: rgba(14, 16, 20, 0.72);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  #site-header.is-scrolled .header-bar {
+    opacity: 1;
+  }
+
+  #site-header.is-compact .site-logo {
+    transform: scale(0.85);
+  }
+</style>

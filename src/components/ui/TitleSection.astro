@@ -1,0 +1,53 @@
+---
+interface Props {
+  path: string;
+  class?: string;
+  /** Heading element; pages without a hero (e.g. the CV) use h1. */
+  as?: 'h1' | 'h2';
+}
+
+const { path, class: className, as: Heading = 'h2' } = Astro.props;
+---
+
+<div class={`title-section ${className || ''}`}>
+  <p class="title-path">{path}</p>
+  <Heading class="title-heading"><slot /></Heading>
+</div>
+
+<style>
+  .title-section {
+    margin-bottom: 2rem;
+  }
+
+  .title-path {
+    margin-bottom: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--layer-tint);
+  }
+
+  .title-heading {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    line-height: 1;
+    color: var(--layer-text);
+  }
+
+  /* Desktop: sections fit one screen, so titles are tighter. */
+  @media (min-width: 1024px) {
+    .title-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .title-path {
+      margin-bottom: 0.5rem;
+      font-size: 0.8125rem;
+    }
+
+    .title-heading {
+      font-size: clamp(2.25rem, 4.2vw, 3.5rem);
+    }
+  }
+</style>

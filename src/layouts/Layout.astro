@@ -1,80 +1,110 @@
 ---
-import '@fontsource/dm-sans/400.css';
-import '@fontsource/dm-sans/500.css';
-import '@fontsource/dm-sans/700.css';
-import '@fontsource/inter/400.css';
-import '@fontsource/inter/500.css';
-import '@fontsource/inter/600.css';
-import { ViewTransitions } from 'astro:transitions';
-import Header from '@/components/Header.astro';
-import SocialSidebar from '@/components/SocialSidebar.astro';
-import EmailSidebar from '@/components/EmailSidebar.astro';
-import Footer from '@/components/Footer.astro';
+// Latin subsets only: the site is Spanish/English. Inter's @font-face lives in global.css.
+// JetBrains Mono ships one weight: the 500 labels render with the 400 face (no faux bold).
+import '@fontsource/anton/latin-400.css';
+import '@fontsource/jetbrains-mono/latin-400.css';
+import { ClientRouter } from 'astro:transitions';
+import '@styles/global.css';
+import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import antonLatin from '@fontsource/anton/files/anton-latin-400-normal.woff2?url';
+import Header from '@components/layout/header/Header.astro';
+import Footer from '@components/layout/Footer.astro';
+import DataCrystal from '@components/crystal/DataCrystal.astro';
+import SideDock from '@components/layout/SideDock.astro';
+import { getLangFromUrl } from '@i18n/utils';
+import { localizePath, withBase } from '@lib/urls';
 
 interface Props {
   title: string;
   description: string;
+  crystal?: boolean;
+  /** 'home' points the canonical link at the language home (section routes duplicate it). */
+  canonical?: 'home' | 'self';
 }
 
-const { title, description } = Astro.props;
+const { title, description, crystal = false, canonical = 'self' } = Astro.props;
 
-const base = import.meta.env.BASE_URL;
-const faviconUrl = base.endsWith('/') ? `${base}logo.svg` : `${base}/logo.svg`;
+const lang = getLangFromUrl(Astro.url);
+
+const faviconUrl = withBase('logo.svg');
+
+const canonicalPath = canonical === 'home' ? localizePath(lang) : Astro.url.pathname;
+const canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site).href : undefined;
 ---
 
 <!doctype html>
-<html lang="es" class="dark">
+<html lang={lang} class="dark" data-stage={crystal ? 'center' : undefined}>
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href={faviconUrl} />
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
-    <ViewTransitions />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href={interLatin} />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href={antonLatin} />
+    <slot name="head" />
+    <ClientRouter />
 
-    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-W9MRJJPZG4"></script>
+    <!-- --vw: viewport width without the scrollbar, so full-bleed blocks never overflow the page. -->
     <script is:inline>
+      (function () {
+        var root = document.documentElement;
+        var lastWidth = -1;
+        var sync = function () {
+          var width = root.clientWidth;
+          if (width === lastWidth) return;
+          lastWidth = width;
+          root.style.setProperty('--vw', width + 'px');
+        };
+        sync();
+        // A router swap replaces the root attributes (dropping the inline --vw): always rewrite then.
+        var force = function () {
+          lastWidth = -1;
+          sync();
+        };
+        if ('ResizeObserver' in window) new ResizeObserver(sync).observe(root);
+        else window.addEventListener('resize', sync);
+        document.addEventListener('astro:after-swap', force);
+        window.addEventListener('load', sync);
+        document.addEventListener('astro:page-load', force);
+      })();
+    </script>
+
+    <!-- Google Analytics runs in a Partytown web worker (gtag.js is the heaviest script on the
+         page), once per full load: a ClientRouter navigation does not re-run these scripts. -->
+    <script
+      is:inline
+      type="text/partytown"
+      src="https://www.googletagmanager.com/gtag/js?id=G-W9MRJJPZG4"></script>
+    <script is:inline type="text/partytown">
       window.dataLayer = window.dataLayer || [];
-      function gtag() {
+      window.gtag = function gtag() {
         dataLayer.push(arguments);
-      }
+      };
       gtag('js', new Date());
 
       gtag('config', 'G-W9MRJJPZG4');
     </script>
   </head>
 
-  <body class="relative min-h-screen bg-primary-black text-white font-inter">
-    <div
-      class="fixed inset-0 -z-10 bg-gradient-to-br from-primary-black via-primary-blue-dark-muted to-primary-black"
-    >
-    </div>
-
+  <body class="relative min-h-screen font-sans">
+    {crystal && <DataCrystal />}
+    <SideDock />
     <Header />
-    <SocialSidebar />
-    <EmailSidebar />
 
-    <main class="lg:px-16 xl:px-20">
+    <main
+      class:list={['relative z-10 overflow-x-clip', crystal ? 'main-zone' : 'lg:px-20 xl:px-24']}
+    >
       <slot />
     </main>
 
-    <Footer />
+    <div class="relative z-10"><Footer /></div>
 
     <style is:global>
       :root {
         color-scheme: dark;
-      }
-
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-
-      html {
-        scroll-behavior: smooth;
-        font-family: 'Inter', system-ui, sans-serif;
       }
 
       body {
@@ -86,10 +116,6 @@ const faviconUrl = base.endsWith('/') ? `${base}logo.svg` : `${base}/logo.svg`;
       }
 
       @media (prefers-reduced-motion: reduce) {
-        html {
-          scroll-behavior: auto;
-        }
-
         *,
         *::before,
         *::after {
@@ -99,5 +125,12 @@ const faviconUrl = base.endsWith('/') ? `${base}logo.svg` : `${base}/logo.svg`;
         }
       }
     </style>
+
+    <script>
+      import { initMotion, destroyMotion } from '@lib/motion';
+
+      document.addEventListener('astro:page-load', () => initMotion());
+      document.addEventListener('astro:before-swap', () => destroyMotion());
+    </script>
   </body>
 </html>

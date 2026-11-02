@@ -1,0 +1,34 @@
+<span id="layer-chip" class="layer-chip" aria-hidden="true">
+  <span class="layer-chip-dot"></span>
+  <span class="layer-chip-text">raw</span>
+</span>
+
+<style>
+  /* Layer chip: a small mono readout of the current pipeline layer. */
+  .layer-chip {
+    display: none;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.625rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 9999px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1;
+    color: var(--layer-muted);
+  }
+
+  @media (min-width: 1024px) {
+    .layer-chip[data-show] {
+      display: inline-flex;
+    }
+  }
+
+  .layer-chip-dot {
+    width: 6px;
+    height: 6px;
+    flex: none;
+    border-radius: 9999px;
+    background: var(--layer-accent);
+  }
+</style>

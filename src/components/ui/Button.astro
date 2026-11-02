@@ -1,0 +1,60 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+type Variant = 'primary' | 'glass';
+
+interface Props extends Omit<HTMLAttributes<'a'>, 'class'> {
+  variant?: Variant;
+  class?: string;
+  /** Only for the <button> form (no href). */
+  type?: 'button' | 'submit' | 'reset';
+}
+
+// An <a> when it has an href, a <button> otherwise. Every other attribute (target, rel, download,
+// data-*, aria-*, type...) goes to the element. Slots: the default one is the label, `icon` goes
+// before it.
+const { variant = 'primary', class: className, href, ...attrs } = Astro.props;
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag href={href} class:list={[className, `btn-${variant}`]} {...attrs}>
+  <slot name="icon" />
+  <slot />
+</Tag>
+
+<style>
+  .btn-primary,
+  .btn-glass {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.375rem;
+    border-radius: 9999px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    transition:
+      transform 0.25s ease,
+      background-color 0.25s ease;
+  }
+
+  .btn-primary {
+    background: var(--color-lava);
+    color: var(--color-coal);
+  }
+
+  .btn-primary:hover {
+    background: var(--color-lava-400);
+    transform: translateY(-2px);
+  }
+
+  /* No backdrop-filter here: a flat translucent fill is enough and keeps scrolling cheap. */
+  .btn-glass {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--layer-text);
+  }
+
+  .btn-glass:hover {
+    transform: translateY(-2px);
+  }
+</style>

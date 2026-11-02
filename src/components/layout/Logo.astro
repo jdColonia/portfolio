@@ -1,0 +1,21 @@
+---
+// Monogram: three offset layers (the medallion). The top one takes the layer accent.
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 48 48"
+  fill="currentColor"
+  class={className}
+  role="img"
+  aria-label="Logo"
+>
+  <polygon points="2,42 12,32 40,32 30,42"></polygon>
+  <polygon points="5,29 15,19 43,19 33,29"></polygon>
+  <polygon points="8,16 18,6 46,6 36,16" fill="var(--layer-accent, #FF3621)"></polygon>
+</svg>
