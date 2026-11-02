@@ -1,7 +1,11 @@
-// Scroll effect for the hero: the name drifts up and fades as the hero scrolls out of view.
-// The intro animation (letters rising, text fading in) is pure CSS in HeroName.astro and
-// Hero.astro; this file only adds the scroll-linked part.
-// GSAP is the animation library; ScrollTrigger ties animations to the scroll position.
+/**
+ * @file Scroll effect for the hero: the name drifts up and fades as the hero scrolls out of view.
+ *
+ * The intro animation (letters rising, text fading in) is pure CSS in HeroName.astro and
+ * Hero.astro; this file only adds the scroll-linked part. GSAP is the animation library;
+ * ScrollTrigger ties animations to the scroll position.
+ */
+
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { onDestroy, prefersReducedMotion } from '@lib/motion';

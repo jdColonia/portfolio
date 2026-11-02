@@ -1,10 +1,14 @@
 ---
+/**
+ * @file Clean section URLs (/stack, /proyectos, ...) are real routes that render the whole home
+ * page, so reloading or sharing one of them works on a static host.
+ *
+ * After the page loads, the header script scrolls to the section named in the URL.
+ * pages/en/[section].astro is the English twin.
+ */
+
 import HomePage from '@components/views/HomePage.astro';
 import { SECTION_SLUGS } from '@data/config';
-
-// Clean section URLs (/stack, /proyectos, ...) are real routes that render the whole home page,
-// so reloading or sharing one of them works on a static host. After the page loads, the header
-// script scrolls to the section named in the URL. pages/en/[section].astro is the English twin.
 
 /** Astro calls this at build time to know which slugs to generate: one route per home section. */
 export function getStaticPaths() {

@@ -1,13 +1,18 @@
-// Scroll engine for the whole site. Runs on every page (started from Layout.astro):
-//  - Lenis (smooth-scroll library) drives the page scroll, unless the visitor prefers reduced
-//    motion, in which case the browser's native scroll is used.
-//  - GSAP ScrollTrigger (scroll-driven animations) switches the active "layer" and "stage" as the
-//    visitor scrolls. A layer is one step of the medallion pipeline (raw, bronze, silver, gold,
-//    serve), the site's visual theme borrowed from data engineering; each layer has its own colour
-//    palette. The stage is where the 3D crystal sits on screen.
-//  - Other modules subscribe to the overall scroll progress through `onScrollProgress`.
-// The site uses ClientRouter (Astro's client-side navigation: pages are not reloaded), so
-// `initMotion` must run after every navigation and `destroyMotion` before each page swap.
+/**
+ * @file Scroll engine for the whole site.
+ *
+ * Runs on every page (started from Layout.astro):
+ *  - Lenis (smooth-scroll library) drives the page scroll, unless the visitor prefers reduced
+ *    motion, in which case the browser's native scroll is used.
+ *  - GSAP ScrollTrigger (scroll-driven animations) switches the active "layer" and "stage" as the
+ *    visitor scrolls. A layer is one step of the medallion pipeline (raw, bronze, silver, gold,
+ *    serve), the site's visual theme borrowed from data engineering; each layer has its own colour
+ *    palette. The stage is where the 3D crystal sits on screen.
+ *  - Other modules subscribe to the overall scroll progress through `onScrollProgress`.
+ * The site uses ClientRouter (Astro's client-side navigation: pages are not reloaded), so
+ * `initMotion` must run after every navigation and `destroyMotion` before each page swap.
+ */
+
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
@@ -16,6 +21,7 @@ import 'lenis/dist/lenis.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
+/** Medallion layer of the site's visual theme, from rawest to most refined data. */
 export type LayerName = 'raw' | 'bronze' | 'silver' | 'gold' | 'serve';
 
 /**
@@ -24,7 +30,10 @@ export type LayerName = 'raw' | 'bronze' | 'silver' | 'gold' | 'serve';
  */
 export type StageName = 'center' | 'left' | 'right' | 'none';
 
-/** Called on every scroll update with the overall page progress (0 to 1) and the scroll position in px. */
+/**
+ * Called on every scroll update with the overall page progress (0 to 1) and the scroll position
+ * in px.
+ */
 export type ScrollProgressCallback = (progress: number, scroll: number) => void;
 
 let lenis: Lenis | null = null;
@@ -69,8 +78,10 @@ export function onDestroy(fn: () => void): void {
 
 /**
  * Subscribes to the page scroll progress. The values come from a single Lenis `scroll` listener
- * or, when Lenis is off (reduced motion), from one passive native scroll listener. Returns the
- * function that removes the subscription.
+ * or, when Lenis is off (reduced motion), from one passive native scroll listener.
+ *
+ * @param cb - Called on every scroll update.
+ * @returns A function that removes the subscription (an unsubscribe function).
  */
 export function onScrollProgress(cb: ScrollProgressCallback): () => void {
   progressListeners.add(cb);

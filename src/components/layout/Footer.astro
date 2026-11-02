@@ -1,8 +1,12 @@
 ---
-// Site footer: name, social links, email, CV link and copyright. Used by Layout.astro on every
-// page. On desktop it is a compact strip between the side docks that shares the last screen with
-// the contact section. The `data-track*` attributes are picked up by the click listener in
-// @lib/analytics.
+/**
+ * @file Site footer: name, social links, email, CV link and copyright.
+ *
+ * Used by Layout.astro on every page. On desktop it is a compact strip between the side docks that
+ * shares the last screen with the contact section. The `data-track*` attributes are picked up by
+ * the click listener in @lib/analytics.
+ */
+
 import { getLangFromUrl, useTranslations } from '@i18n/utils';
 import { SITE_CONFIG, SOCIAL_LINKS } from '@data/config';
 import { localizePath } from '@lib/urls';

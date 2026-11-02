@@ -1,7 +1,12 @@
 ---
-// Language dropdown (ES/EN). Currently unused: the header imports it only in commented-out code
-// while the selector is disabled, and global.css excludes this file from the Tailwind scan so its
-// utility classes stay out of the bundle. Remove that exclusion when re-enabling it.
+/**
+ * @file Language dropdown (ES/EN).
+ *
+ * Currently unused: the header imports it only in commented-out code while the selector is
+ * disabled, and global.css excludes this file from the Tailwind scan so its utility classes stay
+ * out of the bundle. Remove that exclusion when re-enabling it.
+ */
+
 import { languages } from '@i18n/ui';
 import type { Lang } from '@data/types';
 import { getLangFromUrl, stripBase } from '@i18n/utils';

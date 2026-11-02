@@ -1,6 +1,9 @@
-// Interface text (menus, buttons, labels, meta tags) in Spanish and English.
-// Longer content such as projects, experience or the manifesto lives in src/data instead, as
-// `Localized` objects. Components read these strings through `useTranslations()` in ./utils.ts.
+/**
+ * @file Interface text (menus, buttons, labels, meta tags) in Spanish and English.
+ *
+ * Longer content such as projects, experience or the manifesto lives in src/data instead, as
+ * `Localized` objects. Components read these strings through `useTranslations()` in ./utils.ts.
+ */
 
 /** Language names as shown to visitors. Same list as `languages`; nothing imports it right now. */
 export const locales = {

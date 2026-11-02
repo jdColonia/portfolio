@@ -1,10 +1,13 @@
 ---
-// The 3D crystal's wrapper (Layout.astro renders it on the home page only). It holds a canvas for
-// the live three.js scene and an SVG isometric cube. The SVG is both the placeholder shown while the
-// 3D code downloads and the static fallback when WebGL is unavailable, motion is reduced, the
-// viewport is small or the visitor has data saving on. crystal-mount.ts decides which one is
-// visible through the `data-crystal` attribute below.
-// The cube has three visible faces, each a 3x3 grid of small cells.
+/**
+ * @file The 3D crystal's wrapper (Layout.astro renders it on the home page only).
+ *
+ * It holds a canvas for the live three.js scene and an SVG isometric cube. The SVG is both the
+ * placeholder shown while the 3D code downloads and the static fallback when WebGL is unavailable,
+ * motion is reduced, the viewport is small or the visitor has data saving on. crystal-mount.ts
+ * decides which one is visible through the `data-crystal` attribute below. The cube has three
+ * visible faces, each a 3x3 grid of small cells.
+ */
 
 // Isometric projection constants: S is the edge length of a cell in SVG units and COS is cos(30
 // degrees), the horizontal factor of an isometric axis.

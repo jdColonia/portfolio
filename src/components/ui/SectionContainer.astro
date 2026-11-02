@@ -1,10 +1,16 @@
 ---
-// Wrapper for every section of the home page (and the plain CV page). On desktop each section
-// fills one screen and the content sits beside a 3D "crystal" drawn by a fixed canvas behind the
-// page. `data-layer` and `data-stage` are read by the scroll engine (src/lib/motion) to change
-// the theme colour and move the crystal as this section scrolls into view.
+/**
+ * @file Wrapper for every section of the home page (and the plain CV page).
+ *
+ * On desktop each section fills one screen and the content sits beside a 3D "crystal" drawn by a
+ * fixed canvas behind the page. `data-layer` and `data-stage` are read by the scroll engine
+ * (src/lib/motion) to change the theme colour and move the crystal as this section scrolls into
+ * view.
+ */
+
 import type { HTMLAttributes } from 'astro/types';
 
+/** Props of a home section; any other attribute is passed to the `<section>`. */
 interface Props extends HTMLAttributes<'section'> {
   /**
    * Medallion layer of this section (raw, bronze, silver, gold or serve): the site's visual

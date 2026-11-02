@@ -1,5 +1,9 @@
-// Helpers to find the language of the current page and to look up interface text for it.
-// The strings themselves live in i18n/ui.ts.
+/**
+ * @file Helpers to find the language of the current page and to look up interface text for it.
+ *
+ * The strings themselves live in i18n/ui.ts.
+ */
+
 import { ui, defaultLang } from '@i18n/ui';
 
 /** Removes the deployment base (e.g. "/portfolio") from a pathname, leaving a leading slash. */
@@ -25,6 +29,9 @@ export function getLangFromUrl(url: URL) {
  * Returns a `t(key)` function for the given language. The keys are typed from the Spanish
  * dictionary, and a missing or empty English string falls back to the Spanish one.
  * Despite the name it is not a React hook; it can be called anywhere.
+ *
+ * @param lang - Language to translate into.
+ * @returns A `t(key)` function that looks up an interface string in that language.
  */
 export function useTranslations(lang: keyof typeof ui) {
   return function t(key: keyof (typeof ui)[typeof defaultLang]) {

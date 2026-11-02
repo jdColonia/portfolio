@@ -1,4 +1,8 @@
 /**
+ * @file Iconify ids for every technology icon shown on the site.
+ */
+
+/**
  * Iconify ids keyed by the technology name shown in the UI (the same text used in data/stack.ts
  * and in the project stacks). It is the single source for the stack panels and the project
  * cards. The ids are collected by pages/tech-icons.svg.ts into one shared SVG sprite, so a new

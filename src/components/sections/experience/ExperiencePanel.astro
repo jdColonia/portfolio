@@ -1,10 +1,17 @@
 ---
-// The content of one company in the experience section: title, date range, roles with their
-// tasks, an optional description and tags. Experience.astro renders one of these per company;
-// experience.ts shows and hides them by toggling the `hidden` attribute.
+/**
+ * @file The content of one company in the experience section: title, date range, roles with their
+ * tasks, an optional description and tags.
+ *
+ * Experience.astro renders one of these per company; experience.ts shows and hides them by toggling
+ * the `hidden` attribute.
+ */
+
 import type { ExperienceCompany } from '@data/experience';
 
+/** Props of one experience panel. */
 interface Props {
+  /** Company whose roles and tags are shown. */
   item: ExperienceCompany;
   /** The first panel starts visible; the script toggles `hidden` afterwards. */
   active: boolean;

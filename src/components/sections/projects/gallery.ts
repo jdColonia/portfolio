@@ -1,6 +1,7 @@
 /**
- * Scroll behaviour of the projects gallery (markup in ProjectsGallery.astro). The cards sit in
- * one long horizontal "track", and there are three ways to move through it:
+ * @file Scroll behaviour of the projects gallery (markup in ProjectsGallery.astro).
+ *
+ * The cards sit in one long horizontal "track", and there are three ways to move through it:
  *   - reduced motion: the visitor scrolls the row natively and the progress bar just follows it;
  *   - desktop: the section is pinned (held in place by GSAP ScrollTrigger, which ties animations
  *     to the scroll position) while vertical scrolling slides the track sideways;
@@ -9,6 +10,7 @@
  * `gsap.matchMedia` picks the right one and undoes it when the screen size or the motion
  * preference changes. Lenis is the smooth-scroll library that drives the page scroll.
  */
+
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { getLenis, onDestroy } from '@lib/motion';

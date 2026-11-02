@@ -1,6 +1,10 @@
-// Projects shown in the horizontal gallery of the home page (components/sections/projects).
-// Each project is written once per language. The tech stack lists and the images are shared
-// constants used by both entries, so they cannot drift apart between languages.
+/**
+ * @file Projects shown in the horizontal gallery of the home page (components/sections/projects).
+ *
+ * Each project is written once per language. The tech stack lists and the images are shared
+ * constants used by both entries, so they cannot drift apart between languages.
+ */
+
 import type { ImageMetadata } from 'astro';
 import type { Localized } from '@data/types';
 import qversityImage from '@assets/projects/qversity-executive-overview.webp';

@@ -1,9 +1,13 @@
-// Takes screenshots of every route of the built site, in Spanish and English, at a phone width
-// (390 px) and a desktop width (1440 px), and saves the visible text of each page at 1440 px in
-// texts.json. compare.mjs then diffs two such folders (before and after a change).
-// Reduced motion is requested so animations are skipped and two captures of the same build are
-// identical.
-// Usage: node capture.mjs <outDir>
+/**
+ * @file Takes screenshots of every route of the built site, in Spanish and English, at a phone
+ * width (390 px) and a desktop width (1440 px), and saves the visible text of each page at 1440 px
+ * in texts.json.
+ *
+ * compare.mjs then diffs two such folders (before and after a change). Reduced motion is requested
+ * so animations are skipped and two captures of the same build are identical. Usage: node
+ * capture.mjs <outDir>
+ */
+
 import fs from 'node:fs';
 import { launch, requireServer, url } from './lib.mjs';
 

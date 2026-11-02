@@ -1,9 +1,14 @@
 ---
-// Row of headline numbers (years, projects, ...) shown at the bottom of the about section. The
-// numbers count up from 0 once the row scrolls into view (script at the bottom).
+/**
+ * @file Row of headline numbers (years, projects, ...) shown at the bottom of the about section.
+ *
+ * The numbers count up from 0 once the row scrolls into view (script at the bottom).
+ */
+
 import { getLangFromUrl, useTranslations } from '@i18n/utils';
 import { metrics } from '@data/metrics';
 
+/** Props of the metrics row. */
 interface Props {
   /** Tight variant with smaller type, used inside the about screen so it fits one viewport. */
   compact?: boolean;

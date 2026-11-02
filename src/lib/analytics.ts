@@ -1,10 +1,14 @@
-// Thin wrapper around Google Analytics (GA) for custom events. Used by the header, the layout and
-// any element that declares `data-track` in its markup.
-//
-// GA's gtag.js runs inside Partytown (a library that runs third-party scripts in a web worker, off
-// the main thread). On the main thread `window.gtag` is only a forwarding stub that relays calls to
-// the worker (see the `forward` option in astro.config.mjs). It can also be missing entirely when
-// an ad blocker stops the script, so every call here must tolerate that.
+/**
+ * @file Thin wrapper around Google Analytics (GA) for custom events.
+ *
+ * Used by the header, the layout and any element that declares `data-track` in its markup.
+ *
+ * GA's gtag.js runs inside Partytown (a library that runs third-party scripts in a web worker, off
+ * the main thread). On the main thread `window.gtag` is only a forwarding stub that relays calls to
+ * the worker (see the `forward` option in astro.config.mjs). It can also be missing entirely when
+ * an ad blocker stops the script, so every call here must tolerate that.
+ */
+
 declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void;
@@ -16,7 +20,13 @@ let listening = false;
 let loaded = false;
 const seenSections = new Set<string>();
 
-/** Sends a GA event. Never throws: analytics must not break the page. */
+/**
+ * Sends a GA event. Never throws: analytics must not break the page.
+ *
+ * @param name - GA event name, e.g. `cv_download` or `contact_click`.
+ * @param params - Event parameters. Do not use `language` as a key: GA reads it as the user's
+ *   language.
+ */
 export function track(name: string, params: Record<string, string> = {}): void {
   try {
     window.gtag?.('event', name, params);

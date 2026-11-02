@@ -1,8 +1,13 @@
 ---
-// Transition screen between sections: a large word that scales up as the user scrolls until it
-// fills the view, with an orange glow behind it. While scrolling, the section is pinned (held in
-// place with CSS `position: sticky`) and the scroll progress drives the zoom; with reduced
-// motion it is just a heading. The animation script is at the bottom of this file.
+/**
+ * @file Transition screen between sections: a large word that scales up as the user scrolls until
+ * it fills the view, with an orange glow behind it.
+ *
+ * While scrolling, the section is pinned (held in place with CSS `position: sticky`) and the scroll
+ * progress drives the zoom; with reduced motion it is just a heading. The animation script is at
+ * the bottom of this file.
+ */
+
 import { getLangFromUrl, useTranslations } from '@i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);

@@ -1,7 +1,11 @@
-// Compares two folders produced by capture.mjs (a baseline taken before a change and the current
-// state) and reports what differs: screenshots pixel by pixel and the saved page text. Exits with
-// 1 when an image changes by more than 1% (except known noise) or any text differs.
-// Usage: node compare.mjs <baselineDir> <currentDir>
+/**
+ * @file Compares two folders produced by capture.mjs (a baseline taken before a change and the
+ * current state) and reports what differs: screenshots pixel by pixel and the saved page text.
+ *
+ * Exits with 1 when an image changes by more than 1% (except known noise) or any text differs.
+ * Usage: node compare.mjs <baselineDir> <currentDir>
+ */
+
 import fs from 'node:fs';
 import path from 'node:path';
 import { PNG } from 'pngjs';

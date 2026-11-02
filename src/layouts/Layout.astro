@@ -1,9 +1,12 @@
 ---
-// Base layout wrapped around every page: the <head> (meta tags, fonts, canonical link, Google
-// Analytics), the page chrome (side dock, header, footer) and, when requested, the 3D crystal.
-// It also starts the scroll engine (@lib/motion) and the analytics listeners. The site uses
-// ClientRouter (Astro's client-side navigation: the page is not reloaded), so those start on every
-// `astro:page-load` and the scroll engine is torn down on `astro:before-swap`.
+/**
+ * @file Base layout wrapped around every page: the <head> (meta tags, fonts, canonical link, Google
+ * Analytics), the page chrome (side dock, header, footer) and, when requested, the 3D crystal.
+ *
+ * It also starts the scroll engine (@lib/motion) and the analytics listeners. The site uses
+ * ClientRouter (Astro's client-side navigation: the page is not reloaded), so those start on every
+ * `astro:page-load` and the scroll engine is torn down on `astro:before-swap`.
+ */
 
 // Fonts: only the latin subsets are loaded, because the site is Spanish and English. Inter's
 // @font-face lives in global.css instead.
@@ -22,8 +25,11 @@ import SideDock from '@components/layout/SideDock.astro';
 import { getLangFromUrl } from '@i18n/utils';
 import { localizePath, withBase } from '@lib/urls';
 
+/** Props of the base layout; the page content goes in the default slot. */
 interface Props {
+  /** Page title, used in the `<title>` tag. */
   title: string;
+  /** Meta description of the page. */
   description: string;
   /** Renders the 3D crystal behind the content. Only the home page uses it. */
   crystal?: boolean;

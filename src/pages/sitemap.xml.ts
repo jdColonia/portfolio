@@ -1,8 +1,13 @@
-// Generates /sitemap.xml at build time (an Astro endpoint: this file becomes a static XML file).
-// The sitemap tells search engines which pages exist and when each one last changed.
-// To make a new indexable page appear here, add it to `entries` below, together with the source
-// files whose history dates it. The build must see the full git history for the dates to be
-// right, which is why the deploy workflow checks out with `fetch-depth: 0`.
+/**
+ * @file Generates /sitemap.xml at build time (an Astro endpoint: this file becomes a static XML
+ * file).
+ *
+ * The sitemap tells search engines which pages exist and when each one last changed. To make a new
+ * indexable page appear here, add it to `entries` below, together with the source files whose
+ * history dates it. The build must see the full git history for the dates to be right, which is why
+ * the deploy workflow checks out with `fetch-depth: 0`.
+ */
+
 import type { APIRoute } from 'astro';
 import { execFileSync } from 'node:child_process';
 import { withBase } from '@lib/urls';

@@ -1,13 +1,16 @@
-// The 3D "data crystal" shown beside the page content (three.js, a WebGL library).
-//
-// It is a 6x6x6 block of 216 small cubes drawn as ONE InstancedMesh (a single draw call with a
-// separate position, rotation, scale and colour per cube). Each medallion layer (raw, bronze,
-// silver, gold, serve: the site's visual theme from data engineering) defines a target arrangement
-// of those same cubes; when the active layer changes, the cubes morph from the current arrangement
-// to the new one. The layer comes from the `layerchange` window event fired by lib/motion.
-//
-// This module is large because it bundles three.js, so crystal-mount.ts loads it with a dynamic
-// `import()` only when the crystal is actually needed.
+/**
+ * @file The 3D "data crystal" shown beside the page content (three.js, a WebGL library).
+ *
+ * It is a 6x6x6 block of 216 small cubes drawn as ONE InstancedMesh (a single draw call with a
+ * separate position, rotation, scale and colour per cube). Each medallion layer (raw, bronze,
+ * silver, gold, serve: the site's visual theme from data engineering) defines a target arrangement
+ * of those same cubes; when the active layer changes, the cubes morph from the current arrangement
+ * to the new one. The layer comes from the `layerchange` window event fired by lib/motion.
+ *
+ * This module is large because it bundles three.js, so crystal-mount.ts loads it with a dynamic
+ * `import()` only when the crystal is actually needed.
+ */
+
 import {
   AmbientLight,
   Color,
@@ -57,6 +60,7 @@ interface LayerState {
   sway: number; // 0 = endless spin around y, 1 = gentle sway facing the camera
 }
 
+/** Options for `createCrystal`. */
 export interface CrystalOptions {
   /** Layer to show on the first frame, so the crystal does not morph on load. Defaults to 'raw'. */
   initialLayer?: LayerName;
@@ -314,6 +318,10 @@ function copyState(target: LayerState, source: LayerState): void {
  * Creates the WebGL scene on the given canvas and returns a handle to control it. The returned
  * promise resolves once the shaders are compiled and rendering has started. Call `destroy()` on
  * the handle before the page is swapped out, or the WebGL context leaks.
+ *
+ * @param canvas - Canvas the scene is drawn on; its size follows the size of its parent.
+ * @param options - Initial layer and the slow-device callback; see `CrystalOptions`.
+ * @returns A handle to pause, resume, retarget and destroy the running scene.
  */
 export async function createCrystal(
   canvas: HTMLCanvasElement,

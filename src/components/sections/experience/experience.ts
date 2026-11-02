@@ -1,8 +1,11 @@
 /**
- * Behaviour of the experience tabs (see Experience.astro): selecting a company shows its panel,
- * arrow keys move between tabs, and a bar slides to mark the active tab. The tabs are a row on
- * small screens and a column from 1024px up, so the bar and the arrow keys follow that layout.
+ * @file Behaviour of the experience tabs (see Experience.astro): selecting a company shows its
+ * panel, arrow keys move between tabs, and a bar slides to mark the active tab.
+ *
+ * The tabs are a row on small screens and a column from 1024px up, so the bar and the arrow keys
+ * follow that layout.
  */
+
 import { onDestroy, prefersReducedMotion } from '@lib/motion';
 
 /**

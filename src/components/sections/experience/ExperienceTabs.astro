@@ -1,10 +1,17 @@
 ---
-// The tab list of the experience section, one tab per company, plus a sliding bar that marks the
-// active one. Selection, keyboard navigation and the bar's position are handled in
-// experience.ts; this file only has the markup and styles.
+/**
+ * @file The tab list of the experience section, one tab per company, plus a sliding bar that marks
+ * the active one.
+ *
+ * Selection, keyboard navigation and the bar's position are handled in experience.ts; this file
+ * only has the markup and styles.
+ */
+
 import type { ExperienceCompany } from '@data/experience';
 
+/** Props of the experience tab list. */
 interface Props {
+  /** One tab per company, in this order. */
   items: ExperienceCompany[];
   /** Accessible name of the tab list (read by screen readers). */
   label: string;

@@ -1,11 +1,16 @@
-// Behaviour of the site header, bundled into Header.astro. Runs on every page.
-//
-// Header.astro calls `initHeader` on each `astro:page-load`. The site uses ClientRouter (Astro's
-// client-side navigation: pages are not reloaded), so everything bound here is released through
-// one AbortController when `astro:before-swap` fires, and bound again on the next page.
-//
-// It handles: the compact header and scroll progress bar, the layer chip, the mobile menu, section
-// navigation with clean URLs (no #hash), and highlighting the nav link of the section in view.
+/**
+ * @file Behaviour of the site header, bundled into Header.astro.
+ *
+ * Runs on every page.
+ *
+ * Header.astro calls `initHeader` on each `astro:page-load`. The site uses ClientRouter (Astro's
+ * client-side navigation: pages are not reloaded), so everything bound here is released through
+ * one AbortController when `astro:before-swap` fires, and bound again on the next page.
+ *
+ * It handles: the compact header and scroll progress bar, the layer chip, the mobile menu, section
+ * navigation with clean URLs (no #hash), and highlighting the nav link of the section in view.
+ */
+
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {

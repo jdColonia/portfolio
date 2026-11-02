@@ -1,5 +1,10 @@
-// Academic background. It is not rendered on its own: experience.ts reads the first entry and
-// shows it as the last tab ("Education") of the experience section.
+/**
+ * @file Academic background.
+ *
+ * It is not rendered on its own: experience.ts reads the first entry and shows it as the last tab
+ * ("Education") of the experience section.
+ */
+
 import type { Localized } from '@data/types';
 
 /** One degree. `year` is the display range, `highlights` become the tags shown under it. */

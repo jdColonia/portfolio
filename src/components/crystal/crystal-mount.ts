@@ -1,14 +1,18 @@
-// Decides when to start and stop the 3D crystal, and which version of it the visitor sees.
-// Used by the script in DataCrystal.astro, which calls `sync` on every page load.
-//
-// The crystal itself (three.js, a WebGL library, about 540 KB) lives in @lib/crystal/scene and is
-// loaded with a dynamic `import()` only when this file decides it is worth it: a desktop-sized
-// screen, a capable device and no preference for less data or motion. In every other case, or if
-// anything fails, the page keeps showing a static SVG cube instead (the "fallback").
-//
-// The element's `data-crystal` attribute is the single source of truth for the CSS:
-// 'loading' (placeholder while three.js downloads), 'ready' (canvas visible) or 'fallback'.
-// Importing only the types below keeps three.js out of the page's main bundle.
+/**
+ * @file Decides when to start and stop the 3D crystal, and which version of it the visitor sees.
+ *
+ * Used by the script in DataCrystal.astro, which calls `sync` on every page load.
+ *
+ * The crystal itself (three.js, a WebGL library, about 540 KB) lives in @lib/crystal/scene and is
+ * loaded with a dynamic `import()` only when this file decides it is worth it: a desktop-sized
+ * screen, a capable device and no preference for less data or motion. In every other case, or if
+ * anything fails, the page keeps showing a static SVG cube instead (the "fallback").
+ *
+ * The element's `data-crystal` attribute is the single source of truth for the CSS:
+ * 'loading' (placeholder while three.js downloads), 'ready' (canvas visible) or 'fallback'.
+ * Importing only the types below keeps three.js out of the page's main bundle.
+ */
+
 import type { Crystal } from '@lib/crystal/scene';
 import type { LayerName } from '@lib/motion';
 
@@ -71,8 +75,10 @@ const setState = (canvas: HTMLCanvasElement, state: 'loading' | 'ready' | 'fallb
 
 const showFallback = (canvas: HTMLCanvasElement) => setState(canvas, 'fallback');
 
-// Three.js is about 540 KB, which is only worth downloading on desktop-sized screens (1024px and
-// up, the same breakpoint the CSS uses to place the crystal beside the content).
+/**
+ * Media query for desktop-sized screens (1024px and up, the same breakpoint the CSS uses to place
+ * the crystal beside the content). Three.js is about 540 KB, which is only worth downloading there.
+ */
 export const desktopQuery = window.matchMedia('(min-width: 1024px)');
 // True when the visitor turned on the browser's data saver. `navigator.connection` is not in the
 // standard TypeScript types, hence the cast.

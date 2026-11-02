@@ -1,7 +1,10 @@
-// Client-side logic of the 404 page (NotFound.astro). GitHub Pages serves this single static page
-// for every unknown URL, so neither the requested path nor the language is known at build time.
-// This script shows the requested path in the fake error message and, on /en/ URLs, swaps the
-// Spanish text for English.
+/**
+ * @file Client-side logic of the 404 page (NotFound.astro).
+ *
+ * GitHub Pages serves this single static page for every unknown URL, so neither the requested path
+ * nor the language is known at build time. This script shows the requested path in the fake error
+ * message and, on /en/ URLs, swaps the Spanish text for English.
+ */
 
 // Spanish is the default, already present in the server-rendered HTML. The keys match the
 // `data-i18n` attributes in NotFound.astro, so only the English strings are kept here.

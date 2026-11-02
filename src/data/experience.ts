@@ -1,7 +1,11 @@
-// Content of the "Experience" section (components/sections/experience): one tab per company,
-// ordered from the most recent job, plus a last tab for the degree. The text comes from the
-// resume, so keep it in sync with it when the resume changes. Dates are display strings already
-// written in each language.
+/**
+ * @file Content of the "Experience" section (components/sections/experience): one tab per company,
+ * ordered from the most recent job, plus a last tab for the degree.
+ *
+ * The text comes from the resume, so keep it in sync with it when the resume changes. Dates are
+ * display strings already written in each language.
+ */
+
 import type { Localized } from '@data/types';
 import { education } from '@data/education';
 

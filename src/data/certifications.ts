@@ -1,5 +1,10 @@
-// Certifications and bootcamps, shown in the "Certifications" section of the home page
-// (components/sections/certifications). The whole section is hidden when a language has no entries.
+/**
+ * @file Certifications and bootcamps, shown in the "Certifications" section of the home page
+ * (components/sections/certifications).
+ *
+ * The whole section is hidden when a language has no entries.
+ */
+
 import type { Localized } from '@data/types';
 
 /** One certification or bootcamp. `date` is display text, already written in the language. */

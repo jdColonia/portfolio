@@ -1,4 +1,16 @@
 ---
+/**
+ * @file The home page: all sections stacked on one long page, from the hero to the contact section.
+ *
+ * It is the single implementation behind pages/index.astro, pages/en/index.astro and every section
+ * route (pages/[section].astro), so a section URL such as /stack shows the same page.
+ *
+ * Each SectionContainer takes two visual props, both read by the scroll engine in src/lib/motion:
+ *  - `layer` is the "medallion layer" theme (raw, bronze, silver, gold, serve), a data
+ *    engineering metaphor for how refined the data is. It sets the accent colour of the section.
+ *  - `stage` is where the 3D crystal sits next to the section's content on desktop.
+ */
+
 import Layout from '@layouts/Layout.astro';
 import Hero from '@components/sections/hero/Hero.astro';
 import Manifesto from '@components/sections/about/Manifesto.astro';
@@ -15,14 +27,6 @@ import { getLangFromUrl, useTranslations } from '@i18n/utils';
 import { SITE_CONFIG } from '@data/config';
 import { certifications } from '@data/certifications';
 
-// The home page: all sections stacked on one long page, from the hero to the contact section.
-// It is the single implementation behind pages/index.astro, pages/en/index.astro and every
-// section route (pages/[section].astro), so a section URL such as /stack shows the same page.
-//
-// Each SectionContainer takes two visual props, both read by the scroll engine in src/lib/motion:
-//  - `layer` is the "medallion layer" theme (raw, bronze, silver, gold, serve), a data
-//    engineering metaphor for how refined the data is. It sets the accent colour of the section.
-//  - `stage` is where the 3D crystal sits next to the section's content on desktop.
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 

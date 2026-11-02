@@ -1,9 +1,15 @@
-// The "What I build with" section (components/sections/stack/StackDomains.astro): technologies
-// grouped into three areas. Technology names are not translated, so `items` is shared by both
-// languages and only the label and description are localized.
+/**
+ * @file The "What I build with" section (components/sections/stack/StackDomains.astro):
+ * technologies grouped into three areas.
+ *
+ * Technology names are not translated, so `items` is shared by both languages and only the label
+ * and description are localized.
+ */
+
 import type { Localized } from '@data/types';
 import { techIcons } from '@data/techIcons';
 
+/** Identifier of one stack area. */
 export type StackDomainId = 'software' | 'cloud' | 'data';
 
 /** One technology tile. */

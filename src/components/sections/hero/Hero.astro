@@ -1,7 +1,12 @@
 ---
-// First screen of the home page: status badge, the big name (HeroName), subtitle, short
-// description and the main buttons. The intro animation is pure CSS so it starts at first paint;
-// hero.ts adds the scroll effect on the name. On desktop the content is centered.
+/**
+ * @file First screen of the home page: status badge, the big name (HeroName), subtitle, short
+ * description and the main buttons.
+ *
+ * The intro animation is pure CSS so it starts at first paint; hero.ts adds the scroll effect on
+ * the name. On desktop the content is centered.
+ */
+
 import { getLangFromUrl, useTranslations } from '@i18n/utils';
 import { SITE_CONFIG } from '@data/config';
 import { Icon } from 'astro-icon/components';

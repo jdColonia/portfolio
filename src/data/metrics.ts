@@ -1,5 +1,8 @@
-// The four figures of the "About me" section, styled as the result of a SQL query
-// (components/sections/about/Metrics.astro), which counts each number up when it scrolls into view.
+/**
+ * @file The four figures of the "About me" section, styled as the result of a SQL query
+ * (components/sections/about/Metrics.astro), which counts each number up when it scrolls into view.
+ */
+
 import type { Localized } from '@data/types';
 
 /** One figure: the number that is counted up, an optional suffix such as "+", and its label. */

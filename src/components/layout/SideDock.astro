@@ -1,7 +1,12 @@
 ---
-// Two fixed columns on the sides of the screen (desktop only): social links at the bottom left
-// and the email, written vertically, at the bottom right. Used by Layout.astro on every page.
-// The `data-track*` attributes are picked up by the click listener in @lib/analytics.
+/**
+ * @file Two fixed columns on the sides of the screen (desktop only): social links at the bottom
+ * left and the email, written vertically, at the bottom right.
+ *
+ * Used by Layout.astro on every page. The `data-track*` attributes are picked up by the click
+ * listener in @lib/analytics.
+ */
+
 import { getLangFromUrl, useTranslations } from '@i18n/utils';
 import { SITE_CONFIG } from '@data/config';
 import SocialLinks from '@components/ui/SocialLinks.astro';

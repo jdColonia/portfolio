@@ -1,8 +1,15 @@
 ---
+/**
+ * @file Icon links for every entry in SOCIAL_LINKS.
+ *
+ * `class` and any other attribute (aria-label, ...) are applied to the <ul>.
+ */
+
 import { Icon } from 'astro-icon/components';
 import type { HTMLAttributes } from 'astro/types';
 import { SOCIAL_LINKS } from '@data/config';
 
+/** Props of the social links list; any other attribute is passed to the `<ul>`. */
 interface Props extends HTMLAttributes<'ul'> {
   /** Class of each <a>. */
   linkClass?: string;
@@ -15,8 +22,6 @@ interface Props extends HTMLAttributes<'ul'> {
   location?: string;
 }
 
-// Icon links for every entry in SOCIAL_LINKS. `class` and any other attribute (aria-label, ...)
-// are applied to the <ul>.
 const { linkClass, size = 24, location, ...attrs } = Astro.props;
 ---
 

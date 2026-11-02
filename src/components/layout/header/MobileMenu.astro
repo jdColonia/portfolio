@@ -1,15 +1,23 @@
 ---
-// Mobile navigation (hidden from `md` up): the hamburger button and the full-screen menu it opens.
-// Rendered by Header.astro. header.ts toggles the `is-open` class, the `inert` attribute and the
-// aria-expanded state, and animates the links in.
+/**
+ * @file Mobile navigation (hidden from `md` up): the hamburger button and the full-screen menu it
+ * opens.
+ *
+ * Rendered by Header.astro. header.ts toggles the `is-open` class, the `inert` attribute and the
+ * aria-expanded state, and animates the links in.
+ */
+
 import { Icon } from 'astro-icon/components';
 // Language picker temporarily disabled; re-enable together with the commented markup below.
 // import LanguagePicker from '@components/ui/LanguagePicker.astro';
 import type { NavItem } from '@components/layout/header/types';
 import { getLangFromUrl, useTranslations } from '@i18n/utils';
 
+/** Props of the mobile menu. */
 interface Props {
+  /** Section links, in display order. */
   navItems: NavItem[];
+  /** Link to the CV page, shown apart from the section links. */
   cvItem: NavItem;
 }
 

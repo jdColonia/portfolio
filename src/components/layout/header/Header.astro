@@ -1,7 +1,12 @@
 ---
-// Fixed site header: logo, current-layer chip, desktop nav pill and mobile menu. It also renders
-// the thin scroll progress bar. Used by Layout.astro on every page; the behaviour (compact mode,
-// active link, mobile menu) lives in header.ts, which finds these elements by id and class.
+/**
+ * @file Fixed site header: logo, current-layer chip, desktop nav pill and mobile menu.
+ *
+ * It also renders the thin scroll progress bar. Used by Layout.astro on every page; the behaviour
+ * (compact mode, active link, mobile menu) lives in header.ts, which finds these elements by id and
+ * class.
+ */
+
 import { getLangFromUrl, useTranslations } from '@i18n/utils';
 import Logo from '@components/layout/Logo.astro';
 import LayerChip from '@components/layout/header/LayerChip.astro';

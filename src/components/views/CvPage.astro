@@ -1,4 +1,12 @@
 ---
+/**
+ * @file The resume page: a PDF viewer plus download and open buttons.
+ *
+ * It is the single implementation behind both routes, pages/cv.astro (Spanish) and
+ * pages/en/cv.astro (English); the language is read from the URL, which also picks which PDF is
+ * shown.
+ */
+
 import { Icon } from 'astro-icon/components';
 import Layout from '@layouts/Layout.astro';
 import SectionContainer from '@components/ui/SectionContainer.astro';
@@ -8,9 +16,6 @@ import { SITE_CONFIG } from '@data/config';
 import { getLangFromUrl, useTranslations } from '@i18n/utils';
 import { localizePath, withBase } from '@lib/urls';
 
-// The resume page: a PDF viewer plus download and open buttons. It is the single implementation
-// behind both routes, pages/cv.astro (Spanish) and pages/en/cv.astro (English); the language is
-// read from the URL, which also picks which PDF is shown.
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 

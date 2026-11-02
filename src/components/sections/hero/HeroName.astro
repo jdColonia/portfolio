@@ -1,8 +1,13 @@
 ---
-// The big name in the hero. It is split into lines, words and single characters while the page is
-// built, so the intro animation is pure CSS and starts at first paint, without waiting for any
-// JavaScript. `index` counts characters across all lines and sets each character's animation
-// delay, which makes the letters appear one after another (a "stagger").
+/**
+ * @file The big name in the hero.
+ *
+ * It is split into lines, words and single characters while the page is built, so the intro
+ * animation is pure CSS and starts at first paint, without waiting for any JavaScript. `index`
+ * counts characters across all lines and sets each character's animation delay, which makes the
+ * letters appear one after another (a "stagger").
+ */
+
 const nameLines = ['Juan David', 'Colonia'];
 let charIndex = 0;
 const nameWords = nameLines.map((line) =>

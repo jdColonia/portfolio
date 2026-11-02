@@ -1,11 +1,16 @@
 ---
-// Projects section: a horizontal row of project cards, grouped by track (data, software,
-// platform) with a divider card before each group. The same markup has three behaviours, chosen
-// by gallery.ts and exposed as `data-mode` on the .gallery element:
-//   - no `data-mode` (reduced motion): a native, swipeable horizontal scroll with snap points;
-//   - `pinned` (desktop): the section is held in place while scrolling moves the cards sideways;
-//   - `sticky` (phones and tablets): the cards stick with CSS while scrolling moves them sideways.
-// The data-gallery-* attributes below are the hooks gallery.ts uses to find each part.
+/**
+ * @file Projects section: a horizontal row of project cards, grouped by track (data, software,
+ * platform) with a divider card before each group.
+ *
+ * The same markup has three behaviours, chosen by gallery.ts and exposed as `data-mode` on the
+ * .gallery element:
+ *   - no `data-mode` (reduced motion): a native, swipeable horizontal scroll with snap points;
+ *   - `pinned` (desktop): the section is held in place while scrolling moves the cards sideways;
+ *   - `sticky` (phones and tablets): the cards stick with CSS while scrolling moves them sideways.
+ * The data-gallery-* attributes below are the hooks gallery.ts uses to find each part.
+ */
+
 import { getLangFromUrl, useTranslations } from '@i18n/utils';
 import ProjectCard from '@components/sections/projects/ProjectCard.astro';
 import TrackDivider from '@components/sections/projects/TrackDivider.astro';

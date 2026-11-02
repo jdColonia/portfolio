@@ -1,5 +1,9 @@
-// Site-wide settings: identity, contact links, resume files and the list of home section slugs.
-// Text that depends on the language is a `Localized` object ({ es, en }); the rest is shared.
+/**
+ * @file Site-wide settings: identity, contact links, resume files and the list of home section
+ * slugs.
+ *
+ * Text that depends on the language is a `Localized` object ({ es, en }); the rest is shared.
+ */
 
 /**
  * Identity and contact data used by the page <head>, the footer, the dock and the hero.

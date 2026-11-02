@@ -1,11 +1,14 @@
 ---
+/**
+ * @file English twin of pages/[section].astro: clean section URLs (/en/stack, /en/proyectos, ...)
+ * that render the whole home page, so reloading or sharing one of them works on a static host.
+ *
+ * The language comes from the "/en/" prefix. After the page loads, the header script scrolls to the
+ * section named in the URL.
+ */
+
 import HomePage from '@components/views/HomePage.astro';
 import { SECTION_SLUGS } from '@data/config';
-
-// English twin of pages/[section].astro: clean section URLs (/en/stack, /en/proyectos, ...) that
-// render the whole home page, so reloading or sharing one of them works on a static host. The
-// language comes from the "/en/" prefix. After the page loads, the header script scrolls to the
-// section named in the URL.
 
 /** Astro calls this at build time to know which slugs to generate: one route per home section. */
 export function getStaticPaths() {

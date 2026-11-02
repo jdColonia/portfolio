@@ -1,20 +1,24 @@
-// Behavioural regression checks for the built site, driven by Playwright against the preview
-// server (see the verify SKILL.md for how to start it and how to read the results).
-// Usage: node checks.mjs [name...]   (no names runs every check; the names are the keys of `all`
-// at the bottom of this file).
-//
-// Things to know before editing a check:
-//  - The fixed waits (page.waitForTimeout) are deliberate. The site animates, and the scroll
-//    engine and the analytics worker settle on their own schedule, so there is no single event
-//    to wait for. The values are generous so the checks pass on a slow machine; if one fails,
-//    re-run it alone before suspecting a real regression.
-//  - Several checks are about the projects gallery, which has two modes. On desktop it is
-//    "pinned": GSAP ScrollTrigger holds the section in place (a pin) inside an element called
-//    `.pin-spacer`, which it adds to make the page taller, while scrolling moves the cards
-//    sideways. On phones and tablets it is "sticky": plain CSS `position: sticky`, no spacer.
-//  - Analytics checks watch the GA4 (Google Analytics 4) requests that Partytown sends.
-//    Partytown is a library that runs third-party scripts, here Google's, in a web worker.
-//    ClientRouter is Astro's client-side navigation: pages change without a full reload.
+/**
+ * @file Behavioural regression checks for the built site, driven by Playwright against the preview
+ * server (see the verify SKILL.md for how to start it and how to read the results).
+ *
+ * Usage: node checks.mjs [name...]   (no names runs every check; the names are the keys of `all` at
+ * the bottom of this file).
+ *
+ * Things to know before editing a check:
+ *  - The fixed waits (page.waitForTimeout) are deliberate. The site animates, and the scroll
+ *    engine and the analytics worker settle on their own schedule, so there is no single event
+ *    to wait for. The values are generous so the checks pass on a slow machine; if one fails,
+ *    re-run it alone before suspecting a real regression.
+ *  - Several checks are about the projects gallery, which has two modes. On desktop it is
+ *    "pinned": GSAP ScrollTrigger holds the section in place (a pin) inside an element called
+ *    `.pin-spacer`, which it adds to make the page taller, while scrolling moves the cards
+ *    sideways. On phones and tablets it is "sticky": plain CSS `position: sticky`, no spacer.
+ *  - Analytics checks watch the GA4 (Google Analytics 4) requests that Partytown sends.
+ *    Partytown is a library that runs third-party scripts, here Google's, in a web worker.
+ *    ClientRouter is Astro's client-side navigation: pages change without a full reload.
+ */
+
 import { BASE, BASE_PATH, check, guard, info, launch, requireServer, url } from './lib.mjs';
 
 // Removes one trailing slash, so "/portfolio/" and "/portfolio" compare as equal.

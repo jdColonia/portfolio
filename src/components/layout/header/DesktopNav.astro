@@ -1,15 +1,23 @@
 ---
-// Desktop navigation (hidden below `md`): a glass pill with the section links, plus a separate CV
-// button on its right. Rendered by Header.astro. header.ts marks the current link with
-// aria-current and slides #nav-drop (the highlight behind the active link) to it.
+/**
+ * @file Desktop navigation (hidden below `md`): a glass pill with the section links, plus a
+ * separate CV button on its right.
+ *
+ * Rendered by Header.astro. header.ts marks the current link with aria-current and slides #nav-drop
+ * (the highlight behind the active link) to it.
+ */
+
 import { Icon } from 'astro-icon/components';
 // Language picker temporarily disabled; re-enable together with the commented markup below.
 // import LanguagePicker from '@components/ui/LanguagePicker.astro';
 import type { NavItem } from '@components/layout/header/types';
 import { getLangFromUrl, useTranslations } from '@i18n/utils';
 
+/** Props of the desktop navigation. */
 interface Props {
+  /** Section links, in display order. */
   navItems: NavItem[];
+  /** Link to the CV page, shown apart from the section links. */
   cvItem: NavItem;
 }
 

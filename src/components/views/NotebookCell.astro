@@ -1,7 +1,13 @@
 ---
-// Decorative "failed notebook cell" used only by the 404 page (NotFound.astro): a SQL query for the
-// missing page and the error it supposedly produced. The text is always English because it
-// mimics SQL engine output. Only the page path inside it changes, see `path` below.
+/**
+ * @file Decorative "failed notebook cell" used only by the 404 page (NotFound.astro): a SQL query
+ * for the missing page and the error it supposedly produced.
+ *
+ * The text is always English because it mimics SQL engine output. Only the page path inside it
+ * changes, see `path` below.
+ */
+
+/** Props of the decorative notebook cell. */
 interface Props {
   /**
    * Placeholder path rendered at build time. The 404 script (not-found.ts) replaces the text of

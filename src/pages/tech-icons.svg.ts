@@ -1,10 +1,13 @@
-// Generates /tech-icons.svg at build time: one static SVG "sprite" (a single file holding many
-// icons as <symbol> elements) with every technology and issuer icon the site uses. Components
-// show an icon with `<use href="tech-icons.svg#id">` (see TechIcon.astro), so the browser
-// downloads and caches the icons once instead of each page inlining them.
-// To add an icon, register its Iconify id in data/techIcons.ts (or on a certification) and it is
-// picked up here; its icon set must be installed as an @iconify-json/* package and listed in
-// `sets`.
+/**
+ * @file Generates /tech-icons.svg at build time: one static SVG "sprite" (a single file holding
+ * many icons as <symbol> elements) with every technology and issuer icon the site uses.
+ *
+ * Components show an icon with `<use href="tech-icons.svg#id">` (see TechIcon.astro), so the
+ * browser downloads and caches the icons once instead of each page inlining them. To add an icon,
+ * register its Iconify id in data/techIcons.ts (or on a certification) and it is picked up here;
+ * its icon set must be installed as an @iconify-json/* package and listed in `sets`.
+ */
+
 import type { APIRoute } from 'astro';
 import { getIconData, iconToSVG } from '@iconify/utils';
 import simpleIcons from '@iconify-json/simple-icons/icons.json';

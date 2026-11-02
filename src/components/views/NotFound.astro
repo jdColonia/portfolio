@@ -1,17 +1,22 @@
 ---
+/**
+ * @file The 404 page.
+ *
+ * It is built once as 404.html, which GitHub Pages serves at whatever unknown URL was requested.
+ * Because it can appear under any path, every link and asset must be absolute (starting with the
+ * base), never relative.
+ *
+ * The page is static and has no language route, so the requested path and the language are
+ * resolved in the browser by not-found.ts. The text below is the Spanish default.
+ * The look imitates a failed SQL notebook cell, in line with the data-engineering theme.
+ */
+
 import Layout from '@layouts/Layout.astro';
 import SectionContainer from '@components/ui/SectionContainer.astro';
 import Button from '@components/ui/Button.astro';
 import NotebookCell from '@components/views/NotebookCell.astro';
 import { withBase } from '@lib/urls';
 
-// The 404 page. It is built once as 404.html, which GitHub Pages serves at whatever unknown URL
-// was requested. Because it can appear under any path, every link and asset must be absolute
-// (starting with the base), never relative.
-//
-// The page is static and has no language route, so the requested path and the language are
-// resolved in the browser by not-found.ts. The text below is the Spanish default.
-// The look imitates a failed SQL notebook cell, in line with the data-engineering theme.
 const base = withBase('');
 const fallbackPath = '/unknown';
 ---

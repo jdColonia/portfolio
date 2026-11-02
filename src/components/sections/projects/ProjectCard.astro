@@ -1,7 +1,12 @@
 ---
-// One project card in the projects gallery: screenshot, title, summary, technology list and links
-// to the repository and the live demo. Its size and layout depend on the gallery's `data-mode`
-// (see ProjectsGallery.astro), so some rules below target that attribute on an ancestor.
+/**
+ * @file One project card in the projects gallery: screenshot, title, summary, technology list and
+ * links to the repository and the live demo.
+ *
+ * Its size and layout depend on the gallery's `data-mode` (see ProjectsGallery.astro), so some
+ * rules below target that attribute on an ancestor.
+ */
+
 import { Image } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
 import TechIcon from '@components/ui/TechIcon.astro';
@@ -10,7 +15,9 @@ import type { Project } from '@data/projects';
 import { techIcons } from '@data/techIcons';
 import type { Lang } from '@data/types';
 
+/** Props of one project card. */
 interface Props {
+  /** Project to show; its text is already in the page language. */
   project: Project;
   /** Language of the page, used for the interface texts (the project text is already localized). */
   lang: Lang;

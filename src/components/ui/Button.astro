@@ -1,9 +1,13 @@
 ---
-// Pill-shaped call-to-action: solid orange ("primary") or translucent ("glass").
+/**
+ * @file Pill-shaped call-to-action: solid orange ("primary") or translucent ("glass").
+ */
+
 import type { HTMLAttributes } from 'astro/types';
 
 type Variant = 'primary' | 'glass';
 
+/** Props of the button; any other attribute is passed to the `<a>` or `<button>`. */
 interface Props extends Omit<HTMLAttributes<'a'>, 'class'> {
   /** Visual style: `primary` is a solid lava-orange fill, `glass` a flat translucent one. */
   variant?: Variant;

@@ -1,10 +1,11 @@
 {
-  /*
-  Small label in the header naming the current medallion layer (raw, bronze, silver, gold or
-  serve: the site's visual theme from data engineering). Rendered by Header.astro. header.ts sets
-  the text from the `layerchange` event and adds `data-show` on pages that have layered sections.
-  It is purely decorative, hence aria-hidden.
-*/
+  /**
+   * @file Small label in the header naming the current medallion layer (raw, bronze, silver, gold
+   * or serve: the site's visual theme from data engineering).
+   *
+   * Rendered by Header.astro. header.ts sets the text from the `layerchange` event and adds
+   * `data-show` on pages that have layered sections. It is purely decorative, hence aria-hidden.
+   */
 }
 <span id="layer-chip" class="layer-chip" aria-hidden="true">
   <span class="layer-chip-dot"></span>
