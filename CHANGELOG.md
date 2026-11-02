@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/jdColonia/portfolio/compare/v1.5.0...v1.5.1) (2026-11-02)
+
+
+### Bug Fixes
+
+* **a11y:** translate the navigation and menu button labels ([4f1aa22](https://github.com/jdColonia/portfolio/commit/4f1aa2275fb17cccdfb84bffb6bbc5cd82e95e21))
+
 # [1.5.0](https://github.com/jdColonia/portfolio/compare/v1.4.0...v1.5.0) (2026-11-02)
 
 
