@@ -6,7 +6,7 @@ import { Icon } from 'astro-icon/components';
 // Language picker temporarily disabled; re-enable together with the commented markup below.
 // import LanguagePicker from '@components/ui/LanguagePicker.astro';
 import type { NavItem } from '@components/layout/header/types';
-import { getLangFromUrl } from '@i18n/utils';
+import { getLangFromUrl, useTranslations } from '@i18n/utils';
 
 interface Props {
   navItems: NavItem[];
@@ -15,13 +15,14 @@ interface Props {
 
 const { navItems, cvItem } = Astro.props;
 const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 {/* Hamburger button; header.ts turns its three lines into an X while the menu is open. */}
 <button
   id="mobile-menu-btn"
   class="md:hidden relative z-50 w-10 h-10 flex flex-col items-center justify-center gap-1.5"
-  aria-label="Toggle menu"
+  aria-label={t('nav.toggle')}
   aria-expanded="false"
   aria-controls="mobile-nav"
 >
@@ -36,7 +37,7 @@ const lang = getLangFromUrl(Astro.url);
 <nav
   id="mobile-nav"
   class="mobile-sheet fixed inset-0 z-40 flex flex-col items-start justify-center gap-5 px-8 md:hidden"
-  aria-label="Principal"
+  aria-label={t('nav.label')}
   inert
 >
   {

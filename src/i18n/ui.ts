@@ -31,6 +31,8 @@ export const ui = {
     'nav.projects': 'Proyectos',
     'nav.contact': 'Contacto',
     'nav.cv': 'CV',
+    'nav.label': 'Principal',
+    'nav.toggle': 'Abrir o cerrar el menú',
 
     'hero.badge': 'Disponible para trabajar',
     'hero.subtitle': 'Ingeniero de Sistemas · Datos y Software',
@@ -99,6 +101,8 @@ export const ui = {
     'nav.projects': 'Projects',
     'nav.contact': 'Contact',
     'nav.cv': 'Resume',
+    'nav.label': 'Main',
+    'nav.toggle': 'Toggle menu',
 
     'hero.badge': 'Open to work',
     'hero.subtitle': 'Systems Engineer · Data & Software',

@@ -6,7 +6,7 @@ import { Icon } from 'astro-icon/components';
 // Language picker temporarily disabled; re-enable together with the commented markup below.
 // import LanguagePicker from '@components/ui/LanguagePicker.astro';
 import type { NavItem } from '@components/layout/header/types';
-import { getLangFromUrl } from '@i18n/utils';
+import { getLangFromUrl, useTranslations } from '@i18n/utils';
 
 interface Props {
   navItems: NavItem[];
@@ -15,10 +15,11 @@ interface Props {
 
 const { navItems, cvItem } = Astro.props;
 const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <div id="desktop-bar" class="hidden md:grid">
-  <nav id="desktop-nav" class="glass flex" aria-label="Principal">
+  <nav id="desktop-nav" class="glass flex" aria-label={t('nav.label')}>
     <span id="nav-drop" aria-hidden="true"></span>
     {
       navItems.map((link) => (
