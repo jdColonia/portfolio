@@ -1,0 +1,216 @@
+---
+import { getLangFromUrl, useTranslations } from '@i18n/utils';
+import ProjectCard from '@components/sections/projects/ProjectCard.astro';
+import TrackDivider from '@components/sections/projects/TrackDivider.astro';
+import { projects, type ProjectTrack } from '@data/projects';
+import TitleSection from '@components/ui/TitleSection.astro';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const trackKeys = {
+  data: { label: 'projects.track.data', desc: 'projects.track.data.desc' },
+  software: { label: 'projects.track.software', desc: 'projects.track.software.desc' },
+  platform: { label: 'projects.track.platform', desc: 'projects.track.platform.desc' },
+} as const;
+
+const trackOrder: ProjectTrack[] = ['data', 'software', 'platform'];
+const groups = trackOrder
+  .map((track) => ({ track, items: projects[lang].filter((project) => project.track === track) }))
+  .filter((group) => group.items.length > 0);
+---
+
+<div class="gallery" data-gallery>
+  <div class="gallery-pin" data-gallery-pin>
+    <div class="projects-intro">
+      <TitleSection path="gold.proyectos">{t('section.projects')}</TitleSection>
+      <p class="projects-lead">{t('projects.intro')}</p>
+    </div>
+
+    <div class="gallery-scroll" data-gallery-scroll>
+      <div class="gallery-stage" data-gallery-stage>
+        <div
+          class="gallery-viewport"
+          data-gallery-viewport
+          role="region"
+          aria-label={t('section.projects')}
+          tabindex="0"
+        >
+          <div class="gallery-track" data-gallery-track>
+            {
+              groups.map((group) => (
+                <Fragment>
+                  <TrackDivider
+                    label={t(trackKeys[group.track].label)}
+                    description={t(trackKeys[group.track].desc)}
+                  />
+
+                  {group.items.map((project) => (
+                    <ProjectCard project={project} lang={lang} />
+                  ))}
+                </Fragment>
+              ))
+            }
+          </div>
+        </div>
+
+        <div class="gallery-progress" aria-hidden="true"><span data-gallery-bar></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .projects-intro {
+    padding-inline: var(--gallery-pad);
+    margin-bottom: 2rem;
+  }
+
+  .projects-intro :global(.title-section) {
+    margin-bottom: 1rem;
+  }
+
+  .projects-lead {
+    max-width: 52ch;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: var(--layer-muted);
+  }
+
+  /* ---- Gallery: full-bleed native snap carousel on small screens ------------------ */
+  .gallery {
+    --gallery-pad: 1rem;
+    position: relative;
+    width: var(--vw, 100vw);
+    margin-left: calc(50% - var(--vw, 100vw) / 2);
+  }
+
+  @media (min-width: 768px) {
+    .gallery {
+      --gallery-pad: 1.5rem;
+    }
+  }
+
+  .gallery-viewport {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 0.5rem;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gallery-pad);
+    scrollbar-width: thin;
+    scrollbar-color: var(--layer-muted) transparent;
+  }
+
+  .gallery-track {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    gap: 1rem;
+    width: max-content;
+    padding-inline: var(--gallery-pad);
+  }
+
+  .gallery-progress {
+    height: 2px;
+    margin: 1.25rem var(--gallery-pad) 0;
+    overflow: hidden;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .gallery-progress span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--layer-tint);
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  /* ---- Desktop: the crystal is hidden here (stage 'none'), so the gallery uses the full
+     width between the docks and shows about three cards at once ------------------------- */
+  @media (min-width: 1024px) {
+    .gallery {
+      --gallery-pad: 0px;
+      --card-w: clamp(19rem, 26vw, 25rem);
+      width: 100%;
+      margin-left: 0;
+    }
+
+    /* The section has no padding of its own (the pin owns it): clear the header here. */
+    .gallery-pin {
+      padding: 5.5rem 0 2.5rem;
+    }
+
+    .projects-intro {
+      margin-bottom: 1.25rem;
+    }
+
+    .projects-lead {
+      max-width: 64ch;
+      font-size: 0.9375rem;
+      line-height: 1.55;
+    }
+
+    .gallery-track {
+      gap: 1.5rem;
+    }
+
+    .gallery-progress {
+      margin-top: 1rem;
+    }
+  }
+
+  /* JS switches the gallery to the pinned mode (desktop, motion allowed): one screen with the
+     title; the cards scrub sideways across the full width (no crystal to avoid here). */
+  .gallery[data-mode='pinned'] .gallery-pin {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100svh;
+    padding: 5.5rem 0 2.5rem;
+  }
+
+  .gallery[data-mode='pinned'] .gallery-viewport {
+    overflow-x: clip;
+    overflow-y: visible;
+    padding-bottom: 0;
+    scroll-snap-type: none;
+  }
+
+  .gallery[data-mode='pinned'] .gallery-track {
+    will-change: transform;
+  }
+
+  /* Phones and tablets (motion allowed): only the cards stick (CSS sticky, no JS pin, so native
+     momentum scrolling never jumps); the title scrolls away above. The stage is only as tall as
+     the cards and sticks centered below the header (--stage-top, set by the script); the scroll
+     box is as tall as the stage plus the horizontal travel. */
+  .gallery[data-mode='sticky'] .gallery-stage {
+    position: sticky;
+    top: var(--stage-top, 4.5rem);
+    padding-top: 1.5rem;
+  }
+
+  .gallery[data-mode='sticky'] .gallery-viewport {
+    overflow-x: clip;
+    overflow-y: visible;
+    padding-bottom: 0;
+    scroll-snap-type: none;
+  }
+
+  .gallery[data-mode='sticky'] .gallery-track {
+    will-change: transform;
+  }
+
+  .gallery[data-mode='sticky'] .gallery-progress {
+    margin-top: 1rem;
+  }
+</style>
+
+<script>
+  import { initGallery } from '@components/sections/projects/gallery';
+
+  document.addEventListener('astro:page-load', initGallery);
+</script>

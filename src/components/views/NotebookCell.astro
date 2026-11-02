@@ -1,0 +1,145 @@
+---
+interface Props {
+  /** Server-rendered placeholder; the script swaps it for the requested pathname. */
+  path: string;
+}
+
+const { path } = Astro.props;
+---
+
+<div class="nf-item nf-card" style="--i: 3">
+  <div class="nf-card-bar">
+    <span class="nf-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="nf-notebook">portfolio_notebook</span>
+    <span class="nf-chips">
+      <span class="nf-chip">SQL</span>
+      <span class="nf-chip nf-chip-plain">Cmd 1</span>
+    </span>
+  </div>
+
+  <pre
+    class="nf-sql"><span class="kw">SELECT</span> * <span class="kw">FROM</span> portfolio.gold.pages <span class="kw">WHERE</span> path = <span class="str">'<span data-path>{path}</span>'</span>;</pre>
+
+  <div class="nf-output" role="alert">
+    <p class="nf-error">
+      <strong>AnalysisException:</strong> [TABLE_OR_VIEW_NOT_FOUND] The page '<span data-path
+        >{path}</span
+      >' cannot be found. Verify the spelling and the schema.
+    </p>
+    <p class="nf-meta">Command took 0.02 seconds -- by juan@portfolio</p>
+  </div>
+</div>
+
+<style>
+  /* Notebook cell that failed. */
+  .nf-card {
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid var(--color-line);
+    border-radius: 0.75rem;
+    background: var(--color-surface);
+    text-align: left;
+    box-shadow: 0 18px 40px -24px rgba(0, 0, 0, 0.7);
+  }
+
+  .nf-card-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    padding: 0.625rem 0.875rem;
+    border-bottom: 1px solid var(--color-line);
+    background: var(--color-surface-2);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--layer-muted);
+  }
+
+  .nf-dots {
+    display: inline-flex;
+    gap: 0.3rem;
+  }
+
+  .nf-dots i {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  .nf-dots i:first-child {
+    background: var(--color-lava);
+  }
+
+  .nf-notebook {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    color: var(--layer-text);
+  }
+
+  .nf-chips {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+
+  .nf-chip {
+    padding: 0.125rem 0.5rem;
+    border: 1px solid color-mix(in srgb, var(--color-lava) 45%, transparent);
+    border-radius: 9999px;
+    line-height: 1.4;
+    color: var(--color-lava-400);
+  }
+
+  .nf-chip-plain {
+    border-color: transparent;
+    padding-inline: 0;
+    color: var(--layer-muted);
+  }
+
+  .nf-sql {
+    margin: 0;
+    padding: 1rem 0.875rem;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    color: var(--layer-text);
+  }
+
+  .nf-sql .kw {
+    color: var(--color-lava);
+  }
+
+  .nf-sql .str {
+    color: var(--color-gold);
+  }
+
+  .nf-output {
+    padding: 0.875rem;
+    border-top: 1px solid var(--color-line);
+    border-left: 3px solid var(--color-lava);
+    background: color-mix(in srgb, var(--color-lava) 10%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+  }
+
+  .nf-error {
+    color: var(--layer-text);
+  }
+
+  .nf-error strong {
+    font-weight: 500;
+    color: var(--color-lava-400);
+  }
+
+  .nf-meta {
+    margin-top: 0.625rem;
+    font-size: 0.75rem;
+    color: var(--layer-muted);
+  }
+</style>

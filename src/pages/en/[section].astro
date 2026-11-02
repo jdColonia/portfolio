@@ -1,0 +1,12 @@
+---
+import HomePage from '@components/views/HomePage.astro';
+import { SECTION_SLUGS } from '@data/config';
+
+// Clean section URLs (/stack, /en/proyectos, ...) are real routes that render the home page,
+// so reloading or sharing them works. The header scrolls to the section on load.
+export function getStaticPaths() {
+  return SECTION_SLUGS.map((section) => ({ params: { section } }));
+}
+---
+
+<HomePage />

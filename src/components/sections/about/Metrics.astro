@@ -1,0 +1,227 @@
+---
+import { getLangFromUrl, useTranslations } from '@i18n/utils';
+import { metrics } from '@data/metrics';
+
+interface Props {
+  /** Tight variant used inside the about screen. */
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const rows = metrics[lang];
+---
+
+<div class:list={['metrics', { 'metrics-compact': compact }]} id="metrics">
+  <p class="metrics-query">{t('metrics.query')}</p>
+
+  <ul class="metrics-row">
+    {
+      rows.map((metric) => (
+        <li class="metric-cell">
+          <p class="metric-value">
+            <span class="metric-number" data-count={metric.value}>
+              {metric.value}
+            </span>
+            {metric.suffix && <span class="metric-suffix">{metric.suffix}</span>}
+          </p>
+          <p class="metric-label">{metric.label}</p>
+        </li>
+      ))
+    }
+  </ul>
+
+  <p class="metrics-footnote">{t('metrics.footnote')}</p>
+</div>
+
+<style>
+  .metrics {
+    padding-block: 2rem;
+  }
+
+  .metrics-query,
+  .metrics-footnote {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--layer-muted);
+  }
+
+  .metrics-query {
+    margin-bottom: 1.75rem;
+  }
+
+  .metrics-footnote {
+    margin-top: 1.75rem;
+  }
+
+  .metrics-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 2.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .metric-cell {
+    padding-inline: 1.25rem;
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  /* 2x2 grid on mobile: no rule at the start of each row. */
+  .metric-cell:nth-child(odd) {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  /* Flex drops the whitespace text nodes so the suffix hugs the number. */
+  .metric-value {
+    display: flex;
+    align-items: baseline;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(3rem, 7vw, 6rem);
+    line-height: 1;
+    color: var(--layer-text);
+  }
+
+  .metric-suffix {
+    color: var(--layer-accent);
+  }
+
+  .metric-label {
+    margin-top: 0.75rem;
+    max-width: 22ch;
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    line-height: 1.45;
+    color: var(--layer-muted);
+  }
+
+  @media (min-width: 768px) {
+    .metrics {
+      padding-block: 3rem;
+    }
+
+    .metrics-row {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .metric-cell:nth-child(odd) {
+      padding-left: 1.5rem;
+      border-left: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .metric-cell {
+      padding-inline: 1.5rem;
+    }
+
+    .metric-cell:first-child {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
+
+  /* Compact: one row of Anton numbers that fits under the three blocks. */
+  .metrics-compact {
+    padding-block: 0;
+  }
+
+  .metrics-compact .metrics-query {
+    margin-bottom: 0.875rem;
+    font-size: 0.75rem;
+  }
+
+  .metrics-compact .metrics-footnote {
+    margin-top: 0.875rem;
+    font-size: 0.75rem;
+  }
+
+  .metrics-compact .metrics-row {
+    row-gap: 1.5rem;
+  }
+
+  .metrics-compact .metric-cell {
+    padding-inline: 1rem;
+  }
+
+  .metrics-compact .metric-cell:nth-child(odd) {
+    padding-left: 0;
+  }
+
+  .metrics-compact .metric-value {
+    font-size: clamp(2.25rem, 4vw, 3.5rem);
+  }
+
+  .metrics-compact .metric-label {
+    margin-top: 0.375rem;
+    max-width: 20ch;
+    font-size: 0.8125rem;
+    line-height: 1.35;
+  }
+
+  @media (min-width: 768px) {
+    .metrics-compact .metric-cell:nth-child(odd) {
+      padding-left: 1rem;
+    }
+
+    .metrics-compact .metric-cell {
+      padding-inline: 1rem;
+    }
+
+    .metrics-compact .metric-cell:first-child {
+      padding-left: 0;
+    }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { onDestroy, prefersReducedMotion } from '@lib/motion';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener('astro:page-load', () => {
+    const root = document.getElementById('metrics');
+    const numbers = gsap.utils.toArray<HTMLElement>('.metric-number', root);
+    if (!root || numbers.length === 0 || prefersReducedMotion()) return;
+
+    // Count up once when the row enters the viewport (a single trigger for all counters).
+    // Final values stay in the markup until the animation starts, so no-JS and reduced-motion
+    // users see the real numbers.
+    const ctx = gsap.context(() => {
+      const counters = numbers.map((el) => ({
+        el,
+        target: Number(el.dataset.count ?? '0'),
+        state: { value: 0 },
+      }));
+      counters.forEach(({ el }) => {
+        el.textContent = '0';
+      });
+
+      ScrollTrigger.create({
+        trigger: root,
+        start: 'top 92%',
+        once: true,
+        onEnter: () => {
+          counters.forEach(({ el, target, state }) => {
+            gsap.to(state, {
+              value: target,
+              duration: 1.4,
+              ease: 'power2.out',
+              snap: { value: 1 },
+              onUpdate: () => {
+                el.textContent = String(state.value);
+              },
+            });
+          });
+        },
+      });
+    }, root);
+
+    onDestroy(() => ctx.revert());
+  });
+</script>

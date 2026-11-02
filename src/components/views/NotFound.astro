@@ -1,0 +1,144 @@
+---
+import Layout from '@layouts/Layout.astro';
+import SectionContainer from '@components/ui/SectionContainer.astro';
+import Button from '@components/ui/Button.astro';
+import NotebookCell from '@components/views/NotebookCell.astro';
+import { withBase } from '@lib/urls';
+
+// GitHub Pages serves this page at whatever unknown URL was requested, so every link and asset
+// must be absolute with the base, never relative. The path and the language are resolved on the
+// client: the page is static and there is no language route here.
+const base = withBase('');
+const fallbackPath = '/unknown';
+---
+
+<Layout
+  title="404 — Juan David Colonia"
+  description="Página no encontrada. Vuelve al inicio o revisa la hoja de vida de Juan David Colonia."
+  canonical="home"
+>
+  <meta slot="head" name="robots" content="noindex" />
+  <SectionContainer plain class="py-16 md:py-20 lg:py-24">
+    <div class="nf" data-notfound data-base={base}>
+      <p class="nf-item nf-label" style="--i: 0">gold.404</p>
+
+      <h1 class="nf-item nf-code" style="--i: 1">4<span>0</span>4</h1>
+
+      <div class="nf-item nf-copy" style="--i: 2">
+        <h2 class="nf-title" data-i18n="title">Esta página no existe en el lakehouse</h2>
+        <p class="nf-text" data-i18n="text">
+          El enlace puede estar roto o la página se movió. Vuelve al inicio o revisa mi hoja de
+          vida.
+        </p>
+      </div>
+
+      <NotebookCell path={fallbackPath} />
+
+      <div class="nf-item nf-actions" style="--i: 4">
+        <Button href={base} data-i18n="home" data-link="home">Volver al inicio</Button>
+        <Button href={withBase('cv')} variant="glass" data-i18n="cv" data-link="cv">
+          Ver hoja de vida
+        </Button>
+      </div>
+    </div>
+  </SectionContainer>
+</Layout>
+
+<style>
+  .nf {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 42rem;
+    margin-inline: auto;
+    padding-top: 1.5rem;
+    text-align: center;
+  }
+
+  .nf-label {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    color: var(--layer-muted);
+  }
+
+  .nf-code {
+    margin-block: 0.25rem 0.5rem;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(5.5rem, 22vw, 9.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    color: var(--layer-text);
+  }
+
+  .nf-code span {
+    color: var(--color-lava);
+  }
+
+  .nf-copy {
+    margin-bottom: 1.75rem;
+  }
+
+  .nf-title {
+    font-size: 1.375rem;
+    font-weight: 500;
+    line-height: 1.25;
+    color: var(--layer-text);
+    margin-bottom: 0.5rem;
+  }
+
+  .nf-text {
+    max-width: 52ch;
+    margin-inline: auto;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--layer-muted);
+  }
+
+  /* Same buttons as the hero actions. */
+  .nf-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+  }
+
+  @media (min-width: 1024px) {
+    .nf {
+      padding-top: 0;
+    }
+
+    .nf-code {
+      font-size: 8.5rem;
+    }
+  }
+
+  /* Staggered fade-up entrance. The notebook cell (NotebookCell.astro) is also an .nf-item,
+     hence :global. */
+  @media (prefers-reduced-motion: no-preference) {
+    .nf :global(.nf-item) {
+      animation: nf-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation-delay: calc(var(--i, 0) * 90ms);
+    }
+  }
+
+  @keyframes nf-up {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<script>
+  import { initNotFound } from '@components/views/not-found';
+
+  document.addEventListener('astro:page-load', initNotFound);
+</script>

@@ -1,0 +1,259 @@
+---
+import { getLangFromUrl, useTranslations } from '@i18n/utils';
+import { SITE_CONFIG, SOCIAL_LINKS } from '@data/config';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+// Shown in this order, not in SOCIAL_LINKS order.
+const contactLinks = ['LinkedIn', 'GitHub'].flatMap((name) =>
+  SOCIAL_LINKS.filter((link) => link.name === name)
+);
+---
+
+<div class="contact">
+  <p class="contact-path">serve.contacto</p>
+
+  <h2 class="contact-title" data-contact-title>
+    <span class="contact-line" data-contact-line>{t('contact.line1')}</span>
+    <span class="contact-line contact-line-accent" data-contact-line>{t('contact.line2')}</span>
+  </h2>
+
+  <p class="contact-text">{t('contact.description')}</p>
+
+  <div class="contact-actions">
+    <button
+      id="copy-email-contact"
+      type="button"
+      class="contact-email"
+      aria-label={`${SITE_CONFIG.email}, ${t('contact.copy')}`}
+      data-copied={t('contact.copied')}
+      data-email={SITE_CONFIG.email}
+    >
+      <span>{SITE_CONFIG.email}</span>
+      <svg
+        class="contact-copy-icon"
+        width="20"
+        height="20"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+        ></path>
+      </svg>
+    </button>
+
+    {
+      contactLinks.map((link) => (
+        <a class="contact-link" href={link.url} target="_blank" rel="noopener noreferrer">
+          {link.name}
+        </a>
+      ))
+    }
+  </div>
+
+  <p id="copy-status-contact" class="contact-status" aria-live="polite"></p>
+</div>
+
+<style>
+  .contact-path {
+    margin-bottom: 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--layer-tint);
+  }
+
+  .contact-title {
+    overflow-x: clip;
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 11vw, 4.5rem);
+    font-weight: 400;
+    line-height: 0.98;
+    color: var(--layer-text);
+  }
+
+  /* Below 1024px the longer second line wraps instead of being clipped. */
+  .contact-line {
+    display: block;
+    white-space: normal;
+    text-wrap: balance;
+  }
+
+  .contact-line-accent {
+    color: var(--layer-accent);
+  }
+
+  .contact-text {
+    max-width: 52ch;
+    margin-top: 2rem;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--layer-muted);
+  }
+
+  .contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 2rem;
+    margin-top: 2rem;
+  }
+
+  .contact-email {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    max-width: 100%;
+    padding: 1rem 1.5rem;
+    border-radius: 14px;
+    background: var(--color-lava);
+    font-size: clamp(0.9375rem, 4vw, 1.375rem);
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: left;
+    overflow-wrap: anywhere;
+    color: var(--color-coal);
+    cursor: pointer;
+    transition:
+      transform 0.25s ease,
+      background-color 0.25s ease;
+  }
+
+  .contact-email:hover {
+    background: var(--color-lava-400);
+    transform: translateY(-2px);
+  }
+
+  .contact-copy-icon {
+    flex: none;
+  }
+
+  .contact-link {
+    font-size: 1.0625rem;
+    font-weight: 500;
+    color: var(--layer-text);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.3em;
+    transition: color 0.2s ease;
+  }
+
+  .contact-link:hover {
+    color: var(--layer-accent);
+  }
+
+  .contact-status {
+    min-height: 1.5rem;
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--layer-muted);
+  }
+
+  /* Desktop: a centered cover screen that shares the last screen with the compact footer. */
+  @media (min-width: 1024px) {
+    .contact {
+      text-align: center;
+    }
+
+    .contact-path {
+      margin-bottom: 0.75rem;
+      font-size: 0.8125rem;
+    }
+
+    .contact-title {
+      font-size: clamp(2.5rem, 4.6vw, 4.5rem);
+    }
+
+    .contact-line {
+      white-space: nowrap;
+    }
+
+    .contact-text {
+      max-width: 52ch;
+      margin-inline: auto;
+      margin-top: 1.25rem;
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+
+    .contact-actions {
+      justify-content: center;
+      gap: 0.75rem 1.5rem;
+      margin-top: 1.25rem;
+    }
+
+    .contact-email {
+      padding: 0.75rem 1.25rem;
+      border-radius: 12px;
+      font-size: clamp(0.9375rem, 1.3vw, 1.125rem);
+    }
+
+    .contact-link {
+      font-size: 0.9375rem;
+    }
+
+    .contact-status {
+      min-height: 1.25rem;
+      margin-top: 0.5rem;
+    }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { onDestroy, prefersReducedMotion } from '@lib/motion';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener('astro:page-load', () => {
+    // ---- Copy email -----------------------------------------------------------
+    const button = document.getElementById('copy-email-contact');
+    const status = document.getElementById('copy-status-contact');
+    let clearTimer: number | undefined;
+
+    button?.addEventListener('click', async () => {
+      const email = button.dataset.email ?? '';
+      try {
+        await navigator.clipboard.writeText(email);
+        if (status) {
+          status.textContent = button.dataset.copied ?? '';
+          window.clearTimeout(clearTimer);
+          clearTimer = window.setTimeout(() => {
+            status.textContent = '';
+          }, 2000);
+        }
+      } catch {
+        // Clipboard blocked: open the mail client instead.
+        window.location.href = `mailto:${email}`;
+      }
+    });
+
+    // ---- Headline: the two lines slide in from opposite sides while entering ------
+    const title = document.querySelector<HTMLElement>('[data-contact-title]');
+    const lines = gsap.utils.toArray<HTMLElement>('[data-contact-line]', title);
+    if (!title || lines.length < 2 || prefersReducedMotion()) return;
+
+    const ctx = gsap.context(() => {
+      const scrollTrigger = { trigger: title, start: 'top 92%', end: 'top 45%', scrub: true };
+      gsap.fromTo(
+        lines[0],
+        { xPercent: -12 },
+        { xPercent: 0, ease: 'none', scrollTrigger: { ...scrollTrigger } }
+      );
+      gsap.fromTo(
+        lines[1],
+        { xPercent: 12 },
+        { xPercent: 0, ease: 'none', scrollTrigger: { ...scrollTrigger } }
+      );
+    }, title);
+
+    onDestroy(() => ctx.revert());
+  });
+</script>

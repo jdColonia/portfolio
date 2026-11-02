@@ -1,0 +1,185 @@
+---
+import { getLangFromUrl, useTranslations } from '@i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+// The zoom is centered on an "a" of the word, so the letter fills the stage at the end.
+const word = t('zoom.word');
+const pivotAt = Math.max(0, word.indexOf('a', Math.floor(word.length * 0.4)));
+const before = word.slice(0, pivotAt);
+const pivot = word.charAt(pivotAt);
+const after = word.slice(pivotAt + 1);
+---
+
+<section class="zoom" data-layer="gold" data-stage="center" data-zoom>
+  <div class="zoom-pin" data-zoom-pin>
+    <div class="zoom-stage">
+      <div class="zoom-glow" data-zoom-glow aria-hidden="true"></div>
+      <h2 class="zoom-word" data-zoom-word>
+        {before}<span data-zoom-pivot>{pivot}</span>{after}
+      </h2>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Small screens: full-bleed out of the padded <main>. */
+  .zoom {
+    position: relative;
+    width: var(--vw, 100vw);
+    margin-left: calc(50% - var(--vw, 100vw) / 2);
+  }
+
+  /* Default (and reduced motion): a plain heading block. */
+  .zoom-pin {
+    position: relative;
+    display: grid;
+    place-items: center;
+    padding-block: 6rem;
+    overflow: clip;
+  }
+
+  .zoom-stage {
+    position: relative;
+    display: grid;
+    width: 100%;
+    place-items: center;
+  }
+
+  .zoom-glow {
+    display: none;
+  }
+
+  .zoom-word {
+    position: relative;
+    z-index: 1;
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 16vw, 8rem);
+    font-weight: 400;
+    line-height: 0.95;
+    white-space: nowrap;
+    text-align: center;
+    color: var(--layer-text);
+  }
+
+  /* Desktop: the zoom spans the full width between the docks (the crystal is centered and dim
+     behind it). The stage clips its contents and fades at both sides. */
+  @media (min-width: 1024px) {
+    .zoom {
+      width: calc(var(--vw, 100vw) - 2 * var(--dock-w));
+      margin-left: var(--dock-w);
+    }
+
+    .zoom-word {
+      font-size: clamp(3.5rem, 8vw, 7rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .zoom {
+      height: 150svh;
+    }
+
+    /* The inner stays in view while the section scrolls past: the zoom is scrubbed on that scroll. */
+    .zoom-pin {
+      position: sticky;
+      top: 0;
+      height: 100svh;
+      padding-block: 0;
+    }
+
+    .zoom-stage {
+      height: 100%;
+      overflow: clip;
+    }
+
+    /* Pre-painted lava glow: only its transform and opacity change while scrolling. */
+    .zoom-glow {
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 70vmax;
+      height: 70vmax;
+      margin: -35vmax 0 0 -35vmax;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 54, 33, 0.35), transparent 60%);
+      opacity: 0;
+      transform: scale(0.4);
+      will-change: transform, opacity;
+      pointer-events: none;
+    }
+
+    .zoom-word {
+      will-change: transform, opacity;
+    }
+  }
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    .zoom-stage {
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent,
+        #000 2.5rem,
+        #000 calc(100% - 2.5rem),
+        transparent
+      );
+      mask-image: linear-gradient(
+        to right,
+        transparent,
+        #000 2.5rem,
+        #000 calc(100% - 2.5rem),
+        transparent
+      );
+    }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { onDestroy, prefersReducedMotion } from '@lib/motion';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener('astro:page-load', () => {
+    const section = document.querySelector<HTMLElement>('[data-zoom]');
+    const glow = section?.querySelector<HTMLElement>('[data-zoom-glow]');
+    const word = section?.querySelector<HTMLElement>('[data-zoom-word]');
+    const pivot = section?.querySelector<HTMLElement>('[data-zoom-pivot]');
+    if (!section || !glow || !word || !pivot || prefersReducedMotion()) return;
+
+    const ctx = gsap.context(() => {
+      // Percentages survive resizes; fonts changing the glyph widths re-run it on refresh.
+      const setOrigin = () => {
+        const width = word.offsetWidth;
+        if (width <= 0) return;
+        const center = pivot.offsetLeft + pivot.offsetWidth / 2;
+        word.style.transformOrigin = `${(center / width) * 100}% 50%`;
+      };
+      setOrigin();
+      void document.fonts?.ready.then(setOrigin);
+
+      // Shorter than before (section is 150svh): the word fades out early while it is still
+      // small, and the stage clips whatever grows past the content zone.
+      const tl = gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: true,
+          onRefresh: setOrigin,
+        },
+      });
+
+      tl.fromTo(word, { scale: 1 }, { scale: 5, duration: 1, ease: 'power2.in' }, 0)
+        .to(word, { opacity: 0, duration: 0.3 }, 0.5)
+        .fromTo(glow, { scale: 0.4 }, { scale: 2.5, duration: 1 }, 0)
+        .fromTo(glow, { opacity: 0 }, { opacity: 1, duration: 0.4 }, 0)
+        .to(glow, { opacity: 0, duration: 0.4 }, 0.6);
+    }, section);
+
+    onDestroy(() => ctx.revert());
+  });
+</script>

@@ -1,0 +1,268 @@
+---
+import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
+import TechIcon from '@components/ui/TechIcon.astro';
+import { useTranslations } from '@i18n/utils';
+import type { Project } from '@data/projects';
+import { techIcons } from '@data/techIcons';
+import type { Lang } from '@data/types';
+
+interface Props {
+  project: Project;
+  lang: Lang;
+}
+
+const { project, lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<article class="card" data-card data-status={project.status}>
+  <div class="card-media">
+    <slot name="media">
+      {
+        project.image ? (
+          <Image
+            src={project.image}
+            alt={project.title}
+            widths={[480, 800, 1200]}
+            sizes="(min-width: 1024px) 26vw, 85vw"
+            format="webp"
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <div class="card-media-empty" aria-hidden="true" />
+        )
+      }
+    </slot>
+  </div>
+
+  <div class="card-body">
+    {project.status === 'upcoming' && <span class="card-soon">{t('projects.soon')}</span>}
+    <h4 class="card-title">{project.title}</h4>
+    <p class="card-summary">{project.summary}</p>
+
+    <ul class="card-stack">
+      {
+        project.stack.map((tech) => (
+          <li>
+            {techIcons[tech] && <TechIcon name={techIcons[tech]} size={12} />}
+            {tech}
+          </li>
+        ))
+      }
+    </ul>
+
+    {
+      (project.github || project.demo) && (
+        <div class="card-links">
+          {project.github && (
+            <a
+              href={project.github}
+              aria-label={`${t('projects.github')} ${project.title}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Icon name="tabler:brand-github" size={24} />
+            </a>
+          )}
+          {project.demo && (
+            <a
+              href={project.demo}
+              aria-label={`${t('projects.demo')}: ${project.title}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Icon name="tabler:external-link" size={24} />
+            </a>
+          )}
+        </div>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .card {
+    display: grid;
+    flex: none;
+    grid-template-columns: minmax(0, 1fr);
+    width: min(85vw, 36rem);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    scroll-snap-align: start;
+  }
+
+  .card-media {
+    position: relative;
+    min-height: 0;
+    aspect-ratio: 16 / 9;
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .card-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1.25rem;
+  }
+
+  .card-soon {
+    padding: 0.125rem 0.625rem;
+    border: 1px solid var(--layer-tint);
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--layer-tint);
+  }
+
+  .card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--layer-text);
+  }
+
+  .card-summary {
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: var(--layer-muted);
+  }
+
+  .card-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.125rem 0.75rem;
+    list-style: none;
+    padding: 0;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: var(--layer-muted);
+  }
+
+  .card-stack li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    white-space: nowrap;
+  }
+
+  .card-stack :global(svg) {
+    flex: none;
+  }
+
+  .card-links {
+    display: flex;
+    gap: 0.25rem;
+    margin: auto 0 -0.5rem -0.625rem;
+  }
+
+  .card-links a {
+    display: inline-flex;
+    padding: 0.625rem;
+    color: var(--layer-muted);
+    transition: color 0.2s ease;
+  }
+
+  .card-links a:hover {
+    color: var(--layer-accent);
+  }
+
+  /* No image yet (e.g. a coming-soon project): a dashed box instead. */
+  .card-media-empty {
+    position: absolute;
+    inset: 1rem;
+    border: 1.5px dashed rgba(255, 255, 255, 0.28);
+    border-radius: 14px;
+  }
+
+  /* Desktop: stacked card, a short media strip on top, so card + title fit one screen. */
+  @media (min-width: 1024px) {
+    .card {
+      width: var(--card-w);
+    }
+
+    .card-media {
+      height: clamp(7rem, 19svh, 12rem);
+      aspect-ratio: auto;
+    }
+
+    .card-media img {
+      position: absolute;
+      inset: 0;
+    }
+
+    .card-media-empty {
+      inset: 0.75rem;
+    }
+
+    .card-body {
+      gap: 0.5rem;
+      padding: 1rem 1.25rem;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+    }
+
+    .card-summary {
+      font-size: 0.8125rem;
+      line-height: 1.55;
+    }
+
+    .card-stack {
+      font-size: 0.6875rem;
+      line-height: 1.5;
+    }
+
+    .card-links {
+      margin-bottom: -0.625rem;
+    }
+
+    .card-links a {
+      padding: 0.5rem;
+    }
+  }
+
+  /* A compact card (short media strip, smaller type) so card + bar fit even a 360x560 screen,
+     while the gallery is in the sticky mode (phones and tablets). */
+  :global(.gallery[data-mode='sticky']) .card-media {
+    height: clamp(5.5rem, 16svh, 9rem);
+    aspect-ratio: auto;
+  }
+
+  :global(.gallery[data-mode='sticky']) .card-media img {
+    position: absolute;
+    inset: 0;
+  }
+
+  :global(.gallery[data-mode='sticky']) .card-body {
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+
+  :global(.gallery[data-mode='sticky']) .card-title {
+    font-size: 1.125rem;
+  }
+
+  :global(.gallery[data-mode='sticky']) .card-summary {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  :global(.gallery[data-mode='sticky']) .card-stack {
+    font-size: 0.6875rem;
+    line-height: 1.5;
+  }
+</style>

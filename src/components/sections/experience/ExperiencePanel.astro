@@ -1,0 +1,256 @@
+---
+import type { ExperienceCompany } from '@data/experience';
+
+interface Props {
+  item: ExperienceCompany;
+  /** The first panel starts visible; the script toggles `hidden` afterwards. */
+  active: boolean;
+  pendingLabel: string;
+}
+
+const { item, active, pendingLabel } = Astro.props;
+---
+
+<div
+  role="tabpanel"
+  id={`exp-panel-${item.id}`}
+  class="exp-panel"
+  aria-labelledby={`exp-tab-${item.id}`}
+  hidden={!active}
+  data-panel
+>
+  <header class="exp-panel-head">
+    <h3 class="exp-title">
+      {item.title}
+      <span class="exp-at">
+        {' '}
+        @{' '}
+        {
+          item.url ? (
+            <a href={item.url} target="_blank" rel="noopener noreferrer">
+              {item.company}
+            </a>
+          ) : (
+            item.company
+          )
+        }
+      </span>
+    </h3>
+    <p class="exp-range">{item.range}</p>
+  </header>
+
+  <div class="exp-body" data-lenis-prevent data-body>
+    {item.pending && <p class="exp-pending">{pendingLabel}</p>}
+
+    {
+      item.roles.length > 0 && (
+        <div class="exp-roles">
+          {item.roles.map((role) => (
+            <section class="role-section">
+              <h4 class="exp-role" data-highlight={role.highlight ? '' : undefined}>
+                {role.role}
+              </h4>
+              <p class="exp-period">{role.period}</p>
+              <ul class="exp-tasks">
+                {role.tasks.map((task) => (
+                  <li>
+                    <span class="exp-marker" aria-hidden="true">
+                      ▹
+                    </span>
+                    <span>{task}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      )
+    }
+
+    {item.description && <p class="exp-description">{item.description}</p>}
+
+    {
+      item.tags && item.tags.length > 0 && (
+        <ul class="exp-tags">
+          {item.tags.map((tag) => (
+            <li>{tag}</li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</div>
+
+<style>
+  /* ---- Panel ------------------------------------------------------------------ */
+  .exp-panel {
+    display: flex;
+    min-width: 0;
+    height: 100%;
+    flex-direction: column;
+  }
+
+  .exp-panel[hidden] {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .exp-panel:not([hidden]) {
+      animation: exp-fade 0.3s ease-in-out;
+    }
+  }
+
+  @keyframes exp-fade {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .exp-panel-head {
+    flex: none;
+    margin-bottom: 1.25rem;
+  }
+
+  .exp-title {
+    font-family: var(--font-sans);
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--layer-text);
+  }
+
+  .exp-at {
+    color: var(--layer-accent);
+  }
+
+  .exp-at a:hover {
+    text-decoration: underline;
+  }
+
+  .exp-range {
+    margin-top: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--layer-muted);
+  }
+
+  .exp-body {
+    min-height: 0;
+    flex: 1 1 auto;
+    padding-right: 0.5rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+  }
+
+  .exp-body::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .exp-body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .exp-body::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  .exp-roles {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .role-section {
+    padding-left: 1rem;
+    border-left: 2px solid color-mix(in srgb, var(--layer-accent) 20%, transparent);
+  }
+
+  .exp-role {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--layer-accent);
+  }
+
+  /* Data-related role: a small accent mark after the name. */
+  .exp-role[data-highlight]::after {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    background: var(--layer-accent);
+  }
+
+  .exp-period {
+    margin: 0.25rem 0 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--layer-muted);
+  }
+
+  .exp-tasks {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .exp-tasks li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--layer-muted);
+  }
+
+  .exp-marker {
+    flex: none;
+    margin-top: 0.1rem;
+    color: var(--layer-accent);
+  }
+
+  .exp-pending {
+    padding-left: 0.875rem;
+    border-left: 2px dashed rgba(255, 255, 255, 0.25);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--layer-muted);
+  }
+
+  .exp-description {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--layer-muted);
+  }
+
+  .exp-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 0.875rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .exp-tags li {
+    padding: 3px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.3;
+    color: var(--layer-text);
+  }
+</style>

@@ -1,0 +1,142 @@
+---
+import { Icon } from 'astro-icon/components';
+import Layout from '@layouts/Layout.astro';
+import SectionContainer from '@components/ui/SectionContainer.astro';
+import TitleSection from '@components/ui/TitleSection.astro';
+import Button from '@components/ui/Button.astro';
+import { SITE_CONFIG } from '@data/config';
+import { getLangFromUrl, useTranslations } from '@i18n/utils';
+import { localizePath, withBase } from '@lib/urls';
+
+// Single source for the CV page: cv and en/cv render it.
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const cvFile = lang === 'es' ? SITE_CONFIG.cvEs : SITE_CONFIG.cvEn;
+const cvUrl = withBase(cvFile.slice(1));
+const homeUrl = localizePath(lang);
+---
+
+<Layout title={t('cv.meta-title')} description={t('cv.meta-description')}>
+  <SectionContainer plain class="cv-section">
+    <TitleSection as="h1" path="serve.cv">{t('cv.title')}</TitleSection>
+    <p class="cv-lead">{t('cv.lead')}</p>
+
+    <div class="cv-actions cv-actions-top">
+      <Button href={cvUrl} download>
+        <Icon slot="icon" name="tabler:download" size={24} />
+        {t('hero.download-cv')}
+      </Button>
+      <Button href={cvUrl} target="_blank" rel="noopener noreferrer" variant="glass">
+        {t('cv.open')}
+      </Button>
+    </div>
+
+    <div class="cv-frame">
+      <iframe src={cvUrl} title={t('cv.title')} class="cv-iframe"></iframe>
+
+      <!-- Phones: mobile browsers usually can't render a PDF in an iframe. -->
+      <div class="cv-fallback">
+        <Icon name="tabler:file-cv" size={40} aria-hidden="true" />
+        <p>{t('cv.fallback')}</p>
+        <div class="cv-actions">
+          <Button href={cvUrl} download>
+            <Icon slot="icon" name="tabler:download" size={24} />
+            {t('hero.download-cv')}
+          </Button>
+          <Button href={cvUrl} target="_blank" rel="noopener noreferrer" variant="glass">
+            {t('cv.open')}
+          </Button>
+        </div>
+      </div>
+    </div>
+
+    <a href={homeUrl} class="cv-back">{t('cv.back')}</a>
+  </SectionContainer>
+</Layout>
+
+<style>
+  /* Clears the fixed header. */
+  :global(.cv-section) {
+    padding-top: 6rem;
+    padding-bottom: 4rem;
+  }
+
+  .cv-lead {
+    max-width: 60ch;
+    margin-bottom: 1.5rem;
+    font-size: 1.0625rem;
+    color: var(--layer-muted);
+  }
+
+  .cv-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .cv-actions-top {
+    margin-bottom: 1.5rem;
+  }
+
+  .cv-frame {
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    background: rgba(14, 16, 20, 0.6);
+  }
+
+  .cv-iframe {
+    display: none;
+    width: 100%;
+    height: min(80svh, 56rem);
+    border: none;
+  }
+
+  .cv-fallback {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2.5rem 1.25rem;
+    text-align: center;
+    color: var(--layer-muted);
+  }
+
+  .cv-fallback .cv-actions {
+    justify-content: center;
+  }
+
+  /* On phones the card carries the buttons; the row above the frame would repeat them. */
+  .cv-actions-top {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .cv-iframe {
+      display: block;
+    }
+
+    .cv-fallback {
+      display: none;
+    }
+
+    .cv-actions-top {
+      display: flex;
+    }
+  }
+
+  .cv-back {
+    display: inline-block;
+    margin-top: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--layer-muted);
+    transition: color 0.2s ease;
+  }
+
+  .cv-back:hover {
+    color: var(--layer-accent);
+  }
+</style>

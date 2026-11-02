@@ -1,0 +1,62 @@
+---
+import { getLangFromUrl, useTranslations } from '@i18n/utils';
+import { experience } from '@data/experience';
+import ExperienceTabs from '@components/sections/experience/ExperienceTabs.astro';
+import ExperiencePanel from '@components/sections/experience/ExperiencePanel.astro';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const items = experience[lang];
+---
+
+<div class="exp" data-experience>
+  <ExperienceTabs items={items} label={t('experience.aria')} />
+
+  <div class="exp-panels">
+    {
+      items.map((item, index) => (
+        <ExperiencePanel item={item} active={index === 0} pendingLabel={t('experience.pending')} />
+      ))
+    }
+  </div>
+</div>
+
+<noscript>
+  <style>
+    .exp-panel[hidden] {
+      display: flex !important;
+      margin-top: 1rem;
+    }
+  </style>
+</noscript>
+
+<style>
+  .exp {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .exp-panels {
+    min-width: 0;
+    min-height: 0;
+  }
+
+  /* ---- Desktop: tabs left, active company right; the whole block fits one screen --- */
+  @media (min-width: 1024px) {
+    .exp {
+      display: grid;
+      grid-template-columns: 11.5rem minmax(0, 1fr);
+      grid-template-rows: minmax(0, 1fr);
+      gap: 1.5rem;
+      height: min(28rem, calc(100svh - 17rem));
+    }
+  }
+</style>
+
+<script>
+  import { initExperience } from '@components/sections/experience/experience';
+
+  document.addEventListener('astro:page-load', initExperience);
+</script>
