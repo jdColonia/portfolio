@@ -1,5 +1,5 @@
 // Behavioural regression checks. Usage: node checks.mjs [name...]  (no args = all)
-import { BASE_PATH, check, guard, info, launch, requireServer, url } from './lib.mjs';
+import { BASE, BASE_PATH, check, guard, info, launch, requireServer, url } from './lib.mjs';
 
 const trimSlash = (p) => p.replace(/\/$/, '');
 
@@ -208,6 +208,30 @@ async function icons() {
   });
 }
 
+// GA4 collect hits of a browser context, one entry per event. A hit carries either one event in
+// the query string or a batch (one body line per event); the common params (dl, tt...) travel in
+// the query. `auto` marks events GA itself generated (ae=a), such as its history page views.
+function collectEvents(context) {
+  const events = [];
+  context.on('request', (r) => {
+    if (!/g\/collect/.test(r.url())) return;
+    const query = new URL(r.url()).searchParams;
+    const lines = (r.postData() || '').split(/\r?\n/).filter(Boolean);
+    for (const line of lines.length ? lines : ['']) {
+      const params = new URLSearchParams(query);
+      for (const [key, value] of new URLSearchParams(line)) params.set(key, value);
+      const dl = params.get('dl');
+      events.push({
+        name: params.get('en'),
+        path: dl ? new URL(dl).pathname : null,
+        auto: params.get('ae') === 'a',
+        params,
+      });
+    }
+  });
+  return events;
+}
+
 // Google Analytics through Partytown across ClientRouter navigations.
 async function analytics() {
   await withBrowser({}, async (browser) => {
@@ -215,20 +239,10 @@ async function analytics() {
       const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
       const page = await context.newPage();
       const errors = [];
-      const pageViews = [];
       let sandboxLoads = 0;
       page.on('console', (m) => m.type() === 'error' && errors.push(m.text().slice(0, 160)));
-      context.on('request', (r) => {
-        if (/partytown-sandbox/.test(r.url())) sandboxLoads += 1;
-        if (!/g\/collect/.test(r.url())) return;
-        const u = new URL(r.url());
-        const lines = (r.postData() || '').split(/\r?\n/).filter(Boolean);
-        const events = lines.length
-          ? lines.map((l) => new URLSearchParams(l).get('en'))
-          : [u.searchParams.get('en')];
-        const dl = u.searchParams.get('dl');
-        if (dl && events.includes('page_view')) pageViews.push(new URL(dl).pathname);
-      });
+      context.on('request', (r) => /partytown-sandbox/.test(r.url()) && (sandboxLoads += 1));
+      const events = collectEvents(context);
       await page.goto(url(), { waitUntil: 'load' });
       await page.waitForTimeout(4000);
       await page.locator('.cv-pill').click();
@@ -236,6 +250,7 @@ async function analytics() {
       await page.locator('header a.site-logo').first().click();
       // hits are batched by Partytown; give them time to flush
       await page.waitForTimeout(8000);
+      const pageViews = events.filter((e) => e.name === 'page_view').map((e) => e.path);
       const home = trimSlash(BASE_PATH);
       check('analytics: sandbox loaded once', sandboxLoads === 1, `loads=${sandboxLoads}`);
       check('analytics: no console errors', errors.length === 0, errors.join(' | '));
@@ -245,9 +260,145 @@ async function analytics() {
         pageViews.includes(`${home}/cv`),
         `hits=${pageViews}`
       );
+      // localhost is not the production host: every hit must carry tt=internal (traffic_type)
+      const untagged = events.filter((e) => e.params.get('tt') !== 'internal').length;
+      check(
+        'analytics: localhost hits flagged internal (tt=internal)',
+        events.length > 0 && untagged === 0,
+        `events=${events.length} untagged=${untagged}`
+      );
       // the page_view of the last navigation may not be flushed before the script ends
       info(
         `analytics: back-home page_view sent=${pageViews.filter((p) => p === home).length > 1} (optional)`
+      );
+      await context.close();
+    });
+  });
+}
+
+// Custom events (data-track) and page_view accounting. Hits go to the real GA property but are
+// flagged tt=internal, so the Internal Traffic filter drops them.
+async function analyticsEvents() {
+  await withBrowser({}, async (browser) => {
+    await guard('analytics-events', async () => {
+      const context = await browser.newContext({
+        viewport: { width: 1280, height: 900 },
+        acceptDownloads: true,
+      });
+      const page = await context.newPage();
+      // External links and the PDF open in a new tab: close it, the click is all that matters.
+      context.on('page', (popup) => popup.close().catch(() => {}));
+      const events = collectEvents(context);
+
+      await page.goto(url(), { waitUntil: 'load' });
+      await page.waitForTimeout(3500);
+      // Scroll through sections: section_view yes, page_view no.
+      await page.evaluate(() => {
+        const s = document.getElementById('proyectos');
+        window.scrollTo(0, s.getBoundingClientRect().top + window.scrollY + 100);
+      });
+      await page.waitForTimeout(2000);
+      await page.locator('[data-card] .card-links a').first().click({ timeout: 8000 });
+      await page.waitForTimeout(500);
+      await page.locator('.dock-link').first().click(); // GitHub in the side dock
+      await page.waitForTimeout(500);
+      await page.locator('.cv-pill').click(); // ClientRouter: home -> cv
+      await page.waitForTimeout(3500);
+      const download = page.waitForEvent('download', { timeout: 8000 });
+      await page.locator('.cv-actions-top a[download]').click();
+      await (await download).cancel().catch(() => {});
+      await page.waitForTimeout(500);
+      await page.locator('.cv-actions-top a[target="_blank"]').click();
+      // hits are batched by Partytown; give them time to flush
+      await page.waitForTimeout(9000);
+
+      const find = (name, expected) =>
+        events.find(
+          (e) =>
+            e.name === name &&
+            Object.entries(expected).every(([key, value]) => e.params.get(`ep.${key}`) === value)
+        );
+      const seen = (name, expected) => {
+        const e = find(name, expected);
+        return check(
+          `analytics-events: ${name} ${JSON.stringify(expected)}`,
+          Boolean(e),
+          e ? '' : `events=${[...new Set(events.map((x) => x.name))]}`
+        );
+      };
+      seen('section_view', { section: 'proyectos' });
+      seen('project_click', { link_type: 'repo' });
+      check(
+        'analytics-events: project_click carries project_id',
+        Boolean(find('project_click', {})?.params.get('ep.project_id'))
+      );
+      seen('contact_click', { method: 'github', location: 'dock' });
+      seen('cv_open', { cv_language: 'es', location: 'nav' });
+      seen('cv_download', { cv_language: 'es', location: 'cv_page' });
+      seen('cv_open', { cv_language: 'es', location: 'cv_page' });
+
+      // page_view: one per real page (home load + ClientRouter nav to cv); sections add none.
+      const home = trimSlash(BASE_PATH);
+      const mine = events.filter((e) => e.name === 'page_view' && !e.auto).map((e) => e.path);
+      const count = (p) => mine.filter((x) => x === p).length;
+      check(
+        'analytics-events: one page_view per page, none per section',
+        mine.length === 2 && count(home) === 1 && count(`${home}/cv`) === 1,
+        `site page_views=${mine}`
+      );
+      const auto = events.filter((e) => e.name === 'page_view' && e.auto).map((e) => e.path);
+      info(
+        auto.length
+          ? `analytics-events: GA still sends history page_views (ae=a) ${auto}: disable "Page changes based on browser history events" in GA Enhanced measurement`
+          : 'analytics-events: GA sent no history page_views'
+      );
+      await context.close();
+    });
+  });
+}
+
+// ?interno=1 stores the ga_internal flag (read by the Partytown worker), ?interno=0 clears it.
+// localhost is rewritten into the "production" host so only the flag can mark traffic internal;
+// the hits are aborted, so these loads never reach GA.
+async function analyticsInternal() {
+  await withBrowser({}, async (browser) => {
+    await guard('analytics-internal', async () => {
+      const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+      const { hostname } = new URL(BASE);
+      const escaped = trimSlash(BASE).replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
+      await context.route(new RegExp(`${escaped}/?(\\?.*)?$`), async (route) => {
+        const res = await route.fetch();
+        const body = (await res.text()).replace("'jdcolonia.github.io'", `'${hostname}'`);
+        await route.fulfill({ response: res, body });
+      });
+      const tags = [];
+      await context.route(/g\/collect/, (route) => {
+        tags.push(new URL(route.request().url()).searchParams.get('tt'));
+        return route.abort();
+      });
+      const visit = async (query) => {
+        tags.length = 0;
+        const page = await context.newPage();
+        await page.goto(url(query), { waitUntil: 'load' });
+        for (let i = 0; i < 40 && !tags.length; i += 1) await page.waitForTimeout(500);
+        await page.waitForTimeout(1000);
+        const stored = await page.evaluate(() => localStorage.getItem('ga_internal'));
+        await page.close();
+        return `${tags.length ? String(tags[0]) : 'no-hit'}${stored ? '+stored' : ''}`;
+      };
+      const steps = [
+        ['', 'null'],
+        ['?interno=1', 'internal+stored'],
+        ['', 'internal+stored'],
+        ['?interno=0', 'null'],
+        ['', 'null'],
+      ];
+      const got = [];
+      for (const [query] of steps) got.push(await visit(query));
+      check(
+        'analytics-internal: ?interno=1 flags, ?interno=0 clears (localStorage read in Partytown)',
+        steps.every(([, want], i) => got[i] === want),
+        steps.map(([q, want], i) => `${q || '(none)'} -> ${got[i]} (want ${want})`).join(' | ')
       );
       await context.close();
     });
@@ -403,6 +554,8 @@ const all = {
   'gallery-gap': galleryGap,
   icons,
   analytics,
+  'analytics-events': analyticsEvents,
+  'analytics-internal': analyticsInternal,
   'not-found': notFound,
   live,
 };

@@ -57,7 +57,9 @@ El worktree solo contiene lo commiteado y reutiliza `node_modules` actual: si `H
   - `gallery-wheel`: galería en móvil (sticky, sin pin, track avanza con la rueda) cargando a 390 y redimensionando de 1280 a 390.
   - `gallery-gap`: separación entre el título "Proyectos" y las tarjetas en móvil, y el stage pegado en su offset sticky.
   - `icons`: el sprite `tech-icons.svg` carga, los iconos tienen tamaño y se ponen naranja al hover.
-  - `analytics`: Google Analytics vía Partytown; el iframe `partytown-sandbox` carga una sola vez, sin errores de consola, y se envían `page_view` en la carga y tras navegar con ClientRouter.
+  - `analytics`: Google Analytics vía Partytown; el iframe `partytown-sandbox` carga una sola vez, sin errores de consola, se envían `page_view` en la carga y tras navegar con ClientRouter, y los hits desde localhost llevan `tt=internal`.
+  - `analytics-events`: eventos personalizados (`data-track`): `section_view`, `project_click`, `contact_click`, `cv_open`, `cv_download` con sus parámetros, y un solo `page_view` propio por página real (home + cv), ninguno por sección. Informa (INFO) si GA aún manda sus `page_view` por historial (`ae=a`).
+  - `analytics-internal`: `?interno=1` guarda el flag `ga_internal` (el worker de Partytown lo lee) y marca los hits con `tt=internal`; `?interno=0` lo borra. Reescribe el host de producción para que solo cuente el flag y aborta los hits (no llegan a GA).
   - `not-found`: 404 en ES y EN (estado, `lang`, contenido).
   - `live`: con movimiento activo: cristal, hero, pins, pestañas de experiencia, navegación, home→cv→home con ClientRouter, menú móvil, 404 EN y errores de consola.
 
@@ -66,6 +68,6 @@ El worktree solo contiene lo commiteado y reutiliza `node_modules` actual: si `H
 - La página CV a 1440 puede diferir ~15% por la barra del visor PDF embebido del navegador (`compare.mjs` lo marca `NOTE`, sin fallar).
 - En headless el cristal 3D puede quedar en `crystalAfterNav: 'fallback'` porque WebGL corre con render por software lento (el check lo acepta).
 - El `page_view` de GA de la última navegación puede no enviarse antes de que termine el script (solo se informa como `INFO`).
-- `analytics` necesita red (carga gtag de Google).
+- `analytics` y `analytics-events` necesitan red (cargan gtag de Google; sus hits van a la propiedad real pero con `tt=internal`).
 
 Si algo falla, primero repetir ese check solo (`checks.mjs <nombre>`): los tiempos dependen de la máquina.
