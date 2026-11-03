@@ -1,4 +1,4 @@
-# Portfolio de Juan David Colonia
+# Portfolio de Juan David Colonia Aldana
 
 Portafolio personal de Juan David Colonia Aldana. El pilar es la ingeniería de datos y el desarrollo de software va en segundo lugar ("Ingeniero de Sistemas · Datos y Software"). Es bilingüe: español por defecto (sin prefijo) e inglés en `/en/`. Astro 5 + Tailwind 4, sitio estático desplegado en GitHub Pages bajo la base `/portfolio` (en dev la base es `/`) con cada push a `main`.
 

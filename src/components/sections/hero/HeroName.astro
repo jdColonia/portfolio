@@ -8,7 +8,7 @@
  * letters appear one after another (a "stagger").
  */
 
-const nameLines = ['Juan David', 'Colonia'];
+const nameLines = ['Juan David', 'Colonia Aldana'];
 let charIndex = 0;
 const nameWords = nameLines.map((line) =>
   line.split(' ').map((word) => [...word].map((char) => ({ char, index: charIndex++ })))
@@ -16,7 +16,7 @@ const nameWords = nameLines.map((line) =>
 ---
 
 {/* The per-letter spans are hidden from screen readers; aria-label gives them the whole name. */}
-<h1 class="hero-name" aria-label="Juan David Colonia">
+<h1 class="hero-name" aria-label="Juan David Colonia Aldana">
   <span class="block" aria-hidden="true">
     {
       nameWords.map((words) => (

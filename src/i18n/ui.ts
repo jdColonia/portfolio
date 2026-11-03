@@ -88,9 +88,9 @@ export const ui = {
 
     'footer.links': 'Enlaces',
 
-    'cv.meta-title': 'Hoja de vida — Juan David Colonia',
+    'cv.meta-title': 'Hoja de vida — Juan David Colonia Aldana',
     'cv.meta-description':
-      'Hoja de vida de Juan David Colonia, Ingeniero de Sistemas en datos y software.',
+      'Hoja de vida de Juan David Colonia Aldana, Ingeniero de Sistemas en datos y software.',
     'cv.title': 'Hoja de vida',
     'cv.lead': 'Ingeniero de Sistemas · Datos y Software. Descárgala o léela aquí.',
     'cv.open': 'Abrir en otra pestaña',
@@ -155,8 +155,9 @@ export const ui = {
 
     'footer.links': 'Links',
 
-    'cv.meta-title': 'Resume — Juan David Colonia',
-    'cv.meta-description': 'Resume of Juan David Colonia, Systems Engineer in data and software.',
+    'cv.meta-title': 'Resume — Juan David Colonia Aldana',
+    'cv.meta-description':
+      'Resume of Juan David Colonia Aldana, Systems Engineer in data and software.',
     'cv.title': 'Resume',
     'cv.lead': 'Systems Engineer · Data & Software. Download it or read it here.',
     'cv.open': 'Open in a new tab',

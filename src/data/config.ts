@@ -12,8 +12,8 @@
 export const SITE_CONFIG = {
   name: 'Juan David Colonia Aldana',
   title: {
-    es: 'Juan David Colonia — Datos y Software',
-    en: 'Juan David Colonia — Data & Software',
+    es: 'Juan David Colonia Aldana — Datos y Software',
+    en: 'Juan David Colonia Aldana — Data & Software',
   },
   description: {
     es: 'Ingeniero de Sistemas. Construyo pipelines y tableros de datos, y desarrollo aplicaciones web y móviles.',
