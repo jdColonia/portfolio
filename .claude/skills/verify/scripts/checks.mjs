@@ -351,7 +351,8 @@ async function analytics() {
       );
       // localhost is not the production host, so every hit must carry tt=internal (the
       // traffic_type parameter). A GA filter drops that traffic, so tests never pollute real data.
-      const untagged = events.filter((e) => e.params.get('tt') !== 'internal').length;
+      // Hits without an event name (the stats.g.doubleclick.net ping) carry no GA data to filter.
+      const untagged = events.filter((e) => e.name && e.params.get('tt') !== 'internal').length;
       check(
         'analytics: localhost hits flagged internal (tt=internal)',
         events.length > 0 && untagged === 0,
