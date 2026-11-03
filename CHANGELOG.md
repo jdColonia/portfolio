@@ -1,3 +1,10 @@
+## [1.5.2](https://github.com/jdColonia/portfolio/compare/v1.5.1...v1.5.2) (2026-11-03)
+
+
+### Bug Fixes
+
+* **content:** show the full name Juan David Colonia Aldana ([195b454](https://github.com/jdColonia/portfolio/commit/195b454723092a0bf2d2f3d3a2362056bc5a1f66))
+
 ## [1.5.1](https://github.com/jdColonia/portfolio/compare/v1.5.0...v1.5.1) (2026-11-02)
 
 
