@@ -1,0 +1,17 @@
+# Dependabot keeps the GitHub Actions used by the workflows up to date, so deprecations such as the
+# move from Node 20 to Node 24 are fixed by a pull request instead of showing up as warnings.
+# Only the actions are covered; npm dependencies are updated by hand.
+version: 2
+updates:
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'monthly'
+    # One pull request per month with every action update, instead of one per action.
+    groups:
+      actions:
+        patterns:
+          - '*'
+    # "ci:" keeps the commits valid Conventional Commits and does not trigger a release.
+    commit-message:
+      prefix: 'ci'
