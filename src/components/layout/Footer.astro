@@ -1,6 +1,6 @@
 ---
 /**
- * @file Site footer: name, social links, email, CV link and copyright.
+ * @file Site footer: name, social links, email, CV link, copyright and privacy link.
  *
  * Used by Layout.astro on every page. On desktop it is a compact strip between the side docks that
  * shares the last screen with the contact section. The `data-track*` attributes are picked up by
@@ -16,6 +16,7 @@ const t = useTranslations(lang);
 const currentYear = new Date().getFullYear();
 
 const cvPage = localizePath(lang, 'cv');
+const privacyPage = localizePath(lang, 'privacidad');
 ---
 
 <footer class="site-footer site-footer-zone">
@@ -67,6 +68,7 @@ const cvPage = localizePath(lang, 'cv');
 
     <div class="footer-bottom">
       <p>© {currentYear} {SITE_CONFIG.name}</p>
+      <a href={privacyPage} class="footer-privacy">{t('footer.privacy')}</a>
     </div>
   </div>
 </footer>
@@ -128,9 +130,26 @@ const cvPage = localizePath(lang, 'cv');
 
   .footer-bottom {
     display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 0.5rem;
     padding-top: 1.5rem;
     border-top: 1px solid color-mix(in srgb, var(--layer-muted) 30%, transparent);
     font-size: 0.8125rem;
+  }
+
+  /* Privacy link: separated from the copyright by a middle dot, muted like the rest of the row. */
+  .footer-privacy::before {
+    content: '·';
+    margin-right: 0.5rem;
+  }
+
+  .footer-privacy {
+    transition: color 0.2s ease;
+  }
+
+  .footer-privacy:hover {
+    color: var(--layer-accent);
   }
 
   /* Desktop: a compact centred footer between the side docks, with a fixed height (--footer-h,

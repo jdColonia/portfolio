@@ -87,6 +87,7 @@ export const ui = {
     'contact.copied': 'Copiado',
 
     'footer.links': 'Enlaces',
+    'footer.privacy': 'Privacidad',
 
     'cv.meta-title': 'Hoja de vida — Juan David Colonia Aldana',
     'cv.meta-description':
@@ -96,6 +97,12 @@ export const ui = {
     'cv.open': 'Abrir en otra pestaña',
     'cv.fallback': 'Tu navegador no muestra PDF aquí.',
     'cv.back': '← Volver al inicio',
+
+    'privacy.meta-title': 'Política de privacidad — Juan David Colonia Aldana',
+    'privacy.meta-description':
+      'Cómo mide este sitio las visitas con Google Analytics, qué cookies usa y cómo desactivarlo.',
+    'privacy.path': 'serve.privacidad',
+    'privacy.title': 'Política de privacidad',
   },
   en: {
     'nav.about': 'About',
@@ -154,6 +161,7 @@ export const ui = {
     'contact.copied': 'Copied',
 
     'footer.links': 'Links',
+    'footer.privacy': 'Privacy',
 
     'cv.meta-title': 'Resume — Juan David Colonia Aldana',
     'cv.meta-description':
@@ -163,5 +171,11 @@ export const ui = {
     'cv.open': 'Open in a new tab',
     'cv.fallback': "Your browser can't show the PDF here.",
     'cv.back': '← Back to home',
+
+    'privacy.meta-title': 'Privacy policy — Juan David Colonia Aldana',
+    'privacy.meta-description':
+      'How this site measures visits with Google Analytics, which cookies it uses, and how to opt out.',
+    'privacy.path': 'serve.privacy',
+    'privacy.title': 'Privacy policy',
   },
 } as const;
