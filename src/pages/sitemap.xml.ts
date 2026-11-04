@@ -56,6 +56,14 @@ const entries: Entry[] = [
     priority: '0.8',
     changefreq: 'monthly',
   },
+  // Privacy policy: long-form text that rarely changes (data in privacy.ts, markup in the view).
+  {
+    es: 'privacidad/',
+    en: 'en/privacidad/',
+    sources: ['src/components/views/PrivacyPage.astro', 'src/data/privacy.ts'],
+    priority: '0.3',
+    changefreq: 'yearly',
+  },
 ];
 
 /** Runs a git command and returns its trimmed output, or '' if git fails or is not installed. */

@@ -1,0 +1,165 @@
+---
+/**
+ * @file The privacy policy page: what the site measures with Google Analytics, which cookies it
+ * uses and how to opt out.
+ *
+ * It is the single implementation behind both routes, pages/privacidad.astro (Spanish) and
+ * pages/en/privacidad.astro (English); the language is read from the URL. The text lives in
+ * data/privacy.ts. This is a long-form page, so unlike the home sections it is meant to scroll.
+ */
+
+import Layout from '@layouts/Layout.astro';
+import SectionContainer from '@components/ui/SectionContainer.astro';
+import TitleSection from '@components/ui/TitleSection.astro';
+import { SITE_CONFIG } from '@data/config';
+import { privacy } from '@data/privacy';
+import { getLangFromUrl, useTranslations } from '@i18n/utils';
+import { localizePath } from '@lib/urls';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const content = privacy[lang];
+const homeUrl = localizePath(lang);
+
+/** Splits a paragraph around the `{email}` placeholder so the address can be rendered as a link. */
+const splitEmail = (text: string) => text.split('{email}');
+---
+
+<Layout title={t('privacy.meta-title')} description={t('privacy.meta-description')}>
+  <SectionContainer plain class="privacy-section">
+    <TitleSection as="h1" path={t('privacy.path')}>{t('privacy.title')}</TitleSection>
+    <p class="privacy-lead">{content.lead}</p>
+    <p class="privacy-updated">{content.updated}</p>
+
+    <div class="privacy-body">
+      {
+        content.blocks.map((block) => (
+          <section class="privacy-block">
+            <h2>{block.title}</h2>
+            {block.paragraphs?.map((text) => {
+              const parts = splitEmail(text);
+              return (
+                <p>
+                  {parts.map((part, i) => (
+                    <>
+                      {part}
+                      {i < parts.length - 1 && (
+                        <a href={`mailto:${SITE_CONFIG.email}`}>{SITE_CONFIG.email}</a>
+                      )}
+                    </>
+                  ))}
+                </p>
+              );
+            })}
+            {block.items && (
+              <ul>
+                {block.items.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            )}
+            {block.closing?.map((text) => (
+              <p>{text}</p>
+            ))}
+            {block.links && (
+              <ul class="privacy-links">
+                {block.links.map((link) => (
+                  <li>
+                    <a href={link.url} target="_blank" rel="noopener noreferrer">
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        ))
+      }
+    </div>
+
+    <a href={homeUrl} class="privacy-back">{t('cv.back')}</a>
+  </SectionContainer>
+</Layout>
+
+<style>
+  /* Top padding leaves room for the fixed site header. :global is needed because the class is
+     applied to SectionContainer, a child component whose elements Astro does not scope here. */
+  :global(.privacy-section) {
+    padding-top: 6rem;
+    padding-bottom: 4rem;
+  }
+
+  .privacy-lead {
+    max-width: 70ch;
+    margin-bottom: 0.5rem;
+    font-size: 1.0625rem;
+    color: var(--layer-muted);
+  }
+
+  .privacy-updated {
+    margin-bottom: 2.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--layer-muted);
+  }
+
+  .privacy-body {
+    max-width: 70ch;
+    line-height: 1.7;
+    color: var(--layer-muted);
+  }
+
+  .privacy-block + .privacy-block {
+    margin-top: 2.25rem;
+  }
+
+  .privacy-block h2 {
+    margin-bottom: 0.75rem;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--layer-text);
+  }
+
+  .privacy-block p + p,
+  .privacy-block ul + p,
+  .privacy-block p + ul,
+  .privacy-block ul + ul {
+    margin-top: 0.75rem;
+  }
+
+  .privacy-block ul {
+    padding-left: 1.25rem;
+    list-style: disc;
+  }
+
+  .privacy-block li + li {
+    margin-top: 0.375rem;
+  }
+
+  .privacy-block a {
+    color: var(--layer-text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    overflow-wrap: anywhere;
+    transition: color 0.2s ease;
+  }
+
+  .privacy-block a:hover {
+    color: var(--layer-accent);
+  }
+
+  .privacy-back {
+    display: inline-block;
+    margin-top: 2.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--layer-muted);
+    transition: color 0.2s ease;
+  }
+
+  .privacy-back:hover {
+    color: var(--layer-accent);
+  }
+</style>

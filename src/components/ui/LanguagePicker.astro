@@ -14,7 +14,8 @@ import { localizePath } from '@lib/urls';
 
 const pathWithoutBase = stripBase(Astro.url.pathname);
 const currentLang = getLangFromUrl(Astro.url);
-const isCv = /\/cv\/?$/.test(pathWithoutBase);
+// Standalone pages keep the same slug in both languages, so the picker links to the twin page.
+const staticPage = pathWithoutBase.match(/\/(cv|privacidad)\/?$/)?.[1] ?? '';
 ---
 
 <div class="relative inline-block">
@@ -36,7 +37,7 @@ const isCv = /\/cv\/?$/.test(pathWithoutBase);
   >
     {
       Object.entries(languages).map(([lang, label]) => {
-        const href = localizePath(lang as Lang, isCv ? 'cv' : '');
+        const href = localizePath(lang as Lang, staticPage);
         return (
           <a
             href={href}
