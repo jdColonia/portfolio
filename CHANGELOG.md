@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/jdColonia/portfolio/compare/v1.5.3...v1.6.0) (2026-11-04)
+
+
+### Features
+
+* **privacy:** add a bilingual privacy policy page ([be73224](https://github.com/jdColonia/portfolio/commit/be73224dba6b969be28f868f1f145aa2bdbda75c))
+
 ## [1.5.3](https://github.com/jdColonia/portfolio/compare/v1.5.2...v1.5.3) (2026-11-04)
 
 
