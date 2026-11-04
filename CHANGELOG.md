@@ -1,3 +1,10 @@
+## [1.5.3](https://github.com/jdColonia/portfolio/compare/v1.5.2...v1.5.3) (2026-11-04)
+
+
+### Bug Fixes
+
+* **content:** add Power Apps and Power Automate from the updated CV ([37b229d](https://github.com/jdColonia/portfolio/commit/37b229d6cbd5d5863a3ff7ece892592c100aebef))
+
 ## [1.5.2](https://github.com/jdColonia/portfolio/compare/v1.5.1...v1.5.2) (2026-11-03)
 
 
