@@ -54,6 +54,8 @@ export const stackDomains: StackDomain[] = [
       'Airflow',
       'dbt',
       'Power BI',
+      'Power Apps',
+      'Power Automate',
       'PostgreSQL',
       'MySQL',
       'MongoDB',
