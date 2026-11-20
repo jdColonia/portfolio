@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/jdColonia/portfolio/compare/v1.6.0...v1.7.0) (2026-11-20)
+
+
+### Features
+
+* **projects:** add the Cali earthquake analytics project ([05c45a2](https://github.com/jdColonia/portfolio/commit/05c45a25cc3f4398b58d75b09f17d40a53b7b3b2))
+
 # [1.6.0](https://github.com/jdColonia/portfolio/compare/v1.5.3...v1.6.0) (2026-11-04)
 
 
