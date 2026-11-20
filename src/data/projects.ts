@@ -10,6 +10,7 @@ import type { Localized } from '@data/types';
 import qversityImage from '@assets/projects/qversity-executive-overview.webp';
 import microTodoImage from '@assets/projects/project1.webp';
 import cozamImage from '@assets/projects/project2.webp';
+import caliEarthquakeImage from '@assets/projects/cali-earthquake.webp';
 
 /**
  * Group a project belongs to. The gallery lists projects by group, with a divider and a caption
@@ -39,6 +40,16 @@ export interface Project {
 }
 
 // Tech stacks are shared by the Spanish and English entries below.
+const caliEarthquakeStack = [
+  'Databricks',
+  'PySpark',
+  'dbt',
+  'Power BI',
+  'Genie',
+  'MapLibre',
+  'GitHub Actions',
+];
+
 const microTodoStack = [
   'Azure',
   'Terraform',
@@ -70,6 +81,18 @@ const qversityStack = ['Airflow', 'PySpark', 'dbt', 'PostgreSQL', 'Power BI', 'D
 /** Projects per language, in display order within each track. */
 export const projects: Localized<Project[]> = {
   es: [
+    {
+      id: 'cali-earthquake',
+      track: 'data',
+      title: 'Análisis del sismo de Cali',
+      summary:
+        'Cruza el daño satelital de 5.146 edificios de Cali tras el sismo de 2026 con el suelo, la cercanía a hospitales y la población para priorizar inspecciones. Un lakehouse en Databricks (PySpark y dbt) alimenta un mapa interactivo, un tablero de Power BI y preguntas en lenguaje natural con Genie. Proyecto de la DataBridge Hack 2026.',
+      stack: caliEarthquakeStack,
+      image: caliEarthquakeImage,
+      github: 'https://github.com/jdColonia/databridge-hack-sismo-cali',
+      demo: 'https://jdcolonia.github.io/databridge-hack-sismo-cali/',
+      status: 'live',
+    },
     {
       id: 'qversity-elt-fintech',
       track: 'data',
@@ -105,6 +128,18 @@ export const projects: Localized<Project[]> = {
     },
   ],
   en: [
+    {
+      id: 'cali-earthquake',
+      track: 'data',
+      title: 'Cali earthquake analytics',
+      summary:
+        'Cross-checks satellite damage on 5,146 Cali buildings after the 2026 earthquake against soil, distance to hospitals, and population to decide what to inspect first. A Databricks lakehouse (PySpark and dbt) feeds an interactive map, a Power BI dashboard, and plain-language questions through Genie. DataBridge Hack 2026 project.',
+      stack: caliEarthquakeStack,
+      image: caliEarthquakeImage,
+      github: 'https://github.com/jdColonia/databridge-hack-sismo-cali',
+      demo: 'https://jdcolonia.github.io/databridge-hack-sismo-cali/',
+      status: 'live',
+    },
     {
       id: 'qversity-elt-fintech',
       track: 'data',

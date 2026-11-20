@@ -51,6 +51,7 @@ export const techIcons: Record<string, string> = {
   Airflow: 'simple-icons:apacheairflow',
   dbt: 'simple-icons:dbt',
   'Power BI': 'simple-icons:powerbi',
+  MapLibre: 'simple-icons:maplibre',
   'Power Apps': 'simple-icons:powerapps',
   'Power Automate': 'simple-icons:powerautomate',
 };
