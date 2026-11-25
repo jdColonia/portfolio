@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/jdColonia/portfolio/compare/v1.7.0...v1.8.0) (2026-11-25)
+
+
+### Features
+
+* **projects:** add Power BI dashboards track ([3deb7bf](https://github.com/jdColonia/portfolio/commit/3deb7bfe4c6fb5005e4450399da6489e9493be39))
+
 # [1.7.0](https://github.com/jdColonia/portfolio/compare/v1.6.0...v1.7.0) (2026-11-20)
 
 
