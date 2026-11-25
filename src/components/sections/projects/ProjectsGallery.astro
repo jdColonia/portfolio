@@ -1,6 +1,6 @@
 ---
 /**
- * @file Projects section: a horizontal row of project cards, grouped by track (data, software,
+ * @file Projects section: a horizontal row of project cards, grouped by track (data, bi, software,
  * platform) with a divider card before each group.
  *
  * The same markup has three behaviours, chosen by gallery.ts and exposed as `data-mode` on the
@@ -23,12 +23,13 @@ const t = useTranslations(lang);
 // Translation keys for each track's heading and one-line description.
 const trackKeys = {
   data: { label: 'projects.track.data', desc: 'projects.track.data.desc' },
+  bi: { label: 'projects.track.bi', desc: 'projects.track.bi.desc' },
   software: { label: 'projects.track.software', desc: 'projects.track.software.desc' },
   platform: { label: 'projects.track.platform', desc: 'projects.track.platform.desc' },
 } as const;
 
 // Display order of the tracks. A track without projects is dropped.
-const trackOrder: ProjectTrack[] = ['data', 'software', 'platform'];
+const trackOrder: ProjectTrack[] = ['data', 'bi', 'software', 'platform'];
 const groups = trackOrder
   .map((track) => ({ track, items: projects[lang].filter((project) => project.track === track) }))
   .filter((group) => group.items.length > 0);

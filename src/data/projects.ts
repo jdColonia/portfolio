@@ -11,13 +11,16 @@ import qversityImage from '@assets/projects/qversity-executive-overview.webp';
 import microTodoImage from '@assets/projects/project1.webp';
 import cozamImage from '@assets/projects/project2.webp';
 import caliEarthquakeImage from '@assets/projects/cali-earthquake.webp';
+import powerBiWorkOrderImage from '@assets/projects/powerbi-work-order-tracking.webp';
+import powerBiDailyImage from '@assets/projects/powerbi-daily-work-order-tracking.webp';
+import powerBiPermitImage from '@assets/projects/powerbi-permit-tracking.webp';
 
 /**
  * Group a project belongs to. The gallery lists projects by group, with a divider and a caption
  * for each one. A group with no projects does not appear, so a project only needs
  * `track: 'software'` to create the software group.
  */
-export type ProjectTrack = 'data' | 'software' | 'platform';
+export type ProjectTrack = 'data' | 'bi' | 'software' | 'platform';
 
 /** One project card. */
 export interface Project {
@@ -78,6 +81,8 @@ const cozamStack = [
 
 const qversityStack = ['Airflow', 'PySpark', 'dbt', 'PostgreSQL', 'Power BI', 'Docker'];
 
+const powerBiStack = ['Power BI', 'DAX', 'Power Query', 'Deneb', 'Python'];
+
 /** Projects per language, in display order within each track. */
 export const projects: Localized<Project[]> = {
   es: [
@@ -102,6 +107,39 @@ export const projects: Localized<Project[]> = {
       stack: qversityStack,
       image: qversityImage,
       github: 'https://github.com/jdColonia/qversity-data-2026-cali-juancolonia',
+      status: 'live',
+    },
+    {
+      id: 'powerbi-work-order-tracking',
+      track: 'bi',
+      title: 'Seguimiento de órdenes de trabajo',
+      summary:
+        'Tablero de Power BI que sigue las órdenes de trabajo de clientes industriales de punta a punta: abiertas frente a su plazo, cerradas, un buscador por solicitud y el recorrido por fases. Modelo en estrella, Power Query y Deneb; datos ficticios, en español e inglés.',
+      stack: powerBiStack,
+      image: powerBiWorkOrderImage,
+      github: 'https://github.com/jdColonia/powerbi-work-order-tracking',
+      status: 'live',
+    },
+    {
+      id: 'powerbi-daily-work-order-tracking',
+      track: 'bi',
+      title: 'Seguimiento diario de órdenes de trabajo',
+      summary:
+        'Tablero de Power BI para el seguimiento diario de un contratista: órdenes en tiempo, por vencer y vencidas según un plazo en días hábiles, con ficha emergente por orden.',
+      stack: powerBiStack,
+      image: powerBiDailyImage,
+      github: 'https://github.com/jdColonia/powerbi-daily-work-order-tracking',
+      status: 'live',
+    },
+    {
+      id: 'powerbi-permit-tracking',
+      track: 'bi',
+      title: 'Seguimiento de permisos',
+      summary:
+        'Tablero de Power BI que mide el backlog de órdenes frente a su línea base y su meta, cuánto tardan los permisos de obra ante la alcaldía y cuánto cuestan, con histórico en Parquet.',
+      stack: powerBiStack,
+      image: powerBiPermitImage,
+      github: 'https://github.com/jdColonia/powerbi-permit-tracking',
       status: 'live',
     },
     {
@@ -149,6 +187,39 @@ export const projects: Localized<Project[]> = {
       stack: qversityStack,
       image: qversityImage,
       github: 'https://github.com/jdColonia/qversity-data-2026-cali-juancolonia',
+      status: 'live',
+    },
+    {
+      id: 'powerbi-work-order-tracking',
+      track: 'bi',
+      title: 'Work order tracking',
+      summary:
+        "Power BI dashboard that follows industrial customers' work orders end to end: open orders against their response target, closed orders, a per-request search and the journey through each phase. Star schema, Power Query and Deneb; synthetic data, in Spanish and English.",
+      stack: powerBiStack,
+      image: powerBiWorkOrderImage,
+      github: 'https://github.com/jdColonia/powerbi-work-order-tracking',
+      status: 'live',
+    },
+    {
+      id: 'powerbi-daily-work-order-tracking',
+      track: 'bi',
+      title: 'Daily work order tracking',
+      summary:
+        "Power BI dashboard for a contractor's daily follow-up: orders on time, due soon and overdue against a business-day target, with a pop-up order card.",
+      stack: powerBiStack,
+      image: powerBiDailyImage,
+      github: 'https://github.com/jdColonia/powerbi-daily-work-order-tracking',
+      status: 'live',
+    },
+    {
+      id: 'powerbi-permit-tracking',
+      track: 'bi',
+      title: 'Permit tracking',
+      summary:
+        'Power BI dashboard that measures the work order backlog against its baseline and target, how long street-works permits take at the city hall and what they cost, with Parquet history.',
+      stack: powerBiStack,
+      image: powerBiPermitImage,
+      github: 'https://github.com/jdColonia/powerbi-permit-tracking',
       status: 'live',
     },
     {
