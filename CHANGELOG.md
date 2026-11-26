@@ -1,3 +1,10 @@
+## [1.8.1](https://github.com/jdColonia/portfolio/compare/v1.8.0...v1.8.1) (2026-11-26)
+
+
+### Bug Fixes
+
+* **certifications:** link Qversity to a hosted certificate PDF ([9db555d](https://github.com/jdColonia/portfolio/commit/9db555d0390aa5396156cffd2619f720798b9ca7))
+
 # [1.8.0](https://github.com/jdColonia/portfolio/compare/v1.7.0...v1.8.0) (2026-11-25)
 
 
